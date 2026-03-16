@@ -15,7 +15,8 @@ services:
   # Backend Symfony
   symfony:
     build:
-      context: ./docker/php
+      context: .
+      dockerfile: Dockerfile
       args:
         USERNAME: ${USERNAME}
         UID: ${UID}
@@ -40,7 +41,7 @@ services:
     volumes:
       - ./backend:/var/www/backend
       - ./frontend:/var/www/frontend
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - welab-network
     depends_on:

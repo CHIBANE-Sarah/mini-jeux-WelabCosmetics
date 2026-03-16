@@ -44,11 +44,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'createur')]
     private Collection $sessionsCrees;
 
-    /**
-     * @var Collection<int, Participation>
-     */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'joueur')]
-    private Collection $participations;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $niveauEtude = null;
@@ -59,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->sessionsCrees = new ArrayCollection();
-        $this->participations = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -200,32 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Participation>
      */
-    public function getParticipations(): Collection
-    {
-        return $this->participations;
-    }
-
-    public function addParticipation(Participation $participation): static
-    {
-        if (!$this->participations->contains($participation)) {
-            $this->participations->add($participation);
-            $participation->setJoueur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipation(Participation $participation): static
-    {
-        if ($this->participations->removeElement($participation)) {
-            // set the owning side to null (unless already changed)
-            if ($participation->getJoueur() === $this) {
-                $participation->setJoueur(null);
-            }
-        }
-
-        return $this;
-    }
+   
 
     public function getNiveauEtude(): ?string
     {

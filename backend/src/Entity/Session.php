@@ -28,17 +28,6 @@ class Session
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createur = null;
 
-    /**
-     * @var Collection<int, Participation>
-     */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'session')]
-    private Collection $participations;
-
-    public function __construct()
-    {
-        $this->participations = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -92,33 +81,5 @@ class Session
         return $this;
     }
 
-    /**
-     * @return Collection<int, Participation>
-     */
-    public function getParticipations(): Collection
-    {
-        return $this->participations;
-    }
 
-    public function addParticipation(Participation $participation): static
-    {
-        if (!$this->participations->contains($participation)) {
-            $this->participations->add($participation);
-            $participation->setSession($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipation(Participation $participation): static
-    {
-        if ($this->participations->removeElement($participation)) {
-            // set the owning side to null (unless already changed)
-            if ($participation->getSession() === $this) {
-                $participation->setSession(null);
-            }
-        }
-
-        return $this;
-    }
 }
