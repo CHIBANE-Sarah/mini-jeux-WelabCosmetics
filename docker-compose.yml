@@ -1,14 +1,14 @@
 services:
   # Frontend Angular
   angular:
-    image: node:18-alpine
+    image: node:20-alpine
     container_name: welab-angular
     working_dir: /var/www/frontend
     volumes:
       - ./frontend:/var/www/frontend
     ports:
       - "${ANGULAR_PORT:-4200}:4200"
-    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --poll=2000"
+    command: sh -c "apk add --no-cache bash && npm install -g typescript @angular/cli@21 && npm install && tail -f /dev/null"
     networks:
       - welab-network
 
