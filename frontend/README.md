@@ -6,6 +6,7 @@ Il y aura ici tous les détails et les explications concernant le front de l'App
 # Partie Authentification et Session (réalisé par Christian BITODI)
 
 Cette partie gère :
+- la page d'Accueil
 - la page de Connexion
 - la page de Dashboard 
 - la page pour rejoindre une session 

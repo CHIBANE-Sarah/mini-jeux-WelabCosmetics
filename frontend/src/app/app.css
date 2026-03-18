@@ -1,0 +1,109 @@
+
+:root {
+  --bg: #f4f6fb;
+  --card: #fff;
+  --border: #dde3f1;
+  --primary: #2f61f6;
+  --primary-hover: #1f47d6;
+  --text: #10253c;
+  --muted: #66738b;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.top-nav {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.top-nav a {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.top-nav a:hover {
+  background: #eef2ff;
+  color: var(--primary-hover);
+}
+
+.app-main {
+  padding: 1.2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: min(460px, 100%);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: 0 15px 32px rgba(15, 32, 87, 0.14);
+  background: var(--card);
+}
+
+.card-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem;
+}
+
+.card-body {
+  padding: 1.4rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccd6e5;
+  border-radius: 0.5rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.55rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.alert {
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid #d4e2ff;
+  background: #f8fbff;
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.85rem;
+}
+

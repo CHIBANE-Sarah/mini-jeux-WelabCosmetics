@@ -1,0 +1,63 @@
+:root {
+  --home-bg: #f4f6fb;
+  --hero-bg: #0958d4;
+  --feature-bg: #ffffff;
+  --step-bg: #ffffff;
+  --cta-bg: #ffffff;
+  --hero-text: #fff;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1f63f4 0%, #1663df 100%);
+  color: var(--hero-text);
+}
+
+.hero .btn {
+  font-weight: 600;
+}
+
+.features .card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.features .card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(15, 32, 87, 0.12);
+}
+
+.features .feature-icon {
+  font-size: 1.5rem;
+}
+
+.how-it-works .step-number {
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  font-weight: 700;
+}
+
+.how-it-works h2,
+.features h2 {
+  font-weight: 700;
+}
+
+.cta {
+  background: #fff;
+  border-top: 1px solid #e9ecf5;
+}
+
+.cta .btn {
+  min-width: 220px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hero .display-3 {
+    font-size: 2rem;
+  }
+
+  .cta .btn {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+}

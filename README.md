@@ -14,12 +14,12 @@ Projet réalisé dans le cadre de la licence 3 MIAGE.
 - Kamilia HACINI
 
 ## Répartion des tâches
-
-# Christian  : 
-# Backend : 
+ 
+# Christian
+# Backend  : 
 -  Entités User, Session, Participation
 -  Gestion des sessions 
 -  Fixtures et données de test
-# Frontend : 
--  Pages de connexion et dashboard
+## Frontend(Christian) : 
+-  Pages d'accueil,connexion, dashboard et rejoindre une session
 

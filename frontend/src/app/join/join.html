@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  <div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="text-center mb-4">
+        <h1 class="h2 fw-bold">WeLab Cosmetic</h1>
+        <p class="text-muted">Rejoindre une session</p>
+      </div>
+
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 p-lg-5">
+          <h2 class="card-title text-center mb-4">Entrez vos informations</h2>
+
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+          <form (ngSubmit)="join()" class="needs-validation" autocomplete="off">
+            <div class="mb-3">
+              <label for="nom" class="form-label">Nom</label>
+              <input
+                id="nom"
+                type="text"
+                class="form-control form-control-lg"
+                [(ngModel)]="nom"
+                name="nom"
+                required
+                placeholder="Votre nom"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="prenom" class="form-label">Prénom</label>
+              <input
+                id="prenom"
+                type="text"
+                class="form-control form-control-lg"
+                [(ngModel)]="prenom"
+                name="prenom"
+                required
+                placeholder="Votre prénom"
+              />
+            </div>
+
+            <div class="mb-4">
+              <label for="code" class="form-label">Code de session</label>
+              <input
+                id="code"
+                type="text"
+                class="form-control form-control-lg"
+                [(ngModel)]="sessionCode"
+                name="sessionCode"
+                required
+                maxlength="6"
+                placeholder="6 caractères"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-success w-100 py-3 fw-medium"
+              [disabled]="isLoading"
+            >
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              {{ isLoading ? 'Connexion...' : 'Rejoindre la session' }}
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <a routerLink="/login" class="text-decoration-none">← Retour à l'accueil</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <span class="navbar-brand fw-bold">WeLab Cosmetic - Administration</span>
+      <div class="ms-auto">
+        <button class="btn btn-outline-light" (click)="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-semibold">Tableau de bord</h2>
+      <button class="btn btn-success px-4 py-2" (click)="createSession()">
+        <i class="bi bi-plus-circle me-2"></i>Nouvelle session
+      </button>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card bg-primary text-white h-100">
+          <div class="card-body">
+            <h5 class="card-title">Sessions totales</h5>
+            <p class="display-4">{{ sessions?.length || 0 }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card bg-success text-white h-100">
+          <div class="card-body">
+            <h5 class="card-title">Participants</h5>
+            <p class="display-4">{{ totalParticipants || 0 }}</p>
+          </div>
+        </div>
+      </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-semibold">Sessions récentes</h5>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div>
+        </div>
+
+        <div *ngIf="!isLoading && (!sessions || sessions.length === 0)" class="text-center py-5 text-muted">
+          <p>Aucune session créée pour le moment</p>
+          <button class="btn btn-primary" (click)="createSession()">Créer votre première session</button>
+        </div>
+
+        <div *ngIf="!isLoading && sessions && sessions.length > 0" class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Code</th>
+                <th>Date</th>
+                <th>Durée</th>
+                <th>Participants</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let session of sessions">
+                <td class="fw-medium">{{ session.titre }}</td>
+                <td><span class="badge bg-secondary">{{ session.code }}</span></td>
+                <td>{{ session.dateCreation ? (session.dateCreation | date: 'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ session.duree || '-' }} min</td>
+                <td>{{ session.nbParticipants || 0 }}</td>
+                <td>
+                  <button class="btn btn-sm btn-info me-2" (click)="goToSession(session.code)">Voir</button>
+                  <button class="btn btn-sm btn-outline-secondary">Code</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

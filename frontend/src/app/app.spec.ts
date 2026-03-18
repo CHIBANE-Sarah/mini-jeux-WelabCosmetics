@@ -14,10 +14,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render nav links', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, frontend');
+    expect(compiled.querySelectorAll('nav.top-nav a').length).toBeGreaterThanOrEqual(1);
+    expect(compiled.querySelector('nav.top-nav a')?.textContent).toContain('Login');
   });
 });
