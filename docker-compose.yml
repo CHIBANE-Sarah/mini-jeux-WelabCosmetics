@@ -18,10 +18,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        USERNAME: ${USERNAME}
-        UID: ${UID}
-        EMAIL: ${EMAIL}
-        NAME: ${NAME}
+        USERNAME: sarah
+        UID: 1000
+        EMAIL: chibanesarah42@gmail.com
+        NAME: "Sarah Chibane"
     container_name: welab-symfony
     volumes:
       - ./backend:/var/www/backend
