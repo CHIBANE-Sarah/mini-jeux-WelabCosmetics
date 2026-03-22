@@ -1,19 +1,18 @@
-// src/app/auth/login/login.ts
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';  // ← ajoute RouterModule
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],  // ← ajoute RouterModule ici
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
+
   login = '';
   password = '';
   loading = false;
@@ -29,19 +28,16 @@ export class LoginComponent {
       this.errorMessage = 'Veuillez remplir tous les champs';
       return;
     }
-
     this.loading = true;
     this.errorMessage = '';
-
     this.authService.login(this.login, this.password).subscribe({
-      next: (response) => {
+      next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage = 'Identifiants incorrects';
-        console.error('Erreur login', err);
       }
     });
   }

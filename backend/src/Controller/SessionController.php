@@ -21,10 +21,10 @@ final class SessionController extends AbstractController
     #[IsGranted(['ROLE_ADMIN'])]
     public function create(Request $request, UserRepository $userRepository,EntityManagerInterface $entityManager): JsonResponse {
        
-        $admin = $userRepository->findOneBy(['login' => 'admin']);
-
+        $admin = $this->getUser();
+        
         if (!$admin) {
-            return $this->json(['message' => 'Administrateur non trouvé. Assurez-vous que les fixtures ont été chargées.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        return $this->json(['message' => 'Non autorisé.'], Response::HTTP_UNAUTHORIZED);
         }
 
         $data = json_decode($request->getContent(), true);

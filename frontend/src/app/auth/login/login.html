@@ -1,81 +1,35 @@
-<!-- src/app/auth/login/login.html -->
+<div class="login-page">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <div class="brand-title">We Lab Cosmetic</div>
+    <div class="brand-subtitle">Inventons la cosmétique de demain</div>
+  </div>
 
-<div class="login-screen">
-  <div class="card login-card">
-    <div class="card-header text-center">
-      <div class="logo-container mb-2">
-        <div class="logo-icon">
-          <i class="bi bi-flask"></i>
-        </div>
-        <h1 class="logo-text">WE LAB <span>Cosmetic</span></h1>
-      </div>
-      <p class="brand-slogan">INVENTONS LA COSMÉTIQUE DE DEMAIN</p>
-      <p class="admin-badge">Espace Administrateur</p>
-      <p class="login-description">Connectez-vous pour gérer vos sessions</p>
-    </div>
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h1 class="page-title">Espace Administrateur</h1>
+    <p class="page-desc">Connectez-vous pour gérer vos sessions</p>
+  </div>
 
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4 fw-semibold">Connexion</h2>
+  <div class="login-card">
+    <div class="form-title">Connexion</div>
 
-      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
-      </div>
+    <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
 
-      <form (ngSubmit)="onSubmit()" autocomplete="off">
-        <div class="mb-3">
-          <label for="login" class="form-label fw-medium">
-            <i class="bi bi-person"></i> Identifiant
-          </label>
-          <input
-            id="login"
-            name="login"
-            type="text"
-            class="form-control form-control-lg"
-            [(ngModel)]="login"
-            required
-            placeholder="admin"
-          />
-        </div>
-
-        <div class="mb-4">
-          <label for="password" class="form-label fw-medium">
-            <i class="bi bi-lock"></i> Mot de passe
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            class="form-control form-control-lg"
-            [(ngModel)]="password"
-            required
-            placeholder="*********"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="btn-login w-100 py-3 fw-medium"
-          [disabled]="loading"
-        >
-          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
-        </button>
-      </form>
-
-      <div class="back-link mt-3">
-        <a routerLink="/">
-          <i class="bi bi-arrow-left"></i> Retour à l'accueil
-        </a>
+    <form (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="input-group">
+        <label>Nom d'utilisateur</label>
+        <input type="text" name="login" [(ngModel)]="login" placeholder="admin" class="input-control">
       </div>
 
-      <div class="alert alert-light mt-4 small" role="alert">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        <!-- <strong>Identifiants de test :</strong><br />
-        Admin : <span class="fw-medium">admin / admin123</span><br />
-        Joueur : <span class="fw-medium">joueur1 / joueur1123</span> -->
+      <div class="input-group" style="margin-bottom: 2.5rem;">
+        <label>Mot de passe</label>
+        <input type="password" name="password" [(ngModel)]="password" placeholder="•••••••" class="input-control">
       </div>
-    </div>
 
-    <div class="text-center mt-3 text-muted small">&copy; 2026 WeLab Cosmetic - Tous droits réservés</div>
+      <button type="submit" [disabled]="loading" class="btn-submit">
+        <span *ngIf="loading" class="spinner"></span>
+        <i *ngIf="!loading" class="bi bi-box-arrow-in-right"></i>
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
   </div>
 </div>

@@ -1,156 +1,73 @@
-<!-- src/app/home.html -->
+<div class="home-page">
+  <div class="header-logo">
+    <div class="brand-title">We Lab Cosmetic</div>
+    <div class="brand-subtitle">Inventons la cosmétique de demain</div>
+  </div>
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content text-center">
-      <div class="logo-badge">
-        <i class="bi bi-flask"></i>
-      </div>
-      <h1 class="hero-title">WE LAB <span>Cosmetic</span></h1>
-      <p class="hero-subtitle">INVENTONS LA COSMÉTIQUE DE DEMAIN</p>
-      <p class="hero-description">
-        Découvrez l'univers fascinant de la cosmétique à travers des mini-jeux éducatifs et ludiques
-      </p>
+  <div class="hero-section">
+    <h1 class="hero-title">Mini Jeux</h1>
+    <p class="hero-desc">Découvrez l'univers fascinant de la cosmétique à travers des mini-jeux éducatifs et ludiques</p>
+  </div>
+
+  <div class="cards-container">
+    <div class="role-card">
+      <div class="card-icon blue"><i class="bi bi-person-badge"></i></div>
+      <h2 class="role-title">Je suis un participant</h2>
+      <p class="role-desc">Rejoins une session de jeu avec un code fourni par ton professeur</p>
+      <button routerLink="/join" class="btn-round btn-blue">Rejoindre une session</button>
+    </div>
+
+    <div class="role-card">
+      <div class="card-icon pink"><i class="bi bi-person-video3"></i></div>
+      <h2 class="role-title">Je suis un professeur</h2>
+      <p class="role-desc">Crée et gère des sessions de jeu pour tes étudiants</p>
+      <button routerLink="/login" class="btn-round btn-pink">Accéder au tableau de bord</button>
     </div>
   </div>
-</section>
 
-<!-- Roles Section - 2 colonnes -->
-<section class="roles">
-  <div class="container">
-    <div class="row g-5">
-      <!-- Participant Card -->
-      <div class="col-md-6">
-        <div class="role-card participant-card">
-          <div class="role-icon">
-            <i class="bi bi-person-arms-up"></i>
-          </div>
-          <h3 class="role-title">Je suis un participant</h3>
-          <p class="role-description">
-            Rejoins une session de jeu avec un code fourni par ton professeur
-          </p>
-          <button class="btn-role btn-participant" routerLink="/join">
-            Rejoindre une session
-          </button>
-        </div>
-      </div>
-
-      <!-- Professor Card -->
-      <div class="col-md-6">
-        <div class="role-card professor-card">
-          <div class="role-icon">
-            <i class="bi bi-person-video3"></i>
-          </div>
-          <h3 class="role-title">Je suis un professeur</h3>
-          <p class="role-description">
-            Crée et gère des sessions de jeu pour tes étudiants
-          </p>
-          <button class="btn-role btn-professor" routerLink="/login">
-            Accéder au tableau de bord
-          </button>
-        </div>
-      </div>
+  <div class="features-container">
+    <div class="feature-box">
+      <div class="feat-icon" style="background: var(--welab-blue-light); color: var(--welab-blue-title);"><i class="bi bi-book"></i></div>
+      <h3 style="font-size: 0.95rem; color: var(--welab-blue-title); font-weight: 500; margin-bottom: 0.5rem;">Apprentissage Interactif</h3>
+      <p style="color: var(--welab-text-light); font-size: 0.8rem; line-height: 1.5;">Apprenez le vocabulaire cosmétique de manière ludique</p>
+    </div>
+    <div class="feature-box">
+      <div class="feat-icon" style="background: var(--welab-rose-light); color: var(--welab-pink-btn);"><i class="bi bi-droplet"></i></div>
+      <h3 style="font-size: 0.95rem; color: var(--welab-pink-btn); font-weight: 500; margin-bottom: 0.5rem;">Formulation Pratique</h3>
+      <p style="color: var(--welab-text-light); font-size: 0.8rem; line-height: 1.5;">Créez vos propres formulations virtuelles</p>
+    </div>
+    <div class="feature-box">
+      <div class="feat-icon" style="background: var(--welab-cyan-light); color: var(--welab-cyan);"><i class="bi bi-graph-up"></i></div>
+      <h3 style="font-size: 0.95rem; color: var(--welab-cyan); font-weight: 500; margin-bottom: 0.5rem;">Suivi des Progrès</h3>
+      <p style="color: var(--welab-text-light); font-size: 0.8rem; line-height: 1.5;">Suivez votre évolution et vos résultats en temps réel</p>
     </div>
   </div>
-</section>
 
-<!-- Features Section - 3 colonnes -->
-<section class="features">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="feature-item">
-          <div class="feature-icon">
-            <i class="bi bi-mortarboard"></i>
-          </div>
-          <h4 class="feature-title">Apprentissage Interactif</h4>
-          <p class="feature-description">
-            Apprenez le vocabulaire cosmétique de manière ludique et engageante
-          </p>
-        </div>
+  <div class="banner-tuto">
+    <div class="banner-content">
+      <h3 class="banner-title">Comment ça marche ?</h3>
+      <div class="step-item"><div class="step-circle">1</div><div style="font-size: 0.9rem;">Votre formateur vous communique un code</div></div>
+      <div class="step-item"><div class="step-circle">2</div><div style="font-size: 0.9rem;">Entrez le code pour rejoindre la session</div></div>
+      <div class="step-item"><div class="step-circle">3</div><div style="font-size: 0.9rem;">Jouez aux différents mini-jeux</div></div>
+      <div class="step-item" style="margin-bottom:0;"><div class="step-circle">4</div><div style="font-size: 0.9rem;">Consultez vos résultats</div></div>
+    </div>
+    <div class="banner-img"></div>
+  </div>
+
+  <div class="footer">
+    <div>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <div class="footer-logo-circle">WL</div>
+        <div style="color: var(--welab-rose); font-weight: 700; font-size: 0.95rem; line-height: 1.1;">WE LAB<br><span style="font-size: 0.6rem; font-weight: 400; color:var(--welab-text-light)">COSMETIC</span></div>
       </div>
-      <div class="col-md-4">
-        <div class="feature-item">
-          <div class="feature-icon">
-            <i class="bi bi-droplet"></i>
-          </div>
-          <h4 class="feature-title">Formulation Pratique</h4>
-          <p class="feature-description">
-            Créez vos propres formulations cosmétiques virtuelles
-          </p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="feature-item">
-          <div class="feature-icon">
-            <i class="bi bi-graph-up"></i>
-          </div>
-          <h4 class="feature-title">Suivi des Progrès</h4>
-          <p class="feature-description">
-            Suivez votre évolution et vos résultats en temps réel
-          </p>
-        </div>
+      <p style="color: var(--welab-text-light); font-size: 0.8rem; max-width: 250px;">Plateforme éducative de mini-jeux cosmétiques.</p>
+    </div>
+    <div style="display: flex; gap: 5rem;">
+      <div>
+        <h4 style="color: var(--welab-blue-title); font-size: 0.9rem; font-weight: 500; margin-bottom: 1rem;">Navigation</h4>
+        <div style="color: var(--welab-text-muted); font-size: 0.85rem; margin-bottom: 0.6rem;">Accueil</div>
+        <div style="color: var(--welab-text-muted); font-size: 0.85rem;" routerLink="/login">Espace Administrateur</div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- How It Works Section - 4 étapes -->
-<section class="how-it-works">
-  <div class="container">
-    <h2 class="section-title text-center">Comment ça marche ?</h2>
-    <div class="steps-wrapper">
-      <div class="step-item">
-        <div class="step-number">1️⃣</div>
-        <p class="step-text">Votre formateur vous communique un code de session</p>
-      </div>
-      <div class="step-item">
-        <div class="step-number">2️⃣</div>
-        <p class="step-text">Entrez le code ci-dessus pour rejoindre la session</p>
-      </div>
-      <div class="step-item">
-        <div class="step-number">3️⃣</div>
-        <p class="step-text">Jouez aux différents mini-jeux et apprenez en vous amusant</p>
-      </div>
-      <div class="step-item">
-        <div class="step-number">4️⃣</div>
-        <p class="step-text">Consultez vos résultats et progressez dans vos connaissances</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4">
-        <div class="footer-brand">
-          <i class="bi bi-flask"></i>
-          <span>WE LAB</span>
-        </div>
-        <p class="footer-description">
-          Plataforma educative de mini-jeux cosmétiques pour apprendre en s'amuser.
-        </p>
-      </div>
-      <div class="col-md-4">
-        <h5 class="footer-title">Navigation</h5>
-        <ul class="footer-links">
-          <li><a routerLink="/">Accueil</a></li>
-          <li><a href="#">À propos</a></li>
-          <li><a routerLink="/login">Espace Administrateur</a></li>
-        </ul>
-      </div>
-      <div class="col-md-4">
-        <h5 class="footer-title">Contact</h5>
-        <ul class="footer-links">
-          <li><a href="mailto:contact@weilabcosmetic.fr">contact@weilabcosmetic.fr</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom text-center">
-      <p>&copy; 2025 WE LAB Cosmetic - Tous droits réservés</p>
-    </div>
-  </div>
-</footer>
+</div>

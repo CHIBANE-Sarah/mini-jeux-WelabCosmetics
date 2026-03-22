@@ -9,7 +9,7 @@ nelmio_cors:
         max_age: 3600
     paths:
         '^/api/':
-            allow_origin: ['*']
+            allow_origin: ['http://localhost:4200', 'http://127.0.0.1:4200']
             allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
             allow_headers: ['Content-Type', 'Authorization']
             max_age: 3600

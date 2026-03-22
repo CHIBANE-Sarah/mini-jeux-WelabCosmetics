@@ -1,7 +1,8 @@
-// src/app/interfaces/user.ts
+// frontend/src/app/interfaces/user.ts
+// On supprime Session d'ici car elle est déjà définie dans session.service.ts
 
 export interface LoginRequest {
-  login: string;     
+  login: string;
   password: string;
 }
 

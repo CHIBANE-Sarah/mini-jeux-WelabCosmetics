@@ -1,55 +1,48 @@
 .login-page {
-  max-width: 380px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.75rem;
-  background: #fff;
-}
-
-.login-page h1 {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-}
-
-.login-form {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--welab-bg-main);
 }
 
-.login-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-weight: 600;
-}
+.brand-title { color: var(--welab-rose); font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.brand-subtitle { color: var(--welab-text-light); font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; margin-top: 2px; }
 
-.login-form input {
-  padding: 0.55rem;
-  border: 1px solid #bbb;
-  border-radius: 0.45rem;
+.page-title { color: var(--welab-blue-title); font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
+.page-desc { color: var(--welab-text-muted); font-size: 0.95rem; }
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
   width: 100%;
-  box-sizing: border-box;
+  max-width: 420px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.04);
 }
 
-.login-form button {
-  border: none;
-  background: #4f46e5;
-  color: #fff;
-  border-radius: 0.45rem;
-  padding: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
+.form-title { color: var(--welab-blue-title); font-size: 1.1rem; font-weight: 500; margin-bottom: 2rem; text-align: center; }
+
+.error-alert {
+  background: #FFF1F0; color: #D32F2F; padding: 12px;
+  border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: center;
 }
 
-.login-form button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+.input-group { margin-bottom: 1.5rem; }
+.input-group label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 0.5rem; }
+.input-control {
+  width: 100%; padding: 14px 16px; background: var(--welab-input-bg);
+  border: 1px solid transparent; border-radius: 8px; font-size: 0.95rem; outline: none;
+  transition: border 0.2s; box-sizing: border-box;
 }
+.input-control:focus { border: 1px solid var(--welab-blue-title); }
 
-.error {
-  color: #ef4444;
-  font-size: 0.95rem;
-  margin-top: 0.3rem;
+.btn-submit {
+  width: 100%; background: var(--welab-blue); color: white; border: none;
+  border-radius: 8px; padding: 14px; font-size: 0.95rem; font-weight: 500;
+  cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+  transition: opacity 0.2s;
 }
+.btn-submit:hover { opacity: 0.9; }
+.btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }

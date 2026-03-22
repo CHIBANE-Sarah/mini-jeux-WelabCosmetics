@@ -1,14 +1,11 @@
-// src/app/core/services/session.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-
 export interface Session {
   id: number;
-  titre: string;      
-  code: string;       
+  titre: string;       // ← ce que le backend renvoie
+  code: string;        // ← ce que le backend renvoie
   duree: number;
   createur: string;
   nbParticipants?: number;
@@ -27,7 +24,6 @@ export class SessionService {
   }
 
   createSession(data: { titre: string; duree: number }): Observable<{ message: string; session: Session }> {
-   
     return this.http.post<{ message: string; session: Session }>(`${this.apiUrl}/session`, data);
   }
 

@@ -1,74 +1,108 @@
-<div class="container-fluid">
-  <div class="row justify-content-center min-vh-100 align-items-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="text-center mb-4">
-        <h1 class="h2 fw-bold">WeLab Cosmetic</h1>
-        <p class="text-muted">Rejoindre une session</p>
+<!-- Page rejoindre une session - conforme IHM rapport -->
+<div style="min-height:100vh;background:#f8f9fa;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;">
+
+  <!-- Titre -->
+  <div style="text-align:center;margin-bottom:2rem;">
+    <h1 style="font-size:1.6rem;font-weight:700;color:#1a1a2e;">Mini Games</h1>
+    <p style="color:#666;font-size:0.95rem;">Apprends la cosmétique de façon ludique et interactive</p>
+  </div>
+
+  <!-- Carte formulaire -->
+  <div style="background:white;border:1px solid #e0e0e0;border-radius:12px;padding:2rem;width:100%;max-width:440px;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+
+    <div *ngIf="errorMessage"
+         style="background:#fdecea;border:1px solid #f44336;border-radius:8px;padding:0.75rem;margin-bottom:1rem;color:#c62828;font-size:0.88rem;">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage"
+         style="background:#e8f5e9;border:1px solid #4caf50;border-radius:8px;padding:0.75rem;margin-bottom:1rem;color:#2e7d32;font-size:0.88rem;">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="join()" autocomplete="off">
+
+      <!-- Nom du participant -->
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:0.88rem;color:#333;margin-bottom:0.4rem;font-weight:500;">
+          Nom du participant
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="nom"
+          name="nom"
+          required
+          placeholder="Votre nom"
+          style="width:100%;padding:0.7rem 0.9rem;border:1px solid #e0e0e0;border-radius:8px;font-size:0.95rem;outline:none;"
+        />
       </div>
 
-      <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-body p-4 p-lg-5">
-          <h2 class="card-title text-center mb-4">Entrez vos informations</h2>
-
-          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-
-          <form (ngSubmit)="join()" class="needs-validation" autocomplete="off">
-            <div class="mb-3">
-              <label for="nom" class="form-label">Nom</label>
-              <input
-                id="nom"
-                type="text"
-                class="form-control form-control-lg"
-                [(ngModel)]="nom"
-                name="nom"
-                required
-                placeholder="Votre nom"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label for="prenom" class="form-label">Prénom</label>
-              <input
-                id="prenom"
-                type="text"
-                class="form-control form-control-lg"
-                [(ngModel)]="prenom"
-                name="prenom"
-                required
-                placeholder="Votre prénom"
-              />
-            </div>
-
-            <div class="mb-4">
-              <label for="code" class="form-label">Code de session</label>
-              <input
-                id="code"
-                type="text"
-                class="form-control form-control-lg"
-                [(ngModel)]="sessionCode"
-                name="sessionCode"
-                required
-                maxlength="6"
-                placeholder="6 caractères"
-              />
-            </div>
-
-            <button
-              type="submit"
-              class="btn btn-success w-100 py-3 fw-medium"
-              [disabled]="isLoading"
-            >
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-              {{ isLoading ? 'Connexion...' : 'Rejoindre la session' }}
-            </button>
-          </form>
-
-          <div class="text-center mt-3">
-            <a routerLink="/login" class="text-decoration-none">← Retour à l'accueil</a>
-          </div>
-        </div>
+      <!-- Prénom -->
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:0.88rem;color:#333;margin-bottom:0.4rem;font-weight:500;">
+          Prénom
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="prenom"
+          name="prenom"
+          required
+          placeholder="Votre prénom"
+          style="width:100%;padding:0.7rem 0.9rem;border:1px solid #e0e0e0;border-radius:8px;font-size:0.95rem;outline:none;"
+        />
       </div>
+
+      <!-- Code de session -->
+      <div style="margin-bottom:0.5rem;">
+        <label style="display:block;font-size:0.88rem;color:#333;margin-bottom:0.4rem;font-weight:500;">
+          Code de session
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="sessionCode"
+          name="sessionCode"
+          required
+          maxlength="6"
+          placeholder="LAB2026"
+          style="width:100%;padding:0.7rem 0.9rem;border:1px solid #e0e0e0;border-radius:8px;font-size:1.1rem;font-weight:700;text-align:center;letter-spacing:4px;text-transform:uppercase;outline:none;"
+        />
+        <p style="font-size:0.78rem;color:#999;text-align:center;margin-top:0.35rem;">
+          Entre le code fourni par ton professeur
+        </p>
+      </div>
+
+      <!-- Bouton -->
+      <button
+        type="submit"
+        [disabled]="isLoading"
+        style="width:100%;padding:0.85rem;background:#1565c0;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;"
+        [style.background]="isLoading ? '#90a4ae' : '#1565c0'"
+      >
+        <span *ngIf="isLoading"
+              style="width:16px;height:16px;border:2px solid white;border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin 0.7s linear infinite;">
+        </span>
+        {{ isLoading ? 'Connexion...' : 'Rejoindre la session →' }}
+      </button>
+
+    </form>
+  </div>
+
+  <!-- Statistiques sous la carte (comme dans l'IHM) -->
+  <div style="display:flex;gap:3rem;margin-top:2rem;text-align:center;">
+    <div>
+      <div style="font-size:1.5rem;font-weight:700;color:#1a1a2e;">3</div>
+      <div style="font-size:0.8rem;color:#666;">Mini-jeux</div>
+    </div>
+    <div>
+      <div style="font-size:1.5rem;font-weight:700;color:#1a1a2e;">30min</div>
+      <div style="font-size:0.8rem;color:#666;">Durée moy.</div>
+    </div>
+    <div>
+      <div style="font-size:1.5rem;font-weight:700;color:#1a1a2e;">+500</div>
+      <div style="font-size:0.8rem;color:#666;">Participants</div>
     </div>
   </div>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </div>

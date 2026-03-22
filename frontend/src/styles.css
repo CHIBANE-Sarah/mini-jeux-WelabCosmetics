@@ -1,1 +1,46 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Palette de couleurs de WeLab Cosmetic */
+  --welab-rose: #B9546A;
+  --welab-rose-light: #FDF1F4;
+  --welab-pink-btn: #D95682;
+  
+  --welab-blue: #28629B;
+  --welab-blue-light: #F1F6FA;
+  --welab-blue-title: #6692BC;
+  --welab-blue-dark: #2D4C6E;
+  
+  --welab-cyan: #5B9CB3;
+  --welab-cyan-light: #EFF8F9;
+  
+  --welab-orange: #D97063;
+  --welab-orange-light: #FFF3F0;
+  
+  --welab-text-main: #333333;
+  --welab-text-muted: #888888;
+  --welab-text-light: #A0A0A0;
+  
+  --welab-bg-main: #FDFDFD;
+  --welab-bg-grey: #F8F9FA;
+  --welab-input-bg: #F0F2F5;
+  --welab-border: #EAEAEA;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--welab-bg-main);
+  margin: 0;
+  padding: 0;
+}
+
+/* Animation globale de chargement */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 16px; height: 16px; 
+  border: 2px solid white; border-top-color: transparent; 
+  border-radius: 50%; display: inline-block; 
+  animation: spin 0.7s linear infinite;
+}

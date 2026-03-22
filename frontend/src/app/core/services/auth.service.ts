@@ -3,18 +3,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 
-interface LoginResponse {
-  message: string;
-  token: string;
-  user: {
-    id: number;
-    login: string;
-    roles: string[];
-    nom: string;
-    prenom: string;
-  };
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,12 +13,12 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(login: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { login, password }).pipe(
+  login(login: string, password: string): Observable<any> {
+    // CORRECTION ICI : LexikJWT attend "username", pas "login"
+    return this.http.post<{token: string}>(`${this.apiUrl}/login`, { username: login, password }).pipe(
       map((response) => {
         if (response.token) {
           localStorage.setItem(this.TOKEN_KEY, response.token);
-          localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
         }
         return response;
       })
@@ -45,11 +33,6 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  getUser(): any | null {
-    const raw = localStorage.getItem(this.USER_KEY);
-    return raw ? JSON.parse(raw) : null;
   }
 
   isAuthenticated(): boolean {
