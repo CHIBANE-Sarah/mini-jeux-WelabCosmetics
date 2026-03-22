@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api')]
 final class LoginController extends AbstractController
 {
-    // Connexion de l'Admin
     #[Route('/login', name: 'app_login', methods: ['POST'])]
     public function index(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
@@ -29,9 +28,9 @@ final class LoginController extends AbstractController
             return $this->json(['message' => 'Identifiants invalides.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        
         return $this->json([
             'message' => 'Connexion réussie !',
+            'token' => 'fake-token-' . bin2hex(random_bytes(16)),  // ← token factice
             'user' => [
                 'id' => $user->getId(),
                 'login' => $user->getLogin(),

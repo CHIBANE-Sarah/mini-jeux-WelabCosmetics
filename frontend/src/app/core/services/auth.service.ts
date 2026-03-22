@@ -21,11 +21,12 @@ interface LoginResponse {
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
+  private readonly apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(login: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/login', { login, password }).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { login, password }).pipe(
       map((response) => {
         if (response.token) {
           localStorage.setItem(this.TOKEN_KEY, response.token);
@@ -55,4 +56,3 @@ export class AuthService {
     return !!this.getToken();
   }
 }
-
