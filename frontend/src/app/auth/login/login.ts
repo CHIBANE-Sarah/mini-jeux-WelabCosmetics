@@ -1,5 +1,7 @@
-import { CommonModule } from '@angular/common';
+// src/app/auth/login/login.ts
+
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,30 +11,38 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['./login.css']
 })
-export class Login {
+export class LoginComponent {
   login = '';
   password = '';
-  errorMessage = '';
   loading = false;
+  errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  submit(): void {
-    this.errorMessage = '';
+  onSubmit() {
+    if (!this.login || !this.password) {
+      this.errorMessage = 'Veuillez remplir tous les champs';
+      return;
+    }
+
     this.loading = true;
+    this.errorMessage = '';
 
     this.authService.login(this.login, this.password).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading = false;
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err?.error?.message || 'Échec de l’authentification';
-      },
+        this.errorMessage = 'Identifiants incorrects';
+        console.error('Erreur login', err);
+      }
     });
   }
 }
-

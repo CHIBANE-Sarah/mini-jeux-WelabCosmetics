@@ -1,106 +1,156 @@
+<!-- src/app/home.html -->
+
 <!-- Hero Section -->
-<section class="hero bg-primary text-white py-5">
-  <div class="container text-center">
-    <h1 class="display-3 fw-bold mb-4">WeLab Cosmetic</h1>
-    <p class="lead mb-4">Apprenez la formulation cosmétique en vous amusant !</p>
-
-    <div class="mt-4">
-      <button class="btn btn-light btn-lg me-3" routerLink="/join">
-        <i class="bi bi-door-open me-2"></i>Rejoindre une session
-      </button>
-      <button class="btn btn-outline-light btn-lg" routerLink="/login">
-        <i class="bi bi-person-lock me-2"></i>Espace Admin
-      </button>
+<section class="hero">
+  <div class="container">
+    <div class="hero-content text-center">
+      <div class="logo-badge">
+        <i class="bi bi-flask"></i>
+      </div>
+      <h1 class="hero-title">WE LAB <span>Cosmetic</span></h1>
+      <p class="hero-subtitle">INVENTONS LA COSMÉTIQUE DE DEMAIN</p>
+      <p class="hero-description">
+        Découvrez l'univers fascinant de la cosmétique à travers des mini-jeux éducatifs et ludiques
+      </p>
     </div>
   </div>
 </section>
 
-<!-- Fonctionnalités -->
-<section class="features py-5">
+<!-- Roles Section - 2 colonnes -->
+<section class="roles">
   <div class="container">
-    <h2 class="text-center mb-5">Trois jeux pour apprendre</h2>
+    <div class="row g-5">
+      <!-- Participant Card -->
+      <div class="col-md-6">
+        <div class="role-card participant-card">
+          <div class="role-icon">
+            <i class="bi bi-person-arms-up"></i>
+          </div>
+          <h3 class="role-title">Je suis un participant</h3>
+          <p class="role-description">
+            Rejoins une session de jeu avec un code fourni par ton professeur
+          </p>
+          <button class="btn-role btn-participant" routerLink="/join">
+            Rejoindre une session
+          </button>
+        </div>
+      </div>
+
+      <!-- Professor Card -->
+      <div class="col-md-6">
+        <div class="role-card professor-card">
+          <div class="role-icon">
+            <i class="bi bi-person-video3"></i>
+          </div>
+          <h3 class="role-title">Je suis un professeur</h3>
+          <p class="role-description">
+            Crée et gère des sessions de jeu pour tes étudiants
+          </p>
+          <button class="btn-role btn-professor" routerLink="/login">
+            Accéder au tableau de bord
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section - 3 colonnes -->
+<section class="features">
+  <div class="container">
     <div class="row g-4">
-      <!-- Mots croisés -->
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-          <div class="card-body text-center p-4">
-            <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; line-height: 80px;">
-              <i class="bi bi-grid-3x3-gap-fill fs-1"></i>
-            </div>
-            <h3 class="h4 mb-3">Mots croisés</h3>
-            <p class="text-muted">Testez vos connaissances sur les termes cosmétiques à travers des grilles interactives.</p>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="bi bi-mortarboard"></i>
           </div>
+          <h4 class="feature-title">Apprentissage Interactif</h4>
+          <p class="feature-description">
+            Apprenez le vocabulaire cosmétique de manière ludique et engageante
+          </p>
         </div>
       </div>
-
-      <!-- Association -->
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-          <div class="card-body text-center p-4">
-            <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; line-height: 80px;">
-              <i class="bi bi-arrow-left-right fs-1"></i>
-            </div>
-            <h3 class="h4 mb-3">Association</h3>
-            <p class="text-muted">Associez les termes à leurs définitions pour renforcer votre compréhension.</p>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="bi bi-droplet"></i>
           </div>
+          <h4 class="feature-title">Formulation Pratique</h4>
+          <p class="feature-description">
+            Créez vos propres formulations cosmétiques virtuelles
+          </p>
         </div>
       </div>
-
-      <!-- Formulation -->
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-          <div class="card-body text-center p-4">
-            <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; line-height: 80px;">
-              <i class="bi bi-droplet fs-1"></i>
-            </div>
-            <h3 class="h4 mb-3">Formulation</h3>
-            <p class="text-muted">Sélectionnez les bons ingrédients pour créer des produits cosmétiques.</p>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="bi bi-graph-up"></i>
           </div>
+          <h4 class="feature-title">Suivi des Progrès</h4>
+          <p class="feature-description">
+            Suivez votre évolution et vos résultats en temps réel
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Comment ça marche -->
-<section class="how-it-works bg-light py-5">
+<!-- How It Works Section - 4 étapes -->
+<section class="how-it-works">
   <div class="container">
-    <h2 class="text-center mb-5">Comment ça marche ?</h2>
+    <h2 class="section-title text-center">Comment ça marche ?</h2>
+    <div class="steps-wrapper">
+      <div class="step-item">
+        <div class="step-number">1️⃣</div>
+        <p class="step-text">Votre formateur vous communique un code de session</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2️⃣</div>
+        <p class="step-text">Entrez le code ci-dessus pour rejoindre la session</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3️⃣</div>
+        <p class="step-text">Jouez aux différents mini-jeux et apprenez en vous amusant</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">4️⃣</div>
+        <p class="step-text">Consultez vos résultats et progressez dans vos connaissances</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
     <div class="row">
       <div class="col-md-4">
-        <div class="text-center">
-          <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3" style="width: 50px; height: 50px; line-height: 50px;">1</div>
-          <h4>Pour les enseignants</h4>
-          <p class="text-muted">Connectez-vous à l'espace admin, créez des sessions et générez des codes uniques.</p>
+        <div class="footer-brand">
+          <i class="bi bi-flask"></i>
+          <span>WE LAB</span>
         </div>
+        <p class="footer-description">
+          Plataforma educative de mini-jeux cosmétiques pour apprendre en s'amuser.
+        </p>
       </div>
       <div class="col-md-4">
-        <div class="text-center">
-          <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3" style="width: 50px; height: 50px; line-height: 50px;">2</div>
-          <h4>Pour les élèves</h4>
-          <p class="text-muted">Entrez simplement votre nom et le code fourni pour rejoindre la session.</p>
-        </div>
+        <h5 class="footer-title">Navigation</h5>
+        <ul class="footer-links">
+          <li><a routerLink="/">Accueil</a></li>
+          <li><a href="#">À propos</a></li>
+          <li><a routerLink="/login">Espace Administrateur</a></li>
+        </ul>
       </div>
       <div class="col-md-4">
-        <div class="text-center">
-          <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3" style="width: 50px; height: 50px; line-height: 50px;">3</div>
-          <h4>Jouez et apprenez</h4>
-          <p class="text-muted">Participez aux jeux et recevez votre score en fin de session.</p>
-        </div>
+        <h5 class="footer-title">Contact</h5>
+        <ul class="footer-links">
+          <li><a href="mailto:contact@weilabcosmetic.fr">contact@weilabcosmetic.fr</a></li>
+        </ul>
       </div>
     </div>
+    <div class="footer-bottom text-center">
+      <p>&copy; 2025 WE LAB Cosmetic - Tous droits réservés</p>
+    </div>
   </div>
-</section>
-
-<!-- Call to Action -->
-<section class="cta py-5">
-  <div class="container text-center">
-    <h2 class="mb-4">Prêt à commencer ?</h2>
-    <button class="btn btn-primary btn-lg me-3" routerLink="/join">
-      <i class="bi bi-door-open me-2"></i>Rejoindre une session
-    </button>
-    <button class="btn btn-outline-primary btn-lg" routerLink="/login">
-      <i class="bi bi-person-lock me-2"></i>Espace Admin
-    </button>
-  </div>
-</section>
+</footer>

@@ -1,80 +1,160 @@
-<div class="container-fluid">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<!-- src/app/admin/dashboard/dashboard.html -->
+
+<div class="dashboard-container">
+  <nav class="navbar navbar-dark bg-primary mb-4">
     <div class="container">
-      <span class="navbar-brand fw-bold">WeLab Cosmetic - Administration</span>
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-flask fs-4"></i>
+        <span class="navbar-brand fw-bold">WE LAB Cosmetic</span>
+      </div>
       <div class="ms-auto">
-        <button class="btn btn-outline-light" (click)="logout()">Déconnexion</button>
+        <!-- <button class="btn btn-outline-light" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+        </button> -->
       </div>
     </div>
   </nav>
 
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-semibold">Tableau de bord</h2>
-      <button class="btn btn-success px-4 py-2" (click)="createSession()">
-        <i class="bi bi-plus-circle me-2"></i>Nouvelle session
-      </button>
+    <!-- En-tête -->
+    <div class="mb-4">
+      <h2 class="fw-semibold mb-2">Tableau de bord</h2>
+      <p class="text-muted">Gérez vos sessions et suivez les performances des participants</p>
     </div>
 
+    <!-- Cartes statistiques -->
     <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-value">{{ sessions.length }}</div>
+          <div class="stat-label">Sessions créées</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-value">{{ totalParticipants }}</div>
+          <div class="stat-label">Joueurs participants</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-value">{{ averageScore }}<span class="stat-unit">%</span></div>
+          <div class="stat-label">Score moyen</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-value">{{ averageTime }}<span class="stat-unit">m</span></div>
+          <div class="stat-label">Temps moyen de jeu</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row mb-5">
       <div class="col-md-4 mb-3">
-        <div class="card bg-primary text-white h-100">
-          <div class="card-body">
-            <h5 class="card-title">Sessions totales</h5>
-            <p class="display-4">{{ sessions?.length || 0 }}</p>
+        <div class="action-card" (click)="openCreateModal()">
+          <div class="action-icon primary">
+            <i class="bi bi-plus-circle-fill"></i>
+          </div>
+          <h3 class="action-title">Créer une session</h3>
+          <p class="action-description">Configurez une nouvelle session de jeux pour vos étudiants</p>
+          <span class="action-link">Commencer <i class="bi bi-arrow-right"></i></span>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="action-card" (click)="router.navigate(['/admin/games'])">
+          <div class="action-icon success">
+            <i class="bi bi-puzzle"></i>
+          </div>
+          <h3 class="action-title">Gérer les jeux</h3>
+          <p class="action-description">Modifiez les jeux existants ou créez de nouveaux contenus</p>
+          <span class="action-link">Accéder <i class="bi bi-arrow-right"></i></span>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="action-card" (click)="viewResults()">
+          <div class="action-icon warning">
+            <i class="bi bi-bar-chart-steps"></i>
+          </div>
+          <h3 class="action-title">Résultats des sessions</h3>
+          <p class="action-description">Consultez les performances et statistiques des participants</p>
+          <span class="action-link">Voir les résultats <i class="bi bi-arrow-right"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sessions récentes -->
+    <div class="sessions-section">
+      <h3 class="section-title">Sessions récentes</h3>
+      
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <p>Aucune session créée pour le moment</p>
+        <button class="btn btn-primary" (click)="openCreateModal()">Créer votre première session</button>
+      </div>
+
+      <div *ngIf="!isLoading && sessions.length > 0" class="sessions-list">
+        <div class="session-item" *ngFor="let session of sessions">
+          <div class="session-icon">
+            <i class="bi bi-controller"></i>
+          </div>
+          <div class="session-details">
+            <div class="session-title">{{ session.titre }}</div>
+            <div class="session-meta">
+              <span class="session-code">Code: {{ session.code }}</span>
+              <span class="session-participants">
+                <i class="bi bi-people"></i> {{ session.nbParticipants || 0 }} participants
+              </span>
+            </div>
+          </div>
+          <div class="session-actions">
+            <button class="btn-icon" (click)="goToSession(session.code)" title="Voir">
+              <i class="bi bi-eye"></i>
+            </button>
+            <button class="btn-icon" (click)="copyCode(session.code)" title="Copier le code">
+              <i class="bi bi-copy"></i>
+            </button>
           </div>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
-        <div class="card bg-success text-white h-100">
-          <div class="card-body">
-            <h5 class="card-title">Participants</h5>
-            <p class="display-4">{{ totalParticipants || 0 }}</p>
-          </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de création -->
+<div class="modal fade" id="createSessionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Créer une session</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="createError" class="alert alert-danger">
+          {{ createError }}
+        </div>
+        <div class="mb-3">
+          <label for="titre" class="form-label">Titre de la session</label>
+          <input type="text" class="form-control" id="titre" [(ngModel)]="newTitre" placeholder="Ex: Formation Cosmétique 2024">
+        </div>
+        <div class="mb-3">
+          <label for="duree" class="form-label">Durée (minutes)</label>
+          <input type="number" class="form-control" id="duree" [(ngModel)]="newDuree" placeholder="60">
         </div>
       </div>
-
-    <div class="card shadow-sm">
-      <div class="card-header bg-white py-3">
-        <h5 class="mb-0 fw-semibold">Sessions récentes</h5>
-      </div>
-      <div class="card-body">
-        <div *ngIf="isLoading" class="text-center py-5">
-          <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div>
-        </div>
-
-        <div *ngIf="!isLoading && (!sessions || sessions.length === 0)" class="text-center py-5 text-muted">
-          <p>Aucune session créée pour le moment</p>
-          <button class="btn btn-primary" (click)="createSession()">Créer votre première session</button>
-        </div>
-
-        <div *ngIf="!isLoading && sessions && sessions.length > 0" class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Titre</th>
-                <th>Code</th>
-                <th>Date</th>
-                <th>Durée</th>
-                <th>Participants</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let session of sessions">
-                <td class="fw-medium">{{ session.titre }}</td>
-                <td><span class="badge bg-secondary">{{ session.code }}</span></td>
-                <td>{{ session.dateCreation ? (session.dateCreation | date: 'dd/MM/yyyy') : '-' }}</td>
-                <td>{{ session.duree || '-' }} min</td>
-                <td>{{ session.nbParticipants || 0 }}</td>
-                <td>
-                  <button class="btn btn-sm btn-info me-2" (click)="goToSession(session.code)">Voir</button>
-                  <button class="btn btn-sm btn-outline-secondary">Code</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="createSession()" [disabled]="isCreating">
+          <span *ngIf="isCreating" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isCreating ? 'Création...' : 'Créer' }}
+        </button>
       </div>
     </div>
   </div>

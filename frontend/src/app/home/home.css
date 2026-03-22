@@ -1,63 +1,350 @@
+/* src/app/home.css */
+
+/* Reset et variables */
 :root {
-  --home-bg: #f4f6fb;
-  --hero-bg: #0958d4;
-  --feature-bg: #ffffff;
-  --step-bg: #ffffff;
-  --cta-bg: #ffffff;
-  --hero-text: #fff;
+  --primary: #4a6bff;
+  --primary-light: #eef3ff;
+  --text-dark: #1e2a3a;
+  --text-muted: #6b7a8a;
+  --white: #ffffff;
+  --bg-gray: #f8fafc;
+  --border-light: #eef2f6;
 }
 
+/* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #1f63f4 0%, #1663df 100%);
-  color: var(--hero-text);
+  background: var(--white);
+  padding: 80px 0 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
 }
 
-.hero .btn {
-  font-weight: 600;
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.features .card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+.logo-badge {
+  width: 70px;
+  height: 70px;
+  background: var(--primary-light);
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
-.features .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(15, 32, 87, 0.12);
+.logo-badge i {
+  font-size: 32px;
+  color: var(--primary);
 }
 
-.features .feature-icon {
-  font-size: 1.5rem;
-}
-
-.how-it-works .step-number {
-  width: 55px;
-  height: 55px;
-  line-height: 55px;
+.hero-title {
+  font-size: 42px;
   font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
 }
 
-.how-it-works h2,
-.features h2 {
-  font-weight: 700;
+.hero-title span {
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
-.cta {
-  background: #fff;
-  border-top: 1px solid #e9ecf5;
+.hero-subtitle {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: var(--primary);
+  font-weight: 500;
 }
 
-.cta .btn {
-  min-width: 220px;
+.hero-description {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Roles Section */
+.roles {
+  padding: 60px 0;
+  background: var(--white);
+}
+
+.role-card {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid var(--border-light);
+  border-radius: 24px;
+  background: var(--white);
+  transition: all 0.3s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+}
+
+.role-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--primary-light);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.role-icon i {
+  font-size: 28px;
+  color: var(--primary);
+}
+
+.role-title {
+  font-size: 20px;
   font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-dark);
 }
 
+.role-description {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.btn-role {
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+}
+
+.btn-participant {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-participant:hover {
+  background: #3a5bd9;
+}
+
+.btn-professor {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-professor:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+/* Features Section */
+.features {
+  padding: 60px 0;
+  background: var(--bg-gray);
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.feature-item {
+  text-align: center;
+  padding: 1rem;
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--primary-light);
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.feature-icon i {
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.feature-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.feature-description {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* How It Works Section */
+.how-it-works {
+  padding: 60px 0;
+  background: var(--white);
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--text-dark);
+}
+
+.steps-wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.step-item {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  padding: 1rem;
+}
+
+.step-number {
+  font-size: 28px;
+  margin-bottom: 0.75rem;
+}
+
+.step-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Footer */
+.footer {
+  background: #1a2634;
+  color: #9aaebf;
+  padding: 48px 0 24px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.footer-brand i {
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.footer-brand span {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.footer-description {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 0;
+  color: #9aaebf;
+}
+
+.footer-title {
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: #9aaebf;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+}
+
+.footer-bottom {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+  color: #6b7f8f;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .hero .display-3 {
-    font-size: 2rem;
+  .hero {
+    padding: 50px 0 30px;
   }
-
-  .cta .btn {
-    width: 100%;
-    margin-bottom: 0.75rem;
+  
+  .hero-title {
+    font-size: 32px;
+  }
+  
+  .hero-description {
+    font-size: 14px;
+  }
+  
+  .roles {
+    padding: 40px 0;
+  }
+  
+  .role-card {
+    padding: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 24px;
+  }
+  
+  .steps-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .step-item {
+    max-width: 280px;
+  }
+  
+  .footer {
+    text-align: center;
+  }
+  
+  .footer-brand {
+    justify-content: center;
+  }
+  
+  .footer-title {
+    margin-top: 1.5rem;
   }
 }
