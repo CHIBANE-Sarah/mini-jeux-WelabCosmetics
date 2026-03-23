@@ -28,6 +28,20 @@ class Session
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createur = null;
 
+    // ajout d'une session contient plusieurs jeux
+    #[ORM\OneToMany(
+        targetEntity: Game::class,
+        mappedBy: 'session',
+        cascade: ['persist', 'remove']
+    )]
+    private Collection $games;
+
+    // constructeur pour initialiser la collection
+    public function __construct()
+    {
+        $this->games = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -41,7 +55,6 @@ class Session
     public function setTitreSession(string $titreSession): static
     {
         $this->titreSession = $titreSession;
-
         return $this;
     }
 
@@ -53,7 +66,6 @@ class Session
     public function setCodeSession(string $codeSession): static
     {
         $this->codeSession = $codeSession;
-
         return $this;
     }
 
@@ -65,7 +77,6 @@ class Session
     public function setDuree(int $duree): static
     {
         $this->duree = $duree;
-
         return $this;
     }
 
@@ -77,9 +88,31 @@ class Session
     public function setCreateur(?User $createur): static
     {
         $this->createur = $createur;
-
         return $this;
     }
 
+    // getters/setters pour les jeux
+    public function getGames(): Collection
+    {
+        return $this->games;
+    }
 
+    public function addGame(Game $game): static
+    {
+        if (!$this->games->contains($game)) {
+            $this->games->add($game);
+            $game->setSession($this);
+        }
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        if ($this->games->removeElement($game)) {
+            if ($game->getSession() === $this) {
+                $game->setSession(null);
+            }
+        }
+        return $this;
+    }
 }
