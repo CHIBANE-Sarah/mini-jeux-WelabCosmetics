@@ -85,3 +85,12 @@ docker exec -it welab-symfony bash
 docker compose ps
 ```
 ---
+
+## API - Mini-Jeu d'Association (termes et definitions)
+
+L'API gère désormais la logique complète du jeu d'association développé lors de la Phase 2 :
+
+* **`GET /api/association/{gameId}`** : Récupère la liste des termes et toutes les définitions uniques mélangées pour générer le plateau de jeu côté front.
+* **`POST /api/association/validate/{gameId}`** : Point d'entrée pour la validation. Il attend un payload JSON contenant les associations faites par le joueur, les compare avec les bonnes réponses en base de données, calcule le score final, et retourne un objet JSON détaillé contenant le score et la correction ligne par ligne.
+
+> Ps. La validation se fait strictement côté serveur pour éviter toute triche côté client.

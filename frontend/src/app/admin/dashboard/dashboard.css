@@ -1,31 +1,78 @@
 .dashboard-wrapper { background-color: var(--welab-bg-grey); min-height: 100vh; padding-bottom: 4rem; }
 
+/* Navbar */
 .top-navbar { background: white; padding: 1.25rem 3rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--welab-border); }
 .nav-brand { color: var(--welab-rose); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .nav-sub { color: var(--welab-text-light); font-size: 7px; letter-spacing: 2px; text-transform: uppercase; }
 .btn-logout { background: none; border: none; color: var(--welab-text-muted); font-size: 0.9rem; cursor: pointer; }
+.btn-logout:hover { color: var(--welab-rose); }
 
-.dashboard-container { max-width: 1000px; margin: 3rem auto; }
+/* Container */
+.dashboard-container { max-width: 1000px; margin: 3rem auto; padding: 0 1rem; }
+.dashboard-header { margin-bottom: 2rem; }
 .dash-title { color: var(--welab-blue-title); font-size: 1.8rem; font-weight: 400; margin-bottom: 0.3rem; }
 .dash-desc { color: var(--welab-text-muted); font-size: 0.95rem; }
 
-.grid-row { display: flex; gap: 1.5rem; margin-bottom: 3rem; }
+/* Grid */
+.grid-row { display: flex; gap: 1.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
 
-.stat-card { flex: 1; background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 1.5rem; }
+/* Stat cards */
+.stat-card { flex: 1; background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 1.5rem; min-width: 180px; }
 .stat-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.stat-icon-blue { background: var(--welab-blue-light); color: var(--welab-blue); }
+.stat-icon-pink { background: var(--welab-rose-light); color: var(--welab-pink-btn); }
+.stat-icon-cyan { background: var(--welab-cyan-light); color: var(--welab-cyan); }
+.stat-icon-orange { background: var(--welab-orange-light); color: var(--welab-orange); }
 .stat-val { font-size: 1.8rem; font-weight: 500; line-height: 1; }
+.stat-val-blue { color: var(--welab-blue); }
+.stat-val-pink { color: var(--welab-pink-btn); }
+.stat-val-cyan { color: var(--welab-cyan); }
+.stat-val-orange { color: var(--welab-orange); }
 .stat-label { color: var(--welab-text-light); font-size: 0.75rem; margin-top: 4px; }
 
-.action-card { flex: 1; background: white; border-radius: 12px; border: 1px solid var(--welab-border); padding: 2rem 1.5rem; text-align: center; }
+/* Action cards */
+.action-card { flex: 1; background: white; border-radius: 12px; border: 1px solid var(--welab-border); padding: 2rem 1.5rem; text-align: center; min-width: 200px; }
 .action-icon { width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 1.2rem; color: white; }
+.action-icon-blue { background: var(--welab-blue); }
+.action-icon-pink { background: var(--welab-pink-btn); }
+.action-icon-dark { background: var(--welab-blue-dark); }
 .action-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; }
+.action-title-blue { color: var(--welab-blue-title); }
+.action-title-pink { color: var(--welab-pink-btn); }
+.action-title-dark { color: var(--welab-blue-dark); }
 .action-desc { color: var(--welab-text-light); font-size: 0.85rem; margin-bottom: 1.5rem; }
-.btn-action { color: white; width: 100%; border: none; border-radius: 8px; padding: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s;}
+.btn-action { color: white; width: 100%; border: none; border-radius: 8px; padding: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
 .btn-action:hover { opacity: 0.9; }
+.btn-action-blue { background: var(--welab-blue); }
+.btn-action-pink { background: var(--welab-pink-btn); }
+.btn-action-dark { background: var(--welab-blue-dark); }
 
+/* Sessions panel */
 .sessions-panel { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
 .panel-title { color: var(--welab-blue-title); font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; }
+.loading-state { text-align: center; padding: 2rem 0; }
+.empty-state { text-align: center; color: var(--welab-text-light); padding: 2rem 0; }
 .session-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--welab-border); padding: 1.2rem 0; }
+.session-item:last-child { border-bottom: none; }
 .session-title { color: var(--welab-blue-title); font-weight: 500; font-size: 0.95rem; }
 .session-code { color: var(--welab-text-light); font-size: 0.8rem; margin-top: 4px; }
 .session-meta { text-align: right; color: var(--welab-text-light); font-size: 0.8rem; }
+.session-duree { margin-top: 4px; color: var(--welab-text-light); }
+
+/* Modal */
+.modal-custom { border-radius: 12px; border: none; }
+.modal-header-custom { border-bottom: 1px solid var(--welab-border); padding: 1.5rem 2rem; }
+.modal-title-custom { color: var(--welab-blue-title); font-weight: 500; font-size: 1.1rem; margin: 0; }
+.modal-body-custom { padding: 2rem; }
+.modal-footer-custom { border-top: 1px solid var(--welab-border); padding: 1rem 2rem; display: flex; justify-content: flex-end; gap: 1rem; }
+.modal-error { background: #FFF1F0; color: #D32F2F; padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: center; }
+.modal-field { margin-bottom: 1.5rem; }
+.modal-field:last-child { margin-bottom: 0; }
+.modal-label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 0.5rem; }
+.modal-input { width: 100%; padding: 12px 16px; background: var(--welab-input-bg); border: 1px solid transparent; border-radius: 8px; font-size: 0.95rem; outline: none; box-sizing: border-box; transition: border 0.2s; }
+.modal-input:focus { border-color: var(--welab-blue-title); }
+.btn-modal-cancel { background: none; border: 1px solid var(--welab-border); border-radius: 8px; padding: 10px 20px; cursor: pointer; color: var(--welab-text-muted); font-size: 0.9rem; transition: border-color 0.2s; }
+.btn-modal-cancel:hover { border-color: var(--welab-text-muted); }
+.btn-modal-confirm { background: var(--welab-blue); color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: opacity 0.2s; }
+.btn-modal-confirm:hover { opacity: 0.9; }
+.btn-modal-confirm:disabled { opacity: 0.7; cursor: not-allowed; }

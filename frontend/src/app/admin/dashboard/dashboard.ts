@@ -1,5 +1,3 @@
-// src/app/admin/dashboard/dashboard.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,12 +18,8 @@ export class DashboardComponent implements OnInit {
   sessions: Session[] = [];
   isLoading = true;
   totalParticipants = 0;
-  
-  // Statistiques (valeurs par défaut pour l'instant)
   averageScore = 82;
   averageTime = 38;
-  
-  // Pour le modal
   newTitre = '';
   newDuree: number | null = null;
   isCreating = false;
@@ -34,7 +28,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
-    public router: Router  // ← public pour accéder depuis le template
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -82,10 +76,8 @@ export class DashboardComponent implements OnInit {
       this.createError = 'Veuillez remplir tous les champs';
       return;
     }
-
     this.isCreating = true;
     this.createError = '';
-
     this.sessionService.createSession({
       titre: this.newTitre,
       duree: this.newDuree
@@ -111,7 +103,11 @@ export class DashboardComponent implements OnInit {
   }
 
   viewResults(): void {
-    this.router.navigate(['/admin/results']);
+    alert('Fonctionnalité disponible prochainement');
+  }
+
+  goToGames(): void {
+    alert('Fonctionnalité disponible prochainement');
   }
 
   logout(): void {
