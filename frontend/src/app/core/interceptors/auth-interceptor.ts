@@ -1,31 +1,19 @@
-// src/app/core/interceptors/auth.interceptor.ts
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service'; // Vérifie que ce chemin est le bon
 
-const PUBLIC_ENDPOINTS = [
-  '/api/login',
-  '/api/session/',
-  '/api/association'
-];
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const token = authService.getToken(); // Ou la méthode que tu utilises pour récupérer le token
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService) {}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.auth.getToken();
-
-    const isPublic = PUBLIC_ENDPOINTS.some(url => req.url.includes(url));
-    if (!token || isPublic) {
-      return next.handle(req);
-    }
-
-    const authReq = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
+  if (token) {
+    const cloned = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     });
-
-    return next.handle(authReq);
+    return next(cloned);
   }
-}
+
+  return next(req);
+};

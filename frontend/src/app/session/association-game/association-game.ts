@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AssociationService } from '../../core/services/association';
 import { AssociationQuestion, AssociationVerifyResponse } from '../../interfaces/association.interface';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 interface DefSlot {
   def: string;
@@ -12,10 +13,10 @@ interface DefSlot {
 
 @Component({
   selector: 'app-association-game',
-  standalone: true,
-  imports: [CommonModule, DragDropModule],
+  standalone: true, 
+  imports: [CommonModule, CdkDrag, CdkDropList, CdkDropListGroup],  
   templateUrl: './association-game.html',
-  styleUrl: './association-game.css'
+  styleUrls: ['./association-game.css']
 })
 export class AssociationGameComponent implements OnInit, OnDestroy {
   gameId!: number;

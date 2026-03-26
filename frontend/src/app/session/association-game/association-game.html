@@ -71,9 +71,7 @@
 
         <div 
           cdkDropList
-          [cdkDropListId]="'def-list-' + i"
           [cdkDropListData]="slot.droppedItems"
-          [cdkDropListConnectedTo]="getConnectedDropLists(i)"
           (cdkDropListDropped)="drop($event)"
           class="def-drop-zone"
           [class.filled]="slot.droppedItems.length > 0">
