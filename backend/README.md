@@ -30,7 +30,7 @@ Ce dossier contient le code source de l'API REST développée avec le framework 
 
 4. **Générer les clés JWT (sécurité) :**
    ```bash
-   symfony onsole lexik:jwt:generate-keypair --skip-if-exists
+   symfony console lexik:jwt:generate-keypair --skip-if-exists
    ```
    > Crée les fichiers `private.pem` et `public.pem` dans `config/jwt/`. Ces clés servent à signer et vérifier les tokens d'authentification. Le flag `--skip-if-exists` évite d'écraser des clés déjà existantes.
 
