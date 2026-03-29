@@ -1,0 +1,35 @@
+<div class="login-page">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <div class="brand-title">We Lab Cosmetic</div>
+    <div class="brand-subtitle">Inventons la cosmétique de demain</div>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h1 class="page-title">Espace Administrateur</h1>
+    <p class="page-desc">Connectez-vous pour gérer vos sessions</p>
+  </div>
+
+  <div class="login-card">
+    <div class="form-title">Connexion</div>
+
+    <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+
+    <form (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="input-group">
+        <label>Nom d'utilisateur</label>
+        <input type="text" name="login" [(ngModel)]="login" placeholder="admin" class="input-control">
+      </div>
+
+      <div class="input-group" style="margin-bottom: 2.5rem;">
+        <label>Mot de passe</label>
+        <input type="password" name="password" [(ngModel)]="password" placeholder="•••••••" class="input-control">
+      </div>
+
+      <button type="submit" [disabled]="loading" class="btn-submit">
+        <span *ngIf="loading" class="spinner"></span>
+        <i *ngIf="!loading" class="bi bi-box-arrow-in-right"></i>
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+  </div>
+</div>

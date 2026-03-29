@@ -1,0 +1,49 @@
+<div class="join-wrapper">
+  <div class="join-header">
+    <h1 class="join-title">Mini Games</h1>
+    <p class="join-subtitle">Apprends la cosmétique de façon ludique et interactive</p>
+  </div>
+
+  <div class="join-card">
+    <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert-success">{{ successMessage }}</div>
+
+    <form (ngSubmit)="join()" autocomplete="off">
+      <div class="form-group">
+        <label class="form-label">Nom du participant</label>
+        <input type="text" [(ngModel)]="nom" name="nom" required placeholder="Votre nom" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Prénom</label>
+        <input type="text" [(ngModel)]="prenom" name="prenom" required placeholder="Votre prénom" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Code de session</label>
+        <input type="text" [(ngModel)]="sessionCode" name="sessionCode" required maxlength="7" placeholder="LAB2026" class="form-input input-code" />
+        <p class="form-hint">Entre le code fourni par ton professeur</p>
+      </div>
+
+      <button type="submit" [disabled]="isLoading" class="btn-submit" [class.btn-loading]="isLoading">
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Connexion...' : 'Rejoindre la session →' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="join-stats">
+    <div class="stat-item">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Mini-jeux</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">30min</div>
+      <div class="stat-label">Durée moy.</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">+500</div>
+      <div class="stat-label">Participants</div>
+    </div>
+  </div>
+</div>

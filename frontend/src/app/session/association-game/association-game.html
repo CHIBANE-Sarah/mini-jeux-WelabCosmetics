@@ -1,0 +1,91 @@
+<!-- Loader -->
+<div *ngIf="isLoading" class="loading">
+  <p>Chargement des questions...</p>
+</div>
+
+<!-- Résultats -->
+<div *ngIf="result" class="result-container">
+  <h2>Résultat</h2>
+  <p class="score">Score : {{ result.score }}/{{ questions.length }}</p>
+
+  <div class="result-details">
+    <div *ngFor="let detail of result.corrections" class="result-item" [class.correct]="detail.estCorrect" [class.incorrect]="!detail.estCorrect">
+      <div class="result-term">
+        <strong>{{ detail.terme }}</strong>
+      </div>
+      <div class="result-user-answer">
+        Ta réponse : {{ detail.reponse }}
+      </div>
+      <div class="result-good-answer" *ngIf="!detail.estCorrect">
+        Bonne réponse : {{ detail.bonneReponse }}
+      </div>
+    </div>
+  </div>
+
+  <button class="primary-btn" (click)="goNext()">Revenir à l'accueil</button>
+</div>
+
+<!-- Jeu -->
+<div *ngIf="!isLoading && !result" class="game-board">
+
+  <div class="game-header">
+    <div class="timer">
+      ⏱️ Temps restant : <strong>{{ formattedTime }}</strong>
+    </div>
+    <button class="primary-btn" [disabled]="!allAnswered" (click)="verify()">Valider mes associations</button>
+  </div>
+
+  <p class="instruction">Glissez chaque terme vers sa définition correspondante</p>
+
+  <div class="columns" cdkDropListGroup>
+
+    <!-- Colonne Termes -->
+    <div class="column-terms">
+      <h3 class="column-title">Termes</h3>
+      <div 
+        cdkDropList
+        cdkDropListId="terms-list"
+        [cdkDropListData]="availableTerms"
+        [cdkDropListConnectedTo]="definitionDropListIds"
+        (cdkDropListDropped)="drop($event)"
+        class="terms-drop-zone">
+
+        <div *ngFor="let term of availableTerms" cdkDrag class="term-card">
+          {{ term }}
+        </div>
+
+        <p *ngIf="availableTerms.length === 0" class="placeholder-text">
+          Tous les termes sont placés
+        </p>
+      </div>
+    </div>
+
+    <!-- Colonne Définitions -->
+    <div class="column-defs">
+      <h3 class="column-title def-title">Définitions</h3>
+
+      <div *ngFor="let slot of definitionSlots; let i = index" class="def-row">
+        <div class="def-card">
+          {{ slot.def }}
+        </div>
+
+        <div 
+          cdkDropList
+          [cdkDropListData]="slot.droppedItems"
+          (cdkDropListDropped)="drop($event)"
+          class="def-drop-zone"
+          [class.filled]="slot.droppedItems.length > 0">
+
+          <div *ngFor="let term of slot.droppedItems" cdkDrag class="term-card matched">
+            {{ term }}
+            <span class="remove-btn" (click)="removeTermFromDef(slot)">✕</span>
+          </div>
+
+          <div *ngIf="slot.droppedItems.length === 0" class="drop-placeholder">
+            Déposez ici
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
