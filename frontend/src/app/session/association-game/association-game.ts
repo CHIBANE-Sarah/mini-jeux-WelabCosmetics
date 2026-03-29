@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AssociationService } from '../../core/services/association';
@@ -44,7 +44,7 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   result: AssociationVerifyResponse | null = null;
   isLoading = true;
   isVerified = false;
-  initialTime = 420;
+  initialTime = 420; // 7 minutes
   timeLeft = this.initialTime;
   timerInterval: ReturnType<typeof setInterval> | null = null;
   isVerifying = false;
@@ -54,15 +54,18 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private associationService: AssociationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone // L'Outil qui règle le bug du minuteur
   ) {}
 
   ngOnInit(): void {
-    this.gameId = Number(this.route.snapshot.paramMap.get('gameId'));
+    const idParam = this.route.snapshot.paramMap.get('gameId') || this.route.snapshot.paramMap.get('id');
+    this.gameId = Number(idParam);
+    
     this.loadParticipantInfo();
+    
     if (this.gameId && this.gameId > 0) {
       this.loadQuestions();
-      this.startTimer();
     } else {
       this.isLoading = false;
     }
@@ -103,6 +106,7 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
         this.definitionDropListIds = this.definitionSlots.map((_, index) => `def-list-${index}`);
         this.timeLeft = this.initialTime;
         this.isLoading = false;
+        this.startTimer();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -155,12 +159,8 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   }
 
   verify(forceSubmit = false): void {
-    if (this.result || this.isVerifying) {
-      return;
-    }
-    if (!forceSubmit && !this.allAnswered) {
-      return;
-    }
+    if (this.result || this.isVerifying) return;
+    if (!forceSubmit && !this.allAnswered) return;
 
     const reponses = this.questions
       .filter((q) => this.userAnswers[q.terme])
@@ -169,9 +169,7 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
         reponse: this.userAnswers[q.terme],
       }));
 
-    if (!forceSubmit && reponses.length === 0) {
-      return;
-    }
+    if (!forceSubmit && reponses.length === 0) return;
 
     const payload: AssociationVerifyRequest = { reponses };
 
@@ -186,38 +184,43 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     payload.duree = this.initialTime - this.timeLeft;
 
     this.isVerifying = true;
+    this.clearTimer();
+
     this.associationService.verifyAnswers(this.gameId, payload).subscribe({
       next: (result) => {
         this.result = result;
         this.isVerified = true;
         this.isVerifying = false;
-        this.clearTimer();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur vérification:', err);
         this.isVerifying = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
   startTimer(): void {
     this.clearTimer();
-    this.timerInterval = setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        if (this.timeLeft === 0) {
-          this.verify(true);
-        }
-      } else {
-        this.verify(true);
-      }
-    }, 1000);
+    // LA CORRECTION DÉFINITIVE DU MINUTEUR : On force Angular à écouter chaque seconde
+    this.ngZone.runOutsideAngular(() => {
+      this.timerInterval = setInterval(() => {
+        this.ngZone.run(() => {
+          if (this.timeLeft > 0) {
+            this.timeLeft--;
+            this.cdr.detectChanges();
+            if (this.timeLeft === 0) {
+              this.verify(true);
+            }
+          }
+        });
+      }, 1000);
+    });
   }
 
   get formattedTime(): string {
-    const min = Math.floor(this.timeLeft / 60)
-      .toString()
-      .padStart(2, '0');
+    const min = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
     const sec = (this.timeLeft % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
   }
@@ -228,9 +231,5 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
 
   goNext(): void {
     this.router.navigate(['/']);
-  }
-
-  getConnectedDropLists(index: number): string[] {
-    return ['terms-list', ...this.definitionDropListIds.filter((id) => id !== `def-list-${index}`)];
   }
 }

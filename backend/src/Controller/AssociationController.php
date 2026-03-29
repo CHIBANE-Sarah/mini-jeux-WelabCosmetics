@@ -27,11 +27,15 @@ class AssociationController extends AbstractController
             return $this->json(['error' => 'Jeu introuvable'], 404);
         }
 
-        if ($game->getType() !== Game::TYPE_ASSOCIATION) {
-            return $this->json(['error' => 'Ce jeu n\'est pas un jeu d\'association'], 400);
-        }
-
         $questions = $questionRepository->findBy(['game' => $game]);
+
+        // CORRECTION : Si ce nouveau jeu n'a pas de questions, on prend la banque par défaut
+        if (count($questions) === 0) {
+            $firstQuestion = $questionRepository->findOneBy([]);
+            if ($firstQuestion) {
+                $questions = $questionRepository->findBy(['game' => $firstQuestion->getGame()]);
+            }
+        }
 
         $data = array_map(function (AssociationQuestion $q) {
             $definitions = $q->getDefinitions();
@@ -62,16 +66,21 @@ class AssociationController extends AbstractController
             return $this->json(['error' => 'Jeu introuvable'], 404);
         }
 
-        if ($game->getType() !== Game::TYPE_ASSOCIATION) {
-            return $this->json(['error' => 'Ce jeu n\'est pas un jeu d\'association'], 400);
-        }
-
         $body = json_decode($request->getContent(), true);
         if (!isset($body['reponses']) || !is_array($body['reponses'])) {
             return $this->json(['error' => 'Format invalide, clé "reponses" manquante'], 400);
         }
 
         $questions = $questionRepository->findBy(['game' => $game]);
+        
+        // CORRECTION : Même logique pour la vérification
+        if (count($questions) === 0) {
+            $firstQuestion = $questionRepository->findOneBy([]);
+            if ($firstQuestion) {
+                $questions = $questionRepository->findBy(['game' => $firstQuestion->getGame()]);
+            }
+        }
+
         $questionMap = [];
         foreach ($questions as $question) {
             $questionMap[$question->getId()] = $question;
@@ -155,16 +164,8 @@ class AssociationController extends AbstractController
         }
 
         $body = json_decode($request->getContent(), true);
-        if (
-            empty($body['terme']) ||
-            empty($body['definitions']) ||
-            empty($body['bonneReponse'])
-        ) {
-            return $this->json(['error' => 'Champs terme, definitions et bonneReponse obligatoires'], 400);
-        }
-
-        if (!in_array($body['bonneReponse'], $body['definitions'], true)) {
-            return $this->json(['error' => 'La bonne réponse doit faire partie des définitions'], 400);
+        if (empty($body['terme']) || empty($body['definitions']) || empty($body['bonneReponse'])) {
+            return $this->json(['error' => 'Champs obligatoires manquants'], 400);
         }
 
         $question = new AssociationQuestion();
@@ -176,9 +177,6 @@ class AssociationController extends AbstractController
         $em->persist($question);
         $em->flush();
 
-        return $this->json([
-            'message' => 'Question ajoutée avec succès',
-            'id' => $question->getId(),
-        ], 201);
+        return $this->json(['message' => 'OK', 'id' => $question->getId()], 201);
     }
 }
