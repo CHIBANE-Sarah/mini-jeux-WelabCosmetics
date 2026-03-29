@@ -6,6 +6,9 @@ export interface AssociationQuestion {
 
 export interface AssociationVerifyRequest {
   reponses: { questionId: number; reponse: string }[];
+  participant?: { nom: string; prenom: string };
+  sessionCode?: string;
+  duree?: number;
 }
 
 export interface AssociationVerifyResponse {

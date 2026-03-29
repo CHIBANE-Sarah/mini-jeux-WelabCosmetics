@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Session;
 use App\Entity\Game;
 use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
+use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,35 +16,40 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api')]
 final class SessionController extends AbstractController
-{   
-    // Création de la session par l'Admin
+{
     #[Route('/session', name: 'app_session_create', methods: ['POST'])]
-    #[IsGranted(['ROLE_ADMIN'])]
-    public function create(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse {
-       
+    #[IsGranted('ROLE_ADMIN')]
+    public function create(
+        Request $request,
+        SessionRepository $sessionRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
         $admin = $this->getUser();
-        
         if (!$admin) {
             return $this->json(['message' => 'Non autorisé.'], Response::HTTP_UNAUTHORIZED);
         }
 
         $data = json_decode($request->getContent(), true);
-
         if (empty($data['titre']) || !isset($data['duree'])) {
             return $this->json(['message' => 'Les champs "titre" et "duree" sont requis.'], Response::HTTP_BAD_REQUEST);
         }
 
         $session = new Session();
         $session->setTitreSession($data['titre']);
-        $session->setDuree($data['duree']);
+        $session->setDuree((int) $data['duree']);
         $session->setCreateur($admin);
-        $session->setCodeSession(strtoupper(substr(bin2hex(random_bytes(4)), 0, 6)));
+
+        do {
+            $code = strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
+        } while ($sessionRepository->findOneBy(['codeSession' => $code]) !== null);
+
+        $session->setCodeSession($code);
 
         $game = new Game();
         $game->setType(Game::TYPE_ASSOCIATION);
         $session->addGame($game);
-        $entityManager->persist($game);
 
+        $entityManager->persist($game);
         $entityManager->persist($session);
         $entityManager->flush();
 
@@ -54,19 +59,17 @@ final class SessionController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
-    // Avoir la liste des sessions crées par l'Admin
     #[Route('/sessions', name: 'app_session_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(SessionRepository $sessionRepository): JsonResponse
     {
         return $this->json(array_map([$this, 'serializeSession'], $sessionRepository->findAll()));
     }
 
-    // Récupérer une session par son code
     #[Route('/session/{code}', name: 'app_session_get', methods: ['GET'])]
     public function getSession(string $code, SessionRepository $sessionRepository): JsonResponse
     {
-        $session = $sessionRepository->findOneBy(['codeSession' => $code]);
-
+        $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
         if (!$session) {
             return $this->json(['message' => 'Session introuvable avec ce code.'], Response::HTTP_NOT_FOUND);
         }
@@ -74,29 +77,16 @@ final class SessionController extends AbstractController
         return $this->json($this->serializeSession($session));
     }
 
-    private function serializeSession(Session $session): array
-    {
-        return [
-            'id' => $session->getId(),
-            'titre' => $session->getTitreSession(),
-            'code' => $session->getCodeSession(),
-            'duree' => $session->getDuree(),
-            'createur' => $session->getCreateur()?->getLogin(),
-        ];
-    }
-
     #[Route('/session/{code}/games', name: 'app_session_games', methods: ['GET'])]
     public function getSessionGames(string $code, SessionRepository $sessionRepository): JsonResponse
     {
-        $session = $sessionRepository->findOneBy(['codeSession' => $code]);
-
+        $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
         if (!$session) {
             return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
         }
 
         $games = $session->getGames()->toArray();
-        
-        return $this->json(array_map(function($game) {
+        return $this->json(array_map(function ($game) {
             return [
                 'id' => $game->getId(),
                 'type' => $game->getType(),
@@ -108,10 +98,9 @@ final class SessionController extends AbstractController
     #[Route('/session/{code}/join', name: 'app_session_join', methods: ['POST'])]
     public function joinSession(string $code, SessionRepository $sessionRepository): JsonResponse
     {
-        $session = $sessionRepository->findOneBy(['codeSession' => $code]);
-
+        $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
         if (!$session) {
-            return $this->json(['message' => 'Session introuvable'], 404);
+            return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json([
@@ -121,4 +110,32 @@ final class SessionController extends AbstractController
         ]);
     }
 
+    #[Route('/stats/dashboard', name: 'app_dashboard_stats', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function dashboardStats(
+        SessionRepository $sessionRepository,
+        ParticipationRepository $participationRepository
+    ): JsonResponse {
+        $averageScore = $participationRepository->getAverageScore();
+        $averageDuration = $participationRepository->getAverageDuration();
+
+        return $this->json([
+            'totalSessions' => $sessionRepository->count([]),
+            'totalParticipants' => $participationRepository->count([]),
+            'averageScore' => $averageScore !== null ? round($averageScore) : 0,
+            'averageTime' => $averageDuration !== null ? round($averageDuration / 60) : 0,
+        ]);
+    }
+
+    private function serializeSession(Session $session): array
+    {
+        return [
+            'id' => $session->getId(),
+            'titre' => $session->getTitreSession(),
+            'code' => $session->getCodeSession(),
+            'duree' => $session->getDuree(),
+            'createur' => $session->getCreateur()?->getLogin(),
+            'nbParticipants' => $session->getParticipations()->count(),
+        ];
+    }
 }
