@@ -73,7 +73,7 @@ La route d'authentification est `POST http://localhost:8000/api/login`. Elle att
 ```json
 {
   "username": "admin",
-  "password": "welab"
+  "password": "admin123"
 }
 ```
 ---
