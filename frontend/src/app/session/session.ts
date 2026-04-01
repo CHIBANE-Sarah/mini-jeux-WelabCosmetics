@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionService, Session } from '../core/services/session.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-session',
@@ -15,15 +16,18 @@ export class SessionComponent implements OnInit {
   games: any[] = [];
   isLoading = true;
   error = '';
+  playerName = '';
 
   constructor(
     private route: ActivatedRoute,
     private sessionService: SessionService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     const code = this.route.snapshot.paramMap.get('code');
+    this.playerName = localStorage.getItem('player_name') || 'Joueur';
     if (code) {
       this.loadSessionAndGames(code);
     }
@@ -31,45 +35,43 @@ export class SessionComponent implements OnInit {
 
   loadSessionAndGames(code: string): void {
     this.isLoading = true;
-    
-    // 1. Charger la session
-    this.sessionService.getSessionByCode(code).subscribe({
-      next: (session) => {
+    forkJoin({
+      session: this.sessionService.getSessionByCode(code),
+      games: this.sessionService.getSessionGames(code)
+    }).subscribe({
+      next: ({ session, games }) => {
         this.session = session;
-        
-        // 2. Charger les jeux de la session
-        this.sessionService.getSessionGames(code).subscribe({
-          next: (games) => {
-            this.games = games;
-            this.isLoading = false;
-            
-            // 3. Si une seule jeu, lancer directement
-            if (this.games.length === 1) {
-              this.startGame(this.games[0]);
-            }
-            // Si plusieurs jeux, afficher la sélection
-          },
-          error: (err) => {
-            console.error('Erreur chargement jeux:', err);
-            this.isLoading = false;
-          }
-        });
+        this.games = games;
+        localStorage.setItem('session_games', JSON.stringify(games));
+        localStorage.setItem('session_title', session.titre);
+        this.isLoading = false;
+        this.cdr.detectChanges(); 
       },
-      error: (err) => {
+      error: () => {
         this.error = 'Session non trouvée';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
-  startGame(game: any): void {
-    // Naviguer vers le jeu d'association avec l'ID du jeu
-    this.router.navigate(['/session/association', game.id]);
+  startGames(): void {
+    if (!this.session || this.games.length === 0) return;
+    this.navigateToGame(this.games[0]);
   }
 
-  copyCode(): void {
-    if (this.session) {
-      navigator.clipboard.writeText(this.session.code);
+  navigateToGame(game: any): void {
+    const code = this.session?.code;
+    switch (game.type) {
+      case 'crossword':
+        this.router.navigate(['/session/crossword', code]);
+        break;
+      case 'association':
+        this.router.navigate(['/session/association', game.id]);
+        break;
+      case 'formulation':
+        this.router.navigate(['/session/formulation', code]);
+        break;
     }
   }
 

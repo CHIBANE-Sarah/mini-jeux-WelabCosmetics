@@ -5,6 +5,9 @@ import { LoginComponent } from './auth/login/login';
 import { DashboardComponent } from './admin/dashboard/dashboard';
 import { SessionComponent } from './session/session';
 import { AssociationGameComponent } from './session/association-game/association-game';
+import { CrosswordComponent } from './game/crossword/crossword.component';
+import { FormulationComponent } from './game/formulation/formulation.component';
+import { ResultsComponent } from './game/results/results.component';
 import { inject } from '@angular/core';
 import { AuthService } from './core/services/auth.service';
 import { Router } from '@angular/router';
@@ -20,6 +23,9 @@ export const routes: Routes = [
   },
   { path: 'join', component: JoinSession },
   { path: 'session/association/:gameId', component: AssociationGameComponent },
+  { path: 'session/crossword/:sessionCode', component: CrosswordComponent },
+  { path: 'session/formulation/:sessionCode', component: FormulationComponent },
+  { path: 'session/results/:sessionCode', component: ResultsComponent },
   { path: 'session/:code', component: SessionComponent },
   { path: '**', redirectTo: '' }
 ];

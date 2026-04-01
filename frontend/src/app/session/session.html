@@ -1,4 +1,4 @@
-<div class="container py-5">
+<div class="session-wrapper">
 
   <div *ngIf="isLoading" class="text-center py-5">
     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -6,68 +6,73 @@
     </div>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger text-center py-4">
-    <i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-3"></i>
+  <div *ngIf="error" class="alert alert-danger text-center py-4 m-4">
     <h4>{{ error }}</h4>
     <button class="btn btn-primary mt-3" (click)="goBack()">Retour à l'accueil</button>
   </div>
 
-  <div *ngIf="!isLoading && !error && session" class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-primary text-white text-center py-4">
-          <i class="bi bi-controller fs-1"></i>
-          <!-- CORRECTION : titre au lieu de titreSession -->
-          <h2 class="mb-0 mt-2">{{ session.titre }}</h2>
+  <div *ngIf="!isLoading && !error && session">
+
+    <!-- HEADER -->
+    <div class="session-header">
+      <div class="session-header-content">
+        <div>
+          <p class="session-label">Session : {{ session.code }}</p>
+          <h1 class="session-title">Bienvenue {{ playerName }} !</h1>
+          <p class="session-subtitle">Prépare-toi à tester tes connaissances en cosmétique à travers {{ games.length }} mini-jeux interactifs !</p>
         </div>
-
-        <div class="card-body p-4">
-          <div class="row g-4">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center p-3 bg-light rounded-3">
-                <i class="bi bi-key fs-1 text-primary me-3"></i>
-                <div>
-                  <small class="text-muted d-block">Code de session</small>
-                  <!-- CORRECTION : code au lieu de codeSession -->
-                  <code class="fs-4 fw-bold">{{ session.code }}</code>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="d-flex align-items-center p-3 bg-light rounded-3">
-                <i class="bi bi-clock fs-1 text-success me-3"></i>
-                <div>
-                  <small class="text-muted d-block">Durée</small>
-                  <span class="fs-4 fw-bold">{{ session.duree }} minutes</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="d-flex align-items-center p-3 bg-light rounded-3">
-                <i class="bi bi-person-circle fs-1 text-info me-3"></i>
-                <div>
-                  <small class="text-muted d-block">Créé par</small>
-                  <span class="fs-5 fw-medium">{{ session.createur }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between mt-4 pt-3">
-            <button class="btn btn-outline-secondary px-4" (click)="goBack()">
-              <i class="bi bi-arrow-left"></i> Retour
-            </button>
-            <button class="btn btn-outline-primary px-4" (click)="copyCode()">
-              <i class="bi bi-copy"></i> Copier le code
-            </button>
-            <button class="btn btn-success px-4">
-              <i class="bi bi-play-fill"></i> Commencer les jeux
-            </button>
-          </div>
+        <div class="session-duration-badge">
+          <i class="bi bi-clock"></i>
+          <span>{{ session.duree / 60 | number:'1.0-0' }} min</span>
         </div>
       </div>
     </div>
+
+    <!-- CONTENU -->
+    <div class="session-body">
+
+      <!-- JEUX -->
+      <div class="session-card">
+        <h2 class="section-title">
+          <span class="section-icon">🎯</span> Les mini-jeux
+        </h2>
+        <div class="games-list">
+          <div *ngFor="let game of games; let i = index" class="game-item">
+            <div class="game-number">{{ i + 1 }}</div>
+            <div class="game-info">
+              <p class="game-name">
+                <ng-container *ngIf="game.type === 'crossword'">Mots croisés</ng-container>
+                <ng-container *ngIf="game.type === 'association'">Association</ng-container>
+                <ng-container *ngIf="game.type === 'formulation'">Formulation</ng-container>
+              </p>
+              <p class="game-desc">
+                <ng-container *ngIf="game.type === 'crossword'">Complète les mots croisés avec les termes cosmétiques</ng-container>
+                <ng-container *ngIf="game.type === 'association'">Associe chaque terme à sa définition</ng-container>
+                <ng-container *ngIf="game.type === 'formulation'">Crée un produit cosmétique avec les bons ingrédients</ng-container>
+              </p>
+            </div>
+            <div class="game-points">🏆 100pts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSTRUCTIONS -->
+      <div class="session-card">
+        <h2 class="section-title">Instructions</h2>
+        <ul class="instructions-list">
+          <li><span class="check-icon">✅</span> Complète les {{ games.length }} mini-jeux dans l'ordre présenté</li>
+          <li><span class="check-icon">✅</span> Chaque jeu a un temps limité, organise-toi bien</li>
+          <li><span class="check-icon">✅</span> Ton score final est la moyenne de tes 3 performances</li>
+          <li><span class="check-icon">✅</span> Prends ton temps et réfléchis bien avant de valider</li>
+        </ul>
+      </div>
+
+      <!-- BOUTON -->
+      <button class="btn-start" (click)="startGames()">
+        Commencer les mini-jeux
+      </button>
+
+    </div>
   </div>
+
 </div>

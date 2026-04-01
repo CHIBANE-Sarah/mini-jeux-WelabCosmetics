@@ -29,6 +29,8 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/test, roles: PUBLIC_ACCESS }
+        - { path: ^/api/session/[A-Z0-9]+/games, roles: PUBLIC_ACCESS }
+        - { path: ^/api/session/[A-Z0-9]+/join, roles: PUBLIC_ACCESS }
         - { path: ^/api/session/.*/join, roles: PUBLIC_ACCESS }
         - { path: ^/api/session/[A-Z0-9]+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/association, roles: PUBLIC_ACCESS }

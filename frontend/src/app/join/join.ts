@@ -48,8 +48,10 @@ export class JoinSession {
       next: (session) => {
         this.isLoading = false;
         this.successMessage = `Bravo ${this.prenom} ${this.nom}, vous avez rejoint la session : ${session.titre} !`;
+        localStorage.setItem('player_name', this.prenom + ' ' + this.nom);
+        localStorage.setItem('session_code', this.sessionCode);
         
-        // ✅ Redirection vers la page de la session
+        //  Redirection vers la page de la session
         setTimeout(() => {
           this.router.navigate(['/session', this.sessionCode]);
         }, 1500);

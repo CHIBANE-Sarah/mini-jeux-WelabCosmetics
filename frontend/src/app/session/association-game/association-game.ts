@@ -122,24 +122,27 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   }
 
   verify(): void {
-    if (!this.allAnswered) return;
+  if (!this.allAnswered) return;
 
-    const reponses = this.questions
-      .filter(q => this.userAnswers[q.terme])
-      .map(q => ({
-        questionId: q.id,
-        reponse: this.userAnswers[q.terme]
-      }));
+  const reponses = this.questions
+    .filter(q => this.userAnswers[q.terme])
+    .map(q => ({
+      questionId: q.id,
+      reponse: this.userAnswers[q.terme]
+    }));
 
-    this.associationService.verifyAnswers(this.gameId, { reponses }).subscribe({
-      next: (result) => {
-        this.result = result;
-        this.isVerified = true;
-        clearInterval(this.timerInterval);
-      },
-      error: (err) => console.error('Erreur vérification:', err)
-    });
-  }
+  this.associationService.verifyAnswers(this.gameId, { reponses }).subscribe({
+    next: (result) => {
+      this.result = result;
+      this.isVerified = true;
+      clearInterval(this.timerInterval);
+      // 👇 ajout stockage score
+      localStorage.setItem('score_association', String(result.score));
+      localStorage.setItem('total_association', String(result.total));
+    },
+    error: (err) => console.error('Erreur vérification:', err)
+  });
+}
 
   startTimer(): void {
     this.timerInterval = setInterval(() => {
@@ -162,8 +165,32 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   }
 
   goNext(): void {
-    this.router.navigate(['/']);
+  const sessionCode = localStorage.getItem('session_code') || '';
+  const gamesRaw = localStorage.getItem('session_games');
+
+  if (gamesRaw) {
+    const games = JSON.parse(gamesRaw);
+    const currentIndex = games.findIndex((g: any) => g.type === 'association');
+    const next = games[currentIndex + 1];
+
+    if (next) {
+      switch (next.type) {
+        case 'formulation':
+          this.router.navigate(['/session/formulation', sessionCode]);
+          break;
+        case 'crossword':
+          this.router.navigate(['/session/crossword', sessionCode]);
+          break;
+        default:
+          this.router.navigate(['/session/results', sessionCode]);
+      }
+    } else {
+      this.router.navigate(['/session/results', sessionCode]);
+    }
+  } else {
+    this.router.navigate(['/session/results', sessionCode]);
   }
+}
 
   getConnectedDropLists(index: number): string[] {
     return ['terms-list', ...this.definitionDropListIds.filter(id => id !== `def-list-${index}`)];

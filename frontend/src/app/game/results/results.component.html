@@ -1,0 +1,92 @@
+<div class="results-wrapper">
+
+  <div *ngIf="reussie; else echoue" class="status-badge success">
+    Réussie ✓
+  </div>
+  <ng-template #echoue>
+    <div class="status-badge failed">Échouée ✗</div>
+  </ng-template>
+
+  <div class="results-card">
+    <div class="results-left">
+      <div class="session-number">
+        <span class="num">1</span>
+        <span class="session-name">{{ sessionTitle }}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Date</span>
+        <span class="info-value">{{ date | date:'dd MMMM yyyy' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Joueur</span>
+        <span class="info-value">{{ playerName }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Score global</span>
+        <span class="info-value score-global">{{ scoreGlobal }}%</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="results-right">
+      <h4 class="resume-title">Résumé des jeux</h4>
+
+      <div class="game-result" *ngIf="scoreCrossword !== null">
+        <div class="game-info">
+          <i class="bi bi-grid game-icon"></i>
+          <div>
+            <span class="game-name">Mots Croisés</span>
+            <span class="game-score-raw">{{ scoreCrossword }} / {{ totalCrossword }}</span>
+          </div>
+        </div>
+        <span class="game-pct" [class.good]="getPct(scoreCrossword, totalCrossword) >= 50"
+                                [class.bad]="getPct(scoreCrossword, totalCrossword) < 50">
+          {{ getPct(scoreCrossword, totalCrossword) }}%
+        </span>
+      </div>
+
+      <div class="game-result" *ngIf="scoreAssociation !== null">
+        <div class="game-info">
+          <i class="bi bi-shuffle game-icon"></i>
+          <div>
+            <span class="game-name">Association</span>
+            <span class="game-score-raw">{{ scoreAssociation }} / {{ totalAssociation }}</span>
+          </div>
+        </div>
+        <span class="game-pct" [class.good]="getPct(scoreAssociation, totalAssociation) >= 50"
+                                [class.bad]="getPct(scoreAssociation, totalAssociation) < 50">
+          {{ getPct(scoreAssociation, totalAssociation) }}%
+        </span>
+      </div>
+
+      <div class="game-result" *ngIf="scoreFormulation !== null">
+        <div class="game-info">
+          <i class="bi bi-eyedropper game-icon"></i>
+          <div>
+            <span class="game-name">Formulation</span>
+            <span class="game-score-raw">{{ scoreFormulation }} / {{ totalFormulation }}</span>
+          </div>
+        </div>
+        <span class="game-pct" [class.good]="getPct(scoreFormulation, totalFormulation) >= 50"
+                                [class.bad]="getPct(scoreFormulation, totalFormulation) < 50">
+          {{ getPct(scoreFormulation, totalFormulation) }}%
+        </span>
+      </div>
+
+      <div *ngIf="scoreCrossword === null && scoreAssociation === null && scoreFormulation === null"
+           class="no-scores">
+        Aucun score enregistré pour cette session.
+      </div>
+
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <button class="btn-rejouer" (click)="rejouer()">
+      Rejouer une session
+    </button>
+  </div>
+
+</div>

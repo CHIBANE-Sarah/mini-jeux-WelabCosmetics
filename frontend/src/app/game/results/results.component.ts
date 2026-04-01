@@ -1,0 +1,100 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ParticipationService } from '../../core/services/participation.service';
+
+@Component({
+  selector: 'app-results',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './results.component.html',
+  styleUrls: ['./results.component.css']
+})
+export class ResultsComponent implements OnInit {
+  sessionCode = '';
+  playerName = '';
+  sessionTitle = '';
+
+  scoreCrossword: number | null = null;
+  totalCrossword: number | null = null;
+  scoreAssociation: number | null = null;
+  totalAssociation: number | null = null;
+  scoreFormulation: number | null = null;
+  totalFormulation: number | null = null;
+
+  scoreGlobal: number = 0;
+  reussie = false;
+  date = new Date();
+  startTime = '';
+  endTime = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private participationService: ParticipationService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.sessionCode = this.route.snapshot.paramMap.get('sessionCode') || '';
+    this.playerName = localStorage.getItem('player_name') || 'Joueur';
+    this.sessionTitle = localStorage.getItem('session_title') || 'Session de jeu';
+
+    const sc = localStorage.getItem('score_crossword');
+    const tc = localStorage.getItem('total_crossword');
+    const sa = localStorage.getItem('score_association');
+    const ta = localStorage.getItem('total_association');
+    const sf = localStorage.getItem('score_formulation');
+    const tf = localStorage.getItem('total_formulation');
+
+    if (sc && tc) {
+      this.scoreCrossword = parseInt(sc);
+      this.totalCrossword = parseInt(tc);
+    }
+    if (sa && ta) {
+      this.scoreAssociation = parseInt(sa);
+      this.totalAssociation = parseInt(ta);
+    }
+    if (sf && tf) {
+      this.scoreFormulation = parseInt(sf);
+      this.totalFormulation = parseInt(tf);
+    }
+
+    this.calculateGlobalScore();
+    this.saveParticipation();
+  }
+
+  calculateGlobalScore(): void {
+    const scores: number[] = [];
+    if (this.scoreCrossword !== null && this.totalCrossword)
+      scores.push(Math.round((this.scoreCrossword / this.totalCrossword) * 100));
+    if (this.scoreAssociation !== null && this.totalAssociation)
+      scores.push(Math.round((this.scoreAssociation / this.totalAssociation) * 100));
+    if (this.scoreFormulation !== null && this.totalFormulation)
+      scores.push(Math.round((this.scoreFormulation / this.totalFormulation) * 100));
+
+    if (scores.length > 0) {
+      this.scoreGlobal = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    }
+    this.reussie = this.scoreGlobal >= 50;
+  }
+
+  getPct(score: number | null, total: number | null): number {
+    if (score === null || !total) return 0;
+    return Math.round((score / total) * 100);
+  }
+
+  saveParticipation(): void {
+    this.participationService.save(this.sessionCode, this.scoreGlobal, 0).subscribe();
+  }
+
+  rejouer(): void {
+    localStorage.removeItem('score_crossword');
+    localStorage.removeItem('total_crossword');
+    localStorage.removeItem('score_association');
+    localStorage.removeItem('total_association');
+    localStorage.removeItem('score_formulation');
+    localStorage.removeItem('total_formulation');
+    this.router.navigate(['/join']);
+  }
+}
