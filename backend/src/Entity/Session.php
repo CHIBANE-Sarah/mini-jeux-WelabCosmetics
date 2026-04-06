@@ -28,7 +28,6 @@ class Session
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createur = null;
 
-    // ajout d'une session contient plusieurs jeux
     #[ORM\OneToMany(
         targetEntity: Game::class,
         mappedBy: 'session',
@@ -36,10 +35,21 @@ class Session
     )]
     private Collection $games;
 
-    // constructeur pour initialiser la collection
+    /**
+     * @var Collection<int, Participation>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'session',
+        targetEntity: Participation::class,
+        orphanRemoval: true,
+        cascade: ['persist']
+    )]
+    private Collection $participations;
+
     public function __construct()
     {
         $this->games = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,7 +101,6 @@ class Session
         return $this;
     }
 
-    // getters/setters pour les jeux
     public function getGames(): Collection
     {
         return $this->games;
@@ -111,6 +120,33 @@ class Session
         if ($this->games->removeElement($game)) {
             if ($game->getSession() === $this) {
                 $game->setSession(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setSession($this);
+        }
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            if ($participation->getSession() === $this) {
+                $participation->setSession(null);
             }
         }
         return $this;

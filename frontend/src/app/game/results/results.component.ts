@@ -37,6 +37,8 @@ export class ResultsComponent implements OnInit {
 
   ngOnInit(): void {
     this.sessionCode = this.route.snapshot.paramMap.get('sessionCode') || '';
+    const startTime = localStorage.getItem('session_start_time');
+    const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
     this.playerName = localStorage.getItem('player_name') || 'Joueur';
     this.sessionTitle = localStorage.getItem('session_title') || 'Session de jeu';
 
@@ -85,8 +87,20 @@ export class ResultsComponent implements OnInit {
   }
 
   saveParticipation(): void {
-    this.participationService.save(this.sessionCode, this.scoreGlobal, 0).subscribe();
-  }
+  const alreadySaved = localStorage.getItem('participation_saved');
+  console.log('saveParticipation appelé, alreadySaved:', alreadySaved);
+  if (alreadySaved) return;
+  
+  const startTime = localStorage.getItem('session_start_time');
+  const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
+  
+  this.participationService.save(this.sessionCode, this.scoreGlobal, tempsTotal).subscribe({
+    next: () => {
+      localStorage.setItem('participation_saved', '1');
+      console.log('participation sauvegardée');
+    }
+  });
+}
 
   rejouer(): void {
     localStorage.removeItem('score_crossword');
@@ -95,6 +109,7 @@ export class ResultsComponent implements OnInit {
     localStorage.removeItem('total_association');
     localStorage.removeItem('score_formulation');
     localStorage.removeItem('total_formulation');
+    localStorage.removeItem('participation_saved');
     this.router.navigate(['/join']);
   }
 }

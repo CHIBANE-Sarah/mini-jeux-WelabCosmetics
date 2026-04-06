@@ -84,7 +84,7 @@
         <h3 class="action-title action-title-dark">Résultats des sessions</h3>
         <p class="action-desc">Consultez les performances et statistiques des participants</p>
         <button (click)="viewResults()" class="btn-action btn-action-dark">
-          Voir les résultats
+          {{ showResults ? 'Masquer les résultats' : 'Voir les résultats' }}
         </button>
       </div>
     </div>
@@ -109,6 +109,46 @@
         </div>
       </div>
     </div>
+
+    <!-- Section Résultats -->
+    <div *ngIf="showResults" class="sessions-panel results-panel">
+      <h3 class="panel-title">
+        <i class="bi bi-bar-chart-fill me-2"></i>Résultats des participants
+      </h3>
+
+      <div *ngIf="isLoadingResults" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="!isLoadingResults && participations.length === 0" class="empty-state">
+        Aucune participation enregistrée.
+      </div>
+
+      <table *ngIf="!isLoadingResults && participations.length > 0" class="results-table">
+        <thead>
+          <tr>
+            <th>Session</th>
+            <th>Participant</th>
+            <th>Score</th>
+            <th>Temps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of participations">
+            <td>
+              <div class="session-title">{{ p.sessionTitre }}</div>
+              <div class="session-code">{{ p.sessionCode }}</div>
+            </td>
+            <td>{{ p.userName }}</td>
+            <td>
+              <span class="score-badge">{{ p.scoreTotal }}%</span>
+            </td>
+            <td>{{ p.tempsTotal }}s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 

@@ -11,6 +11,13 @@ export interface Session {
   nbParticipants?: number;
 }
 
+export interface DashboardStats {
+  totalSessions: number;
+  totalParticipants: number;
+  averageScore: number;
+  averageTime: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private apiUrl = 'http://localhost:8000/api';
@@ -19,21 +26,19 @@ export class SessionService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
-
     if (!token) {
-      console.error('Aucun token trouvé');
       throw new Error('Utilisateur non connecté');
     }
-
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
   }
 
   getMySessions(): Observable<Session[]> {
-    // CORRECTION 2 : Backticks
-    return this.http.get<Session[]>(`${this.apiUrl}/sessions`, { headers: this.getAuthHeaders() });
+    return this.http.get<Session[]>(`${this.apiUrl}/sessions`, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
   getSessionByCode(code: string): Observable<Session> {
@@ -45,10 +50,21 @@ export class SessionService {
   }
 
   createSession(data: { titre: string; duree: number }): Observable<Session> {
-    return this.http.post<Session>(`${this.apiUrl}/session`, data, { headers: this.getAuthHeaders() });
+    return this.http.post<Session>(`${this.apiUrl}/session`, data, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
   joinSession(code: string, nom: string, prenom: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/session/${code}/join`, { nom, prenom });
+    return this.http.post<any>(`${this.apiUrl}/session/${code}/join`, {
+      nom,
+      prenom,
+    });
+  }
+
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.apiUrl}/stats/dashboard`, {
+      headers: this.getAuthHeaders(),
+    });
   }
 }

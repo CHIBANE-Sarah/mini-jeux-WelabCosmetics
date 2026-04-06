@@ -13,31 +13,103 @@ class Participation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    
+    #[ORM\Column(length: 100)]
+    private ?string $joueurNom = null;
 
-    #[ORM\ManyToOne(targetEntity: Session::class)]
+    #[ORM\Column(length: 100)]
+    private ?string $joueurPrenom = null;
+
+    
+    #[ORM\Column]
+    private int $score = 0;
+
+   
+    #[ORM\Column]
+    private int $dureeSeconds = 0;
+
+    
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+   
+    #[ORM\ManyToOne(inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Session $session = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $scoreTotal = null;
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
-    #[ORM\Column(nullable: true)]
-    private ?int $tempsTotal = null;
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getId(): ?int { return $this->id; }
+    public function getJoueurNom(): ?string
+    {
+        return $this->joueurNom;
+    }
 
-    public function getUser(): ?User { return $this->user; }
-    public function setUser(?User $user): static { $this->user = $user; return $this; }
+    public function setJoueurNom(string $joueurNom): static
+    {
+        $this->joueurNom = $joueurNom;
+        return $this;
+    }
 
-    public function getSession(): ?Session { return $this->session; }
-    public function setSession(?Session $session): static { $this->session = $session; return $this; }
+    public function getJoueurPrenom(): ?string
+    {
+        return $this->joueurPrenom;
+    }
 
-    public function getScoreTotal(): ?int { return $this->scoreTotal; }
-    public function setScoreTotal(?int $scoreTotal): static { $this->scoreTotal = $scoreTotal; return $this; }
+    public function setJoueurPrenom(string $joueurPrenom): static
+    {
+        $this->joueurPrenom = $joueurPrenom;
+        return $this;
+    }
 
-    public function getTempsTotal(): ?int { return $this->tempsTotal; }
-    public function setTempsTotal(?int $tempsTotal): static { $this->tempsTotal = $tempsTotal; return $this; }
+    public function getScore(): int
+    {
+        return $this->score;
+    }
+
+    public function setScore(int $score): static
+    {
+        $this->score = $score;
+        return $this;
+    }
+
+    public function getDureeSeconds(): int
+    {
+        return $this->dureeSeconds;
+    }
+
+    public function setDureeSeconds(int $dureeSeconds): static
+    {
+        $this->dureeSeconds = $dureeSeconds;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getSession(): ?Session
+    {
+        return $this->session;
+    }
+
+    public function setSession(?Session $session): static
+    {
+        $this->session = $session;
+        return $this;
+    }
 }

@@ -1,38 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { SessionService, Session } from '../../core/services/session.service';
-
-declare var bootstrap: any;
+declare const bootstrap: any;
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.css'],
 })
 export class DashboardComponent implements OnInit {
   sessions: Session[] = [];
   isLoading = true;
   totalParticipants = 0;
-  averageScore = 82;
-  averageTime = 38;
+  averageScore = 0;
+  averageTime = 0;
   newTitre = '';
   newDuree: number | null = null;
   isCreating = false;
   createError = '';
+  participations: any[] = [];
+  showResults = false;
+  isLoadingResults = false;
 
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
-    public router: Router
+    public router: Router,
+    private cdr: ChangeDetectorRef,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.loadSessions();
+    this.loadStats();
   }
 
   loadSessions(): void {
@@ -40,14 +46,48 @@ export class DashboardComponent implements OnInit {
     this.sessionService.getMySessions().subscribe({
       next: (sessions) => {
         this.sessions = sessions;
-        this.totalParticipants = this.sessions.reduce(
-          (total, s) => total + (s.nbParticipants || 0), 0
-        );
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur chargement sessions', err);
         this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  loadStats(): void {
+    this.sessionService.getDashboardStats().subscribe({
+      next: (stats) => {
+        this.totalParticipants = stats.totalParticipants;
+        this.averageScore = stats.averageScore;
+        this.averageTime = stats.averageTime;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erreur chargement stats', err),
+    });
+  }
+
+  viewResults(): void {
+    this.showResults = !this.showResults;
+    if (this.showResults && this.participations.length === 0) {
+      this.loadParticipations();
+    }
+  }
+
+  loadParticipations(): void {
+    this.isLoadingResults = true;
+    this.http.get<any[]>('http://localhost:8000/api/participation').subscribe({
+      next: (data) => {
+        this.participations = data;
+        this.isLoadingResults = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erreur chargement participations', err);
+        this.isLoadingResults = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -78,20 +118,20 @@ export class DashboardComponent implements OnInit {
     }
     this.isCreating = true;
     this.createError = '';
-    this.sessionService.createSession({
-      titre: this.newTitre,
-      duree: this.newDuree
-    }).subscribe({
-      next: () => {
-        this.isCreating = false;
-        this.closeCreateModal();
-        this.loadSessions();
-      },
-      error: (err) => {
-        this.isCreating = false;
-        this.createError = err.error?.message || 'Erreur lors de la création';
-      }
-    });
+    this.sessionService
+      .createSession({ titre: this.newTitre, duree: this.newDuree })
+      .subscribe({
+        next: () => {
+          this.isCreating = false;
+          this.closeCreateModal();
+          this.loadSessions();
+          this.loadStats();
+        },
+        error: (err) => {
+          this.isCreating = false;
+          this.createError = err.error?.message || 'Erreur lors de la création';
+        },
+      });
   }
 
   goToSession(code: string): void {
@@ -100,10 +140,6 @@ export class DashboardComponent implements OnInit {
 
   copyCode(code: string): void {
     navigator.clipboard.writeText(code);
-  }
-
-  viewResults(): void {
-    alert('Fonctionnalité disponible prochainement');
   }
 
   goToGames(): void {

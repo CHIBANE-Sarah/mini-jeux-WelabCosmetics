@@ -76,3 +76,40 @@
 .btn-modal-confirm { background: var(--welab-blue); color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: opacity 0.2s; }
 .btn-modal-confirm:hover { opacity: 0.9; }
 .btn-modal-confirm:disabled { opacity: 0.7; cursor: not-allowed; }
+/* Results panel */
+.results-panel { margin-top: 2rem; }
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.results-table th {
+  text-align: left;
+  padding: 10px 16px;
+  color: var(--welab-text-light);
+  font-weight: 500;
+  border-bottom: 1px solid var(--welab-border);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.results-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--welab-border);
+  color: var(--welab-blue-title);
+}
+
+.results-table tr:last-child td {
+  border-bottom: none;
+}
+
+.score-badge {
+  background: var(--welab-cyan-light);
+  color: var(--welab-cyan);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}

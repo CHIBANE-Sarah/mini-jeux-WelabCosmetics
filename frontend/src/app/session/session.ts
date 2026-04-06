@@ -57,9 +57,9 @@ export class SessionComponent implements OnInit {
 
   startGames(): void {
     if (!this.session || this.games.length === 0) return;
+    localStorage.setItem('session_start_time', String(Date.now())); 
     this.navigateToGame(this.games[0]);
-  }
-
+}
   navigateToGame(game: any): void {
     const code = this.session?.code;
     switch (game.type) {

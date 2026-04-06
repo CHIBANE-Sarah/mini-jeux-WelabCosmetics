@@ -1,5 +1,3 @@
-// src/app/join/join.ts
-
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -37,29 +35,57 @@ export class JoinSession {
       return;
     }
 
-    if (this.sessionCode.length < 4) {
+    const normalizedCode = this.sessionCode.trim().toUpperCase();
+    if (normalizedCode.length < 4) {
       this.errorMessage = 'Le code de session doit contenir au moins 4 caractères.';
       return;
     }
 
     this.isLoading = true;
 
-    this.sessionService.getSessionByCode(this.sessionCode).subscribe({
+    this.sessionService.getSessionByCode(normalizedCode).subscribe({
       next: (session) => {
-        this.isLoading = false;
-        this.successMessage = `Bravo ${this.prenom} ${this.nom}, vous avez rejoint la session : ${session.titre} !`;
-        localStorage.setItem('player_name', this.prenom + ' ' + this.nom);
-        localStorage.setItem('session_code', this.sessionCode);
         
-        //  Redirection vers la page de la session
-        setTimeout(() => {
-          this.router.navigate(['/session', this.sessionCode]);
-        }, 1500);
+        this.sessionService
+          .joinSession(normalizedCode, this.nom.trim(), this.prenom.trim())
+          .subscribe({
+            next: () => {
+              this.isLoading = false;
+
+              
+              this.successMessage = `Bravo ${this.prenom} ${this.nom}, vous avez rejoint la session : ${session.titre} !`;
+
+              
+              localStorage.setItem(
+                'welab.participant',
+                JSON.stringify({
+                  nom: this.nom.trim(),
+                  prenom: this.prenom.trim(),
+                  sessionCode: session.code,
+                })
+              );
+
+              
+              localStorage.setItem('player_name', this.prenom + ' ' + this.nom);
+              localStorage.setItem('session_code', normalizedCode);
+              localStorage.removeItem('session_start_time');
+
+      
+              setTimeout(() => {
+                this.router.navigate(['/session', normalizedCode]);
+              }, 1500);
+            },
+            error: () => {
+              this.isLoading = false;
+              this.errorMessage = 'Impossible de rejoindre cette session pour le moment.';
+            },
+          });
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.status === 404 ? 'Code de session introuvable.' : 'Erreur de connexion au serveur.';
-      }
+        this.errorMessage =
+          err.status === 404 ? 'Code de session introuvable.' : 'Erreur de connexion au serveur.';
+      },
     });
   }
 }

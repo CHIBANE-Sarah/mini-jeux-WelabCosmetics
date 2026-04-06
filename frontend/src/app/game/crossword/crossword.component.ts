@@ -48,8 +48,8 @@ export class CrosswordComponent implements OnInit, OnDestroy {
 
   private readonly WORD_POSITIONS = [
     { row: 0, col: 0, direction: 'horizontal' as const, number: 1 },
-    { row: 3, col: 2, direction: 'horizontal' as const, number: 2 },
-    { row: 1, col: 4, direction: 'vertical' as const,   number: 3 },
+    { row: 3, col: 1, direction: 'horizontal' as const, number: 2 },
+    { row: 1, col: 9, direction: 'vertical' as const,   number: 3 },
     { row: 7, col: 0, direction: 'horizontal' as const, number: 4 },
     { row: 7, col: 11, direction: 'vertical' as const,   number: 5 },
   ];

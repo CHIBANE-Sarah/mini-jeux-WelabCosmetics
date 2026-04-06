@@ -16,35 +16,41 @@ Ce dossier contient le code source de l'API REST développée avec le framework 
    ```
    > Lance les 3 conteneurs en arrière-plan : `welab-symfony` (PHP/Symfony), `welab-angular` (Angular) et `welab-web` (Nginx). Vérifiez qu'ils sont bien actifs avec `docker compose ps`.
 
-2. **Installer les dépendances PHP :**
+2. **Se mettre dans le conteneur welab-symfony:**
    ```bash
-   docker exec welab-symfony composer install
+   docker exec -it welab-symfony bash
+   ```
+   > Se met dans le conteneur du docker `welab-symfony` du backend.
+
+3. **Installer les dépendances PHP :**
+   ```bash
+   composer install
    ```
    > Lit le fichier `composer.json` et télécharge toutes les bibliothèques PHP nécessaires au projet à l'intérieur du conteneur.
 
-3. **Générer les clés JWT (sécurité) :**
+4. **Générer les clés JWT (sécurité) :**
    ```bash
-   docker exec welab-symfony php bin/console lexik:jwt:generate-keypair --skip-if-exists
+   symfony console lexik:jwt:generate-keypair --skip-if-exists
    ```
    > Crée les fichiers `private.pem` et `public.pem` dans `config/jwt/`. Ces clés servent à signer et vérifier les tokens d'authentification. Le flag `--skip-if-exists` évite d'écraser des clés déjà existantes.
 
-4. **Créer la base de données :**
+5. **Créer la base de données :**
    ```bash
-   docker exec welab-symfony php bin/console doctrine:database:create --if-not-exists
+   symfony console doctrine:database:create --if-not-exists
    ```
    > Crée le fichier SQLite `var/data.db`. SQLite est une base de données légère qui ne nécessite pas de serveur séparé : tout est stocké dans un seul fichier.
 
-5. **Créer les tables (migrations) :**
+6. **Créer les tables (migrations) :**
    ```bash
-   docker exec welab-symfony php bin/console doctrine:migrations:migrate -n
+   symfony console doctrine:migrations:migrate -n
    ```
    > Applique les fichiers de migration pour créer toutes les tables dans la base de données. Le flag `-n` répond automatiquement "oui" aux confirmations.
 
 6. **Charger les données de test (Fixtures) :**
    ```bash
-   docker exec welab-symfony php bin/console doctrine:fixtures:load -n
+   symfony console doctrine:fixtures:load -n
    ```
-   > Injecte des données fictives pré-remplies (comptes admin, sessions exemple...) pour tester l'application.
+   > Injecte des données fictives pré-remplies (comptes admin, sessions ...) pour tester l'application.
    > Ps. Cette commande vide d'abord la base avant de la re-remplir.
 
 ## Démarrages suivants
@@ -67,7 +73,7 @@ La route d'authentification est `POST http://localhost:8000/api/login`. Elle att
 ```json
 {
   "username": "admin",
-  "password": "welab"
+  "password": "admin123"
 }
 ```
 ---
