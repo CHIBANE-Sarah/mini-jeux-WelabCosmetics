@@ -49,10 +49,8 @@ export class SessionService {
     return this.http.get<any[]>(`${this.apiUrl}/session/${code}/games`);
   }
 
-  createSession(data: { titre: string; duree: number }): Observable<Session> {
-    return this.http.post<Session>(`${this.apiUrl}/session`, data, {
-      headers: this.getAuthHeaders(),
-    });
+  createSession(data: { titre: string; duree: number; gameTypes?: string[] }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/session`, data);
   }
 
   joinSession(code: string, nom: string, prenom: string): Observable<any> {

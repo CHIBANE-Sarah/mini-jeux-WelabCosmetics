@@ -113,3 +113,94 @@
   font-weight: 600;
   font-size: 0.85rem;
 }
+
+/* ── Sélection des jeux dans le modal ── */
+.modal-hint {
+  font-size: 0.78rem;
+  color: var(--welab-text-light);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.modal-hint-block {
+  font-size: 0.82rem;
+  color: var(--welab-text-light);
+  margin: 0 0 0.75rem;
+}
+
+.modal-estimated {
+  background: var(--welab-blue-light);
+  color: var(--welab-blue);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.game-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.game-select-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--welab-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: white;
+}
+
+.game-select-item input[type="checkbox"] {
+  display: none;
+}
+
+.game-select-item:hover {
+  border-color: var(--welab-blue-title);
+  background: var(--welab-blue-light);
+}
+
+.game-select-item.selected {
+  border-color: var(--welab-blue);
+  background: var(--welab-blue-light);
+}
+
+.game-select-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.icon-assoc { background: var(--welab-blue-light); color: var(--welab-blue); }
+.icon-cross { background: var(--welab-rose-light); color: var(--welab-rose); }
+.icon-form  { background: var(--welab-cyan-light);  color: var(--welab-cyan); }
+
+.game-select-info { flex: 1; }
+
+.game-select-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--welab-text-main);
+}
+
+.game-select-desc {
+  font-size: 0.78rem;
+  color: var(--welab-text-light);
+  margin-top: 1px;
+}
+
+.game-select-duration {
+  font-size: 0.78rem;
+  color: var(--welab-text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

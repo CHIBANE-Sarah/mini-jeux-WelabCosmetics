@@ -8,6 +8,8 @@ import { AssociationGameComponent } from './session/association-game/association
 import { CrosswordComponent } from './game/crossword/crossword.component';
 import { FormulationComponent } from './game/formulation/formulation.component';
 import { ResultsComponent } from './game/results/results.component';
+import { GamesListComponent } from './admin/games-list/games-list.component';
+import { GameEditComponent } from './admin/game-edit/game-edit.component';
 import { inject } from '@angular/core';
 import { AuthService } from './core/services/auth.service';
 import { Router } from '@angular/router';
@@ -21,11 +23,21 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [() => inject(AuthService).isAuthenticated() ? true : inject(Router).parseUrl('/login')]
   },
+  {
+    path: 'dashboard/games',
+    component: GamesListComponent,
+    canActivate: [() => inject(AuthService).isAuthenticated() ? true : inject(Router).parseUrl('/login')]
+  },
+  {
+    path: 'dashboard/games/:id',
+    component: GameEditComponent,
+    canActivate: [() => inject(AuthService).isAuthenticated() ? true : inject(Router).parseUrl('/login')]
+  },
   { path: 'join', component: JoinSession },
   { path: 'session/association/:gameId', component: AssociationGameComponent },
   { path: 'session/crossword/:sessionCode', component: CrosswordComponent },
   { path: 'session/formulation/:sessionCode', component: FormulationComponent },
   { path: 'session/results/:sessionCode', component: ResultsComponent },
   { path: 'session/:code', component: SessionComponent },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' }  // ← toujours en DERNIER
 ];

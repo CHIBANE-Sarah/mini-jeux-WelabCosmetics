@@ -156,14 +156,17 @@
 <div class="modal fade" id="createSessionModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-custom">
+
       <div class="modal-header modal-header-custom">
         <h5 class="modal-title-custom">Créer une session</h5>
         <button type="button" class="btn-close" (click)="closeCreateModal()"></button>
       </div>
+
       <div class="modal-body modal-body-custom">
-        <div *ngIf="createError" class="modal-error">
-          {{ createError }}
-        </div>
+
+        <div *ngIf="createError" class="modal-error">{{ createError }}</div>
+
+        <!-- Titre -->
         <div class="modal-field">
           <label class="modal-label">Titre de la session</label>
           <input
@@ -173,26 +176,84 @@
             class="modal-input"
           />
         </div>
+
+        <!-- Durée optionnelle -->
         <div class="modal-field">
-          <label class="modal-label">Durée (minutes)</label>
+          <label class="modal-label">
+            Durée (minutes)
+            <span class="modal-hint">— laissez vide pour utiliser la durée estimée ({{ getEstimatedDuration() }} min)</span>
+          </label>
           <input
             type="number"
             [(ngModel)]="newDuree"
-            placeholder="30"
+            placeholder="{{ getEstimatedDuration() }}"
             min="1"
             class="modal-input"
           />
         </div>
+
+        <!-- Sélection des jeux -->
+        <div class="modal-field">
+          <label class="modal-label">Jeux disponibles</label>
+          <p class="modal-hint-block">Sélectionnez les jeux à inclure dans cette session</p>
+
+          <div class="game-select-list">
+
+            <label class="game-select-item" [class.selected]="selectedGames.association">
+              <input type="checkbox" [(ngModel)]="selectedGames.association" />
+              <div class="game-select-icon icon-assoc">
+                <i class="bi bi-arrows-angle-contract"></i>
+              </div>
+              <div class="game-select-info">
+                <div class="game-select-name">Association Termes & Définitions</div>
+                <div class="game-select-desc">Associez les termes cosmétiques à leur définition</div>
+              </div>
+              <span class="game-select-duration">10 min</span>
+            </label>
+
+            <label class="game-select-item" [class.selected]="selectedGames.crossword">
+              <input type="checkbox" [(ngModel)]="selectedGames.crossword" />
+              <div class="game-select-icon icon-cross">
+                <i class="bi bi-grid-3x3"></i>
+              </div>
+              <div class="game-select-info">
+                <div class="game-select-name">Mots Croisés Cosmétiques</div>
+                <div class="game-select-desc">Découvrez le vocabulaire essentiel de la cosmétique</div>
+              </div>
+              <span class="game-select-duration">15 min</span>
+            </label>
+
+            <label class="game-select-item" [class.selected]="selectedGames.formulation">
+              <input type="checkbox" [(ngModel)]="selectedGames.formulation" />
+              <div class="game-select-icon icon-form">
+                <i class="bi bi-droplet"></i>
+              </div>
+              <div class="game-select-info">
+                <div class="game-select-name">Formulation de Produit</div>
+                <div class="game-select-desc">Créez une formulation cosmétique en combinant les bons ingrédients</div>
+              </div>
+              <span class="game-select-duration">20 min</span>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Durée estimée -->
+        <div class="modal-estimated">
+          <i class="bi bi-clock me-1"></i>
+          Durée totale estimée : <strong>{{ getEstimatedDuration() }} minutes</strong>
+        </div>
+
       </div>
+
       <div class="modal-footer modal-footer-custom">
-        <button (click)="closeCreateModal()" class="btn-modal-cancel">
-          Annuler
-        </button>
+        <button (click)="closeCreateModal()" class="btn-modal-cancel">Annuler</button>
         <button (click)="createSession()" [disabled]="isCreating" class="btn-modal-confirm">
           <span *ngIf="isCreating" class="spinner"></span>
           {{ isCreating ? 'Création...' : 'Créer la session' }}
         </button>
       </div>
+
     </div>
   </div>
 </div>

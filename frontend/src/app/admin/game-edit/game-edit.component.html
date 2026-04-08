@@ -1,0 +1,280 @@
+<div class="edit-wrapper">
+
+  <!-- Navbar -->
+  <div class="top-navbar">
+    <div>
+      <div class="nav-brand">We Lab Cosmetic</div>
+      <div class="nav-sub">Inventons la cosmétique de demain</div>
+    </div>
+    <div class="nav-actions">
+      <button (click)="goBack()" class="btn-cancel">Annuler</button>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-ring"></div>
+    <p>Chargement du jeu...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="!isLoading && error" class="error-banner">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!isLoading && game" class="edit-container">
+
+    <!-- En-tête titre -->
+    <h1 class="page-title">Modifier : {{ getTypeLabel() }}</h1>
+    <p class="page-desc">Gérez les questions et réponses de ce jeu</p>
+
+    <!-- Succès -->
+    <div *ngIf="successMsg" class="success-banner">
+      <i class="bi bi-check-circle-fill me-2"></i>{{ successMsg }}
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         BLOC : Informations générales
+    ══════════════════════════════════════════ -->
+    <div class="section-card">
+      <h2 class="section-title">Informations générales</h2>
+      <div class="info-grid">
+        <div class="info-field">
+          <label class="info-label">Nom du jeu</label>
+          <div class="info-value">{{ getTypeLabel() }}</div>
+        </div>
+        <div class="info-field">
+          <label class="info-label">Session</label>
+          <div class="info-value">{{ game.sessionTitre }} <span class="code-badge">{{ game.sessionCode }}</span></div>
+        </div>
+        <div class="info-field">
+          <label class="info-label">Description</label>
+          <div class="info-value muted">{{ getTypeDesc() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         JEUX D'ASSOCIATION
+    ══════════════════════════════════════════ -->
+    <ng-container *ngIf="game.type === 'association'">
+
+      <!-- Questions existantes -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Questions</h2>
+          <span class="count-badge">{{ assocQuestions.length }}</span>
+        </div>
+
+        <div *ngIf="assocQuestions.length === 0" class="empty-inline">
+          Aucune question. Ajoutez-en une ci-dessous.
+        </div>
+
+        <div *ngFor="let q of assocQuestions; let i = index" class="question-item">
+          <div class="question-number">{{ i + 1 }}</div>
+          <div class="question-body">
+            <div class="question-enonce">
+              <span class="q-label">Terme : </span>{{ q.terme }}
+            </div>
+            <div class="question-tags">
+              <span class="answer-tag correct">✓ {{ q.bonneReponse }}</span>
+              <span *ngFor="let d of q.definitions" class="answer-tag" [class.correct]="d === q.bonneReponse">
+                {{ d }}
+              </span>
+            </div>
+          </div>
+          <button (click)="deleteAssocQuestion(q)" class="btn-delete" title="Supprimer">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ajouter une question -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <i class="bi bi-plus-circle me-2" style="color: var(--welab-blue);"></i>
+          Ajouter une question
+        </h2>
+
+        <div class="form-field">
+          <label class="form-label">Terme</label>
+          <input type="text" [(ngModel)]="newAssocTerme" placeholder="Ex: Émulsifiant" class="form-input" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">
+            Définitions
+            <span class="form-hint">(séparez par un point-virgule « ; »)</span>
+          </label>
+          <textarea
+            [(ngModel)]="newAssocDefinitions"
+            placeholder="Permet de mélanger l'eau et l'huile; Retient l'eau dans la formule; Protège le produit"
+            class="form-textarea"
+            rows="3">
+          </textarea>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Bonne réponse</label>
+          <input type="text" [(ngModel)]="newAssocBonneReponse"
+                 placeholder="Doit correspondre exactement à une définition ci-dessus"
+                 class="form-input" />
+        </div>
+
+        <button (click)="addAssocQuestion()" [disabled]="addingAssoc" class="btn-add-question">
+          <span *ngIf="addingAssoc" class="spinner"></span>
+          <i *ngIf="!addingAssoc" class="bi bi-plus me-1"></i>
+          {{ addingAssoc ? 'Ajout...' : 'Ajouter la question' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- ══════════════════════════════════════════
+         MOTS CROISÉS
+    ══════════════════════════════════════════ -->
+    <ng-container *ngIf="game.type === 'crossword'">
+
+      <!-- Questions existantes -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Questions</h2>
+          <span class="count-badge">{{ crosswordQuestions.length }}</span>
+        </div>
+
+        <div *ngIf="crosswordQuestions.length === 0" class="empty-inline">
+          Aucune question. Ajoutez-en une ci-dessous.
+        </div>
+
+        <div *ngFor="let q of crosswordQuestions; let i = index" class="question-item">
+          <div class="question-number">{{ i + 1 }}</div>
+          <div class="question-body">
+            <div class="question-enonce">
+              <span class="q-label">Définition : </span>{{ q.definition }}
+            </div>
+            <div class="question-tags">
+              <span class="answer-tag correct">{{ q.motCorrect }}</span>
+            </div>
+          </div>
+          <button (click)="deleteCrossQuestion(q)" class="btn-delete" title="Supprimer">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ajouter une question -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <i class="bi bi-plus-circle me-2" style="color: var(--welab-blue);"></i>
+          Ajouter une question
+        </h2>
+
+        <div class="form-field">
+          <label class="form-label">Définition (indice)</label>
+          <input type="text" [(ngModel)]="newCrossDefinition"
+                 placeholder="Ex: Mélange de deux liquides non miscibles stabilisé par un émulsifiant"
+                 class="form-input" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Mot correct (en majuscules)</label>
+          <input type="text" [(ngModel)]="newCrossMotCorrect"
+                 placeholder="Ex: EMULSION"
+                 class="form-input"
+                 style="text-transform: uppercase;" />
+        </div>
+
+        <button (click)="addCrossQuestion()" [disabled]="addingCross" class="btn-add-question">
+          <span *ngIf="addingCross" class="spinner"></span>
+          <i *ngIf="!addingCross" class="bi bi-plus me-1"></i>
+          {{ addingCross ? 'Ajout...' : 'Ajouter la question' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- ══════════════════════════════════════════
+         FORMULATION
+    ══════════════════════════════════════════ -->
+    <ng-container *ngIf="game.type === 'formulation'">
+
+      <!-- Ingrédients existants -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Ingrédients</h2>
+          <span class="count-badge">{{ ingredients.length }}</span>
+        </div>
+
+        <div *ngIf="ingredients.length === 0" class="empty-inline">
+          Aucun ingrédient. Ajoutez-en un ci-dessous.
+        </div>
+
+        <div *ngFor="let ing of ingredients; let i = index" class="question-item">
+          <div class="question-number">{{ i + 1 }}</div>
+          <div class="question-body">
+            <div class="question-enonce">
+              <span class="q-label">{{ ing.categorie }} : </span>{{ ing.nom }}
+            </div>
+            <div class="question-tags">
+              <span class="answer-tag" [class.correct]="ing.estCorrect" [class.incorrect]="!ing.estCorrect">
+                {{ ing.estCorrect ? '✓ Correct' : '✗ Incorrect' }}
+              </span>
+            </div>
+          </div>
+          <button (click)="deleteIngredient(ing)" class="btn-delete" title="Supprimer">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ajouter un ingrédient -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <i class="bi bi-plus-circle me-2" style="color: var(--welab-blue);"></i>
+          Ajouter un ingrédient
+        </h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Nom de l'ingrédient</label>
+            <input type="text" [(ngModel)]="newIngNom" placeholder="Ex: Eau purifiée" class="form-input" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Catégorie</label>
+            <select [(ngModel)]="newIngCategorie" class="form-input">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let cat of CATEGORIES" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Est un ingrédient correct ?</label>
+          <div class="toggle-row">
+            <button
+              (click)="newIngEstCorrect = true"
+              class="toggle-btn"
+              [class.active-correct]="newIngEstCorrect">
+              ✓ Oui (correct)
+            </button>
+            <button
+              (click)="newIngEstCorrect = false"
+              class="toggle-btn"
+              [class.active-incorrect]="!newIngEstCorrect">
+              ✗ Non (incorrect)
+            </button>
+          </div>
+        </div>
+
+        <button (click)="addIngredient()" [disabled]="addingIng" class="btn-add-question">
+          <span *ngIf="addingIng" class="spinner"></span>
+          <i *ngIf="!addingIng" class="bi bi-plus me-1"></i>
+          {{ addingIng ? 'Ajout...' : 'Ajouter l\'ingrédient' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>

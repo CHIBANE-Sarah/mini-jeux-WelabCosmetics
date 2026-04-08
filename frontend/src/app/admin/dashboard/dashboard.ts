@@ -20,10 +20,20 @@ export class DashboardComponent implements OnInit {
   totalParticipants = 0;
   averageScore = 0;
   averageTime = 0;
+
+  // ── Création session ──
   newTitre = '';
   newDuree: number | null = null;
+  // Sélection des jeux (au moins 1 obligatoire)
+  selectedGames = {
+    association: true,
+    crossword: true,
+    formulation: true,
+  };
   isCreating = false;
   createError = '';
+
+  // ── Résultats ──
   participations: any[] = [];
   showResults = false;
   isLoadingResults = false;
@@ -96,6 +106,7 @@ export class DashboardComponent implements OnInit {
     this.createError = '';
     this.newTitre = '';
     this.newDuree = null;
+    this.selectedGames = { association: true, crossword: true, formulation: true };
     const modalElement = document.getElementById('createSessionModal');
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
@@ -111,15 +122,42 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // Retourne la liste des types sélectionnés
+  getSelectedGameTypes(): string[] {
+    const types: string[] = [];
+    if (this.selectedGames.association) types.push('association');
+    if (this.selectedGames.crossword)   types.push('crossword');
+    if (this.selectedGames.formulation) types.push('formulation');
+    return types;
+  }
+
+  // Durée estimée selon les jeux sélectionnés
+  getEstimatedDuration(): number {
+    let total = 0;
+    if (this.selectedGames.association) total += 10;
+    if (this.selectedGames.crossword)   total += 15;
+    if (this.selectedGames.formulation) total += 20;
+    return total;
+  }
+
   createSession(): void {
-    if (!this.newTitre || !this.newDuree) {
-      this.createError = 'Veuillez remplir tous les champs';
+    if (!this.newTitre) {
+      this.createError = 'Veuillez saisir un titre';
       return;
     }
+    const gameTypes = this.getSelectedGameTypes();
+    if (gameTypes.length === 0) {
+      this.createError = 'Sélectionnez au moins un jeu';
+      return;
+    }
+
     this.isCreating = true;
     this.createError = '';
+
+    const duree = this.newDuree ?? this.getEstimatedDuration();
+
     this.sessionService
-      .createSession({ titre: this.newTitre, duree: this.newDuree })
+      .createSession({ titre: this.newTitre, duree, gameTypes })
       .subscribe({
         next: () => {
           this.isCreating = false;
@@ -143,7 +181,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToGames(): void {
-    alert('Fonctionnalité disponible prochainement');
+    this.router.navigate(['/dashboard/games']);
   }
 
   logout(): void {

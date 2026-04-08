@@ -27,23 +27,26 @@ security:
       jwt: ~
 
   access_control:
-    # Auth
+    # Auth publique
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
     - { path: ^/api/test, roles: PUBLIC_ACCESS }
 
-    # Session join + infos
+    # Session — rejoindre et consulter (public)
     - { path: ^/api/session/[A-Z0-9]+/games, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/[A-Z0-9]+/join, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/.*/join, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/[A-Z0-9]+$, roles: PUBLIC_ACCESS, methods: [GET] }
 
-    # Jeux publics
+    # Jeux publics (lecture pour les joueurs)
     - { path: ^/api/association, roles: PUBLIC_ACCESS }
     - { path: ^/api/crossword, roles: PUBLIC_ACCESS }
     - { path: ^/api/formulation, roles: PUBLIC_ACCESS }
     - { path: ^/api/participation, roles: PUBLIC_ACCESS }
 
-    # Admin
+    # Admin — gestion des jeux (ROLE_ADMIN obligatoire)
+    - { path: ^/api/admin, roles: ROLE_ADMIN }
+
+    # Admin — stats et sessions
     - { path: ^/api/stats/dashboard, roles: ROLE_ADMIN }
     - { path: ^/api/sessions, roles: ROLE_ADMIN }
 

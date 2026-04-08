@@ -1,0 +1,72 @@
+<div class="games-wrapper">
+
+  <!-- Navbar -->
+  <div class="top-navbar">
+    <div>
+      <div class="nav-brand">We Lab Cosmetic</div>
+      <div class="nav-sub">Inventons la cosmétique de demain</div>
+    </div>
+    <button (click)="goToDashboard()" class="btn-back">
+      <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
+    </button>
+  </div>
+
+  <!-- Contenu -->
+  <div class="games-container">
+
+    <div class="page-header">
+      <h1 class="page-title">Gérer les jeux</h1>
+      <p class="page-desc">Modifiez le contenu des jeux existants et ajustez les questions</p>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner-ring"></div>
+      <p>Chargement des jeux...</p>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="!isLoading && error" class="error-state">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+    </div>
+
+    <!-- Liste des jeux -->
+    <div *ngIf="!isLoading && !error" class="games-list">
+
+      <div *ngFor="let game of games" class="game-card">
+
+        <!-- Icône du type -->
+        <div class="game-icon" [ngClass]="getTypeClass(game.type)">
+          <i class="bi" [ngClass]="getTypeIcon(game.type)"></i>
+        </div>
+
+        <!-- Infos -->
+        <div class="game-info">
+          <div class="game-name">{{ getTypeLabel(game.type) }}</div>
+          <div class="game-session">{{ game.sessionTitre }}</div>
+
+          <div class="game-tags">
+            <span class="tag tag-duration">
+              <i class="bi bi-clock me-1"></i>{{ getTypeDuration(game.type) }}
+            </span>
+            <span class="tag tag-type">Type : {{ getTypeLabel(game.type) }}</span>
+            <span class="tag tag-questions">{{ game.nbQuestions }} question(s)</span>
+          </div>
+        </div>
+
+        <!-- Bouton Modifier -->
+        <button (click)="goToEdit(game.id)" class="btn-modify">
+          <i class="bi bi-pencil-fill me-1"></i> Modifier
+        </button>
+
+      </div>
+
+      <!-- Vide -->
+      <div *ngIf="games.length === 0" class="empty-state">
+        <i class="bi bi-inbox" style="font-size:2rem; color: var(--welab-text-light);"></i>
+        <p>Aucun jeu disponible. Créez d'abord une session depuis le tableau de bord.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
