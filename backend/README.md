@@ -22,6 +22,12 @@ Ce dossier contient le code source de l'API REST développée avec le framework 
    ```
    > Se met dans le conteneur du docker `welab-symfony` du backend.
 
+3. **Nettoyer le cache:**
+   ```bash
+   symfony console cache:clear
+   ```
+   > Permet de vider le cache pour qu'il n'y ai pas de conflit.
+
 3. **Installer les dépendances PHP :**
    ```bash
    composer install
