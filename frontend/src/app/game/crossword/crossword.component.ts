@@ -224,6 +224,14 @@ export class CrosswordComponent implements OnInit, OnDestroy {
     this.buildGrid();
   }
 
+  abandonner(): void {
+    if (!confirm('Abandonner ce jeu ? Votre score sera 0 pour cette partie.')) return;
+    clearInterval(this.timer);
+    localStorage.setItem('score_crossword', '0');
+    localStorage.setItem('total_crossword', String(this.words.length || 5));
+    this.nextGame();
+  }
+
   nextGame(): void {
     const games = JSON.parse(localStorage.getItem('session_games') || '[]');
     const currentIndex = games.findIndex((g: any) => g.type === 'crossword');

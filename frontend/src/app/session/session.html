@@ -1,25 +1,31 @@
 <div class="session-wrapper">
 
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-      <span class="visually-hidden">Chargement...</span>
-    </div>
+  <!-- Chargement -->
+  <div *ngIf="isLoading" style="display:flex; justify-content:center; align-items:center; min-height:100vh;">
+    <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status"></div>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger text-center py-4 m-4">
-    <h4>{{ error }}</h4>
-    <button class="btn btn-primary mt-3" (click)="goBack()">Retour à l'accueil</button>
+  <!-- Erreur -->
+  <div *ngIf="error" style="padding:3rem; text-align:center;">
+    <p style="color:#c62828; font-size:1.1rem;">{{ error }}</p>
+    <button class="btn-start" style="max-width:200px;margin:1rem auto;display:block;" (click)="goBack()">
+      Retour à l'accueil
+    </button>
   </div>
 
+  <!-- Contenu principal -->
   <div *ngIf="!isLoading && !error && session">
 
-    <!-- HEADER -->
+    <!-- HEADER gradient -->
     <div class="session-header">
       <div class="session-header-content">
         <div>
           <p class="session-label">Session : {{ session.code }}</p>
           <h1 class="session-title">Bienvenue {{ playerName }} !</h1>
-          <p class="session-subtitle">Prépare-toi à tester tes connaissances en cosmétique à travers {{ games.length }} mini-jeux interactifs !</p>
+          <p class="session-subtitle">
+            Prépare-toi à tester tes connaissances en cosmétique à travers
+            {{ games.length }} mini-jeu{{ games.length > 1 ? 'x' : '' }} interactif{{ games.length > 1 ? 's' : '' }} !
+          </p>
         </div>
         <div class="session-duration-badge">
           <i class="bi bi-clock"></i>
@@ -28,13 +34,14 @@
       </div>
     </div>
 
-    <!-- CONTENU -->
+    <!-- BODY -->
     <div class="session-body">
 
-      <!-- JEUX -->
+      <!-- Liste des jeux -->
       <div class="session-card">
         <h2 class="section-title">
-          <span class="section-icon">🎯</span> Les mini-jeux
+          <i class="bi bi-trophy" style="color: var(--welab-blue);"></i>
+          Les mini-jeux
         </h2>
         <div class="games-list">
           <div *ngFor="let game of games; let i = index" class="game-item">
@@ -51,25 +58,42 @@
                 <ng-container *ngIf="game.type === 'formulation'">Crée un produit cosmétique avec les bons ingrédients</ng-container>
               </p>
             </div>
-            <div class="game-points">🏆 100pts</div>
+            <div class="game-points">
+              <i class="bi bi-trophy-fill me-1"></i>100pts
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- INSTRUCTIONS -->
+      <!-- Instructions -->
       <div class="session-card">
-        <h2 class="section-title">Instructions</h2>
+        <h2 class="section-title">
+          <i class="bi bi-info-circle" style="color: var(--welab-blue);"></i>
+          Instructions
+        </h2>
         <ul class="instructions-list">
-          <li><span class="check-icon">✅</span> Complète les {{ games.length }} mini-jeux dans l'ordre présenté</li>
-          <li><span class="check-icon">✅</span> Chaque jeu a un temps limité, organise-toi bien</li>
-          <li><span class="check-icon">✅</span> Ton score final est la moyenne de tes 3 performances</li>
-          <li><span class="check-icon">✅</span> Prends ton temps et réfléchis bien avant de valider</li>
+          <li>
+            <i class="bi bi-check-circle-fill check-icon"></i>
+            Complète les {{ games.length }} mini-jeux dans l'ordre présenté
+          </li>
+          <li>
+            <i class="bi bi-check-circle-fill check-icon"></i>
+            Chaque jeu a un temps limité, organise-toi bien
+          </li>
+          <li>
+            <i class="bi bi-check-circle-fill check-icon"></i>
+            Ton score final est la moyenne de tes performances
+          </li>
+          <li>
+            <i class="bi bi-check-circle-fill check-icon"></i>
+            Prends ton temps et réfléchis bien avant de valider
+          </li>
         </ul>
       </div>
 
-      <!-- BOUTON -->
+      <!-- Bouton démarrer -->
       <button class="btn-start" (click)="startGames()">
-        Commencer les mini-jeux
+        <i class="bi bi-play-fill me-2"></i> Commencer les mini-jeux
       </button>
 
     </div>

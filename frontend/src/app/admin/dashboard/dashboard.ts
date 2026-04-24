@@ -182,4 +182,21 @@ export class DashboardComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  deleteSession(code: string): void {
+    if (!confirm(`Supprimer la session "${code}" ? Cette action est irréversible.`)) {
+      return;
+    }
+    this.sessionService.deleteSession(code).subscribe({
+      next: () => {
+        // Retirer la session de la liste locale sans recharger
+        this.sessions = this.sessions.filter(s => s.code !== code);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        alert('Impossible de supprimer cette session : ' + (err.error?.message || 'erreur serveur'));
+      }
+    });
+  }
+
 }

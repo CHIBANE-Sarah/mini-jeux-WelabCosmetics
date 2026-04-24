@@ -6,7 +6,7 @@ export interface Session {
   id: number;
   titre: string;
   code: string;
-  duree: number; // en secondes dans la BDD
+  duree: number;
   createur: string;
   nbParticipants?: number;
 }
@@ -15,7 +15,7 @@ export interface DashboardStats {
   totalSessions: number;
   totalParticipants: number;
   averageScore: number;
-  averageTime: number; // en minutes (converti côté backend)
+  averageTime: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,13 +23,6 @@ export class SessionService {
   private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
-
-  /**
-   * CORRECTION BUG #8 : suppression de getAuthHeaders() manuel.
-   * Le JWT est déjà injecté automatiquement par auth-interceptor.ts sur
-   * TOUTES les requêtes HTTP. Ajouter les headers manuellement créait
-   * un doublon d'Authorization header.
-   */
 
   getMySessions(): Observable<Session[]> {
     return this.http.get<Session[]>(`${this.apiUrl}/sessions`);
@@ -45,6 +38,11 @@ export class SessionService {
 
   createSession(data: { titre: string; duree: number; gameTypes?: string[] }): Observable<any> {
     return this.http.post(`${this.apiUrl}/session`, data);
+  }
+
+  /** AJOUT : suppression d'une session par son code */
+  deleteSession(code: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/session/${code}`);
   }
 
   joinSession(code: string, nom: string, prenom: string): Observable<any> {

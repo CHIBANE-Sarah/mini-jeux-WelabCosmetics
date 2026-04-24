@@ -1,12 +1,10 @@
 <div class="dashboard-wrapper">
   <div class="top-navbar">
-    <!-- Logo à gauche -->
     <div>
       <div class="nav-brand">We Lab Cosmetic</div>
       <div class="nav-sub">Inventons la cosmétique de demain</div>
     </div>
 
-    <!-- CORRECTION : tout regroupé à droite dans .nav-right -->
     <div class="nav-right">
       <a routerLink="/" class="nav-link">
         <i class="bi bi-house me-1"></i> Accueil
@@ -109,6 +107,8 @@
       <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
         Aucune session créée pour le moment. Cliquez sur "Commencer" pour en créer une.
       </div>
+
+      <!-- MODIFICATION : ajout du bouton supprimer à chaque session -->
       <div *ngFor="let session of sessions" class="session-item">
         <div>
           <div class="session-title">{{ session.titre }}</div>
@@ -118,6 +118,12 @@
           <div><i class="bi bi-people me-1"></i>{{ session.nbParticipants || 0 }} participants</div>
           <div class="session-duree">{{ session.duree / 60 | number:'1.0-0' }} min</div>
         </div>
+        <button
+          (click)="deleteSession(session.code)"
+          class="btn-delete-session"
+          title="Supprimer cette session">
+          <i class="bi bi-trash"></i>
+        </button>
       </div>
     </div>
 

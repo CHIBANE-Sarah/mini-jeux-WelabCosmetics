@@ -1,14 +1,15 @@
+/* ── Wrapper général ── */
 .session-wrapper {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--welab-bg-grey);
+  font-family: 'Inter', sans-serif;
 }
 
-/* HEADER */
+/* ── Header avec gradient WeLab ── */
 .session-header {
-  background: linear-gradient(135deg, #4a90d9, #357abd);
+  background: linear-gradient(135deg, var(--welab-blue) 0%, var(--welab-blue-dark) 100%);
   color: white;
-  padding: 32px 24px;
+  padding: 2rem 1.5rem 2.5rem;
 }
 
 .session-header-content {
@@ -17,102 +18,114 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .session-label {
-  font-size: 13px;
-  opacity: 0.85;
-  margin-bottom: 4px;
+  font-size: 0.78rem;
+  opacity: 0.8;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
 .session-title {
-  font-size: 28px;
+  font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  line-height: 1.2;
 }
 
 .session-subtitle {
-  font-size: 14px;
-  opacity: 0.9;
-  max-width: 400px;
+  font-size: 0.88rem;
+  opacity: 0.85;
+  max-width: 380px;
   line-height: 1.5;
 }
 
 .session-duration-badge {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
   border-radius: 12px;
-  padding: 10px 16px;
+  padding: 10px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
-  font-size: 14px;
-  font-weight: 600;
-  min-width: 70px;
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 72px;
+  text-align: center;
 }
 
 .session-duration-badge i {
-  font-size: 18px;
+  font-size: 1.1rem;
+  opacity: 0.9;
 }
 
-/* BODY */
+/* ── Body ── */
 .session-body {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  margin: -1.5rem auto 0;
+  padding: 0 1rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1rem;
 }
 
-/* CARD */
+/* ── Cards ── */
 .session-card {
   background: white;
   border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid var(--welab-border);
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #222;
-  margin-bottom: 16px;
+  color: var(--welab-text-main);
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* GAMES */
+/* ── Liste des jeux ── */
 .games-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .game-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  border: 1px solid #eee;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--welab-border);
   border-radius: 12px;
-  background: #fafafa;
+  background: var(--welab-bg-grey);
+  transition: border-color 0.2s;
+}
+
+.game-item:hover {
+  border-color: var(--welab-blue);
 }
 
 .game-number {
   width: 32px;
   height: 32px;
-  background: #4a90d9;
+  background: var(--welab-blue);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 0.85rem;
   flex-shrink: 0;
 }
 
@@ -122,61 +135,70 @@
 
 .game-name {
   font-weight: 600;
-  font-size: 15px;
-  color: #222;
+  font-size: 0.9rem;
+  color: var(--welab-text-main);
   margin: 0 0 2px 0;
 }
 
 .game-desc {
-  font-size: 13px;
-  color: #888;
+  font-size: 0.78rem;
+  color: var(--welab-text-muted);
   margin: 0;
 }
 
 .game-points {
-  font-size: 13px;
-  color: #e91e8c;
+  font-size: 0.8rem;
+  color: var(--welab-pink-btn);
   font-weight: 600;
   white-space: nowrap;
 }
 
-/* INSTRUCTIONS */
+/* ── Instructions ── */
 .instructions-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .instructions-list li {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 14px;
-  color: #444;
+  font-size: 0.85rem;
+  color: var(--welab-text-muted);
   line-height: 1.5;
 }
 
 .check-icon {
   flex-shrink: 0;
+  color: var(--welab-blue);
+  font-size: 1rem;
 }
 
-/* BOUTON */
+/* ── Bouton démarrer ── */
 .btn-start {
   width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, #e91e8c, #c2185b);
+  padding: 1.1rem;
+  background: linear-gradient(135deg, var(--welab-pink-btn), var(--welab-rose));
   color: white;
   border: none;
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: 14px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s;
+  letter-spacing: 0.3px;
+  transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 4px 15px rgba(217, 86, 130, 0.3);
 }
 
 .btn-start:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-start:active {
+  transform: translateY(0);
 }

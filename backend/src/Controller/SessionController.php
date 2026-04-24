@@ -148,6 +148,30 @@ final class SessionController extends AbstractController
         ]);
     }
 
+    #[Route('/session/{code}', name: 'app_session_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteSession(
+        string $code,
+        SessionRepository $sessionRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
+
+        if (!$session) {
+            return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Vérifier que l'admin connecté est bien le créateur
+        if ($session->getCreateur() !== $this->getUser()) {
+            return $this->json(['message' => 'Non autorisé'], Response::HTTP_FORBIDDEN);
+        }
+
+        $entityManager->remove($session);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'Session supprimée'], Response::HTTP_OK);
+    }
+
     #[Route('/stats/dashboard', name: 'app_dashboard_stats', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function dashboardStats(

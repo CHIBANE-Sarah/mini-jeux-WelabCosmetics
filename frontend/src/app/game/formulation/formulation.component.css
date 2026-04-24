@@ -217,3 +217,19 @@
 .correction-item.correct { background: #e8f5e9; }
 .correction-item.wrong { background: #ffebee; }
 .correction-item.missed { background: #fff8e1; }
+
+.btn-abandon-form {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #888;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-abandon-form:hover {
+  border-color: #e57373;
+  color: #c62828;
+  background: #fff5f5;
+}

@@ -1,23 +1,27 @@
 <div class="association-container">
 
-  
   <div *ngIf="isLoading" class="loading-state">
     <p>Chargement du jeu en cours...</p>
   </div>
 
-  
   <div *ngIf="!isLoading && !result" class="game-board">
-    
+
     <div class="game-header">
       <div class="timer" [class.timer-urgent]="timeLeft <= 60">
         ⏱️ Temps restant : <strong>{{ formattedTime }}</strong>
       </div>
 
-      <button class="btn-verify" 
-              [disabled]="!allAnswered || isVerifying" 
-              (click)="verify()">
-        {{ isVerifying ? 'Vérification...' : 'Valider mes associations' }}
-      </button>
+      <div style="display:flex; gap: 0.75rem; align-items:center;">
+        <!-- AJOUT : bouton abandonner -->
+        <button class="btn-abandon" (click)="abandonner()">
+          <i class="bi bi-skip-end me-1"></i> Abandonner
+        </button>
+        <button class="btn-verify"
+                [disabled]="!allAnswered || isVerifying"
+                (click)="verify()">
+          {{ isVerifying ? 'Vérification...' : 'Valider mes associations' }}
+        </button>
+      </div>
     </div>
 
     <p class="instruction">
@@ -26,108 +30,81 @@
 
     <div class="columns" cdkDropListGroup>
 
-      
       <div class="column-terms">
         <h3 class="column-title">Termes disponibles</h3>
-
-        <div 
+        <div
           cdkDropList
           cdkDropListId="terms-list"
           [cdkDropListData]="availableTerms"
           [cdkDropListConnectedTo]="definitionDropListIds"
           (cdkDropListDropped)="drop($event)"
           class="terms-drop-zone">
-
-          <div *ngFor="let term of availableTerms" 
-               cdkDrag 
+          <div *ngFor="let term of availableTerms"
+               cdkDrag
                class="term-card">
             {{ term }}
           </div>
-
           <p *ngIf="availableTerms.length === 0" class="placeholder-text">
             Tout est placé !
           </p>
         </div>
       </div>
 
-      
       <div class="column-defs">
         <h3 class="column-title def-title">Définitions</h3>
-
         <div *ngFor="let slot of definitionSlots; let i = index" class="def-row">
-
           <div class="def-card">{{ slot.def }}</div>
-
-          <div 
+          <div
             cdkDropList
             [cdkDropListData]="slot.droppedItems"
             (cdkDropListDropped)="drop($event)"
             class="def-drop-zone"
             [class.filled]="slot.droppedItems.length > 0">
-
-            <div *ngFor="let term of slot.droppedItems" 
-                 cdkDrag 
+            <div *ngFor="let term of slot.droppedItems"
+                 cdkDrag
                  class="term-card matched">
               {{ term }}
               <span class="remove-btn" (click)="removeTermFromDef(slot)">✕</span>
             </div>
-
             <div *ngIf="slot.droppedItems.length === 0" class="drop-placeholder">
               Déposez ici
             </div>
           </div>
-
         </div>
       </div>
 
     </div>
   </div>
 
-  
   <div *ngIf="result" class="custom-result-section">
     <div class="custom-result-card">
-
       <h2 class="custom-result-title">Résultats de la partie !</h2>
       <p class="custom-result-subtitle">Votre score final</p>
-
       <div class="custom-result-score">
         {{ result.score }} / {{ questions.length }}
       </div>
-
       <div class="custom-corrections-list">
-
         <div *ngFor="let detail of result.corrections"
              class="custom-correction-item"
              [class.is-correct]="detail.estCorrect"
              [class.is-wrong]="!detail.estCorrect">
-
           <div class="correction-header">
             <strong>{{ detail.terme }}</strong>
             <span class="correction-badge">
               {{ detail.estCorrect ? 'Correct' : 'Faux' }}
             </span>
           </div>
-
           <div class="correction-body">
-            <div>
-              Votre réponse : 
-              <span class="user-ans">{{ detail.reponse }}</span>
-            </div>
-
+            <div>Votre réponse : <span class="user-ans">{{ detail.reponse }}</span></div>
             <div *ngIf="!detail.estCorrect" class="expected-ans">
-              La bonne réponse était : 
-              <strong>{{ detail.bonneReponse }}</strong>
+              La bonne réponse était : <strong>{{ detail.bonneReponse }}</strong>
             </div>
           </div>
-
         </div>
-
       </div>
-
       <button class="custom-btn-home" (click)="goNext()">
         Jeu suivant →
       </button>
-
     </div>
   </div>
 

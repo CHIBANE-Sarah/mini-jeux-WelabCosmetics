@@ -147,6 +147,14 @@ export class FormulationComponent implements OnInit, OnDestroy {
     return 'slot-' + cat.toLowerCase().replace(/\s+/g, '-');
   }
 
+  abandonner(): void {
+    if (!confirm('Abandonner ce jeu ? Votre score sera 0 pour cette partie.')) return;
+    clearInterval(this.timer);
+    localStorage.setItem('score_formulation', '0');
+    localStorage.setItem('total_formulation', String(this.ingredients.length || 12));
+    this.nextGame();
+  }
+
   nextGame(): void {
     const games = JSON.parse(localStorage.getItem('session_games') || '[]');
     const currentIndex = games.findIndex((g: any) => g.type === 'formulation');

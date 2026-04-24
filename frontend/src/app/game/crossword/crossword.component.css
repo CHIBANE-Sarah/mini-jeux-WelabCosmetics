@@ -183,3 +183,19 @@
 .correction-item.wrong {
   background: #ffebee;
 }
+
+.btn-abandon-cross {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #888;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-abandon-cross:hover {
+  border-color: #e57373;
+  color: #c62828;
+  background: #fff5f5;
+}

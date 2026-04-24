@@ -4,6 +4,13 @@
     <i class="bi bi-clock"></i> {{ formattedTime }}
   </div>
 
+  <!-- AJOUT : bouton abandonner -->
+  <div *ngIf="!isLoading && score === null" style="position:absolute; top:20px; left:30px;">
+    <button class="btn-abandon-cross" (click)="abandonner()">
+      <i class="bi bi-skip-end me-1"></i> Abandonner
+    </button>
+  </div>
+
   <div *ngIf="isLoading" class="text-center py-5">
     <div class="spinner-border text-primary"></div>
   </div>
@@ -37,7 +44,6 @@
         <button class="btn btn-primary px-4" (click)="validate()">
           Vérifier
         </button>
-        <!-- CORRECTION : méthode resetGrid() au lieu d'expression inline -->
         <button class="btn btn-outline-secondary px-4" (click)="resetGrid()">
           Réinitialiser
         </button>
@@ -47,7 +53,6 @@
     <div class="definitions-section">
       <div class="definitions-card">
         <h5><i class="bi bi-book me-2"></i>Définitions</h5>
-
         <div class="def-group">
           <p class="def-label">HORIZONTAL</p>
           <div *ngFor="let word of horizontalWords" class="def-item">
@@ -55,7 +60,6 @@
             <span class="def-text">{{ word.definition }}</span>
           </div>
         </div>
-
         <div class="def-group mt-3">
           <p class="def-label">VERTICAL</p>
           <div *ngFor="let word of verticalWords" class="def-item">
@@ -65,7 +69,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <div *ngIf="score !== null" class="result-section text-center">
@@ -73,7 +76,6 @@
       <i class="bi bi-trophy-fill text-warning" style="font-size:3rem"></i>
       <h2 class="mt-3">Résultat Mots Croisés</h2>
       <p class="score-display">{{ score }} / {{ total }}</p>
-
       <div class="corrections-list">
         <div *ngFor="let correction of corrections"
              class="correction-item"
@@ -86,7 +88,6 @@
           </i>
         </div>
       </div>
-
       <button class="btn btn-primary btn-lg px-5 mt-4" (click)="nextGame()">
         Jeu suivant <i class="bi bi-arrow-right ms-2"></i>
       </button>

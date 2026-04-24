@@ -4,8 +4,14 @@
     <div class="logo-area">
       <span class="logo-text">WE LAB <span class="logo-sub">COSMETIC</span></span>
     </div>
-    <div class="timer-badge">
-      <i class="bi bi-clock"></i> {{ formattedTime }}
+    <div style="display:flex; gap:0.75rem; align-items:center;">
+      <!-- AJOUT : bouton abandonner -->
+      <button *ngIf="score === null" class="btn-abandon-form" (click)="abandonner()">
+        <i class="bi bi-skip-end me-1"></i> Abandonner
+      </button>
+      <div class="timer-badge">
+        <i class="bi bi-clock"></i> {{ formattedTime }}
+      </div>
     </div>
   </div>
 
@@ -14,7 +20,6 @@
   </div>
 
   <div *ngIf="!isLoading && score === null">
-
     <div class="page-title">
       <h2>Créez votre Sérum Hydratant</h2>
       <p>Sélectionnez les bons ingrédients pour chaque phase de la formulation</p>
@@ -22,15 +27,7 @@
 
     <div class="categories-grid">
       <div *ngFor="let cat of categories" class="category-card">
-        <!--
-          CORRECTION BUG #5 :
-          [class]="..." REMPLACE toutes les classes existantes, faisant disparaître
-          "category-title". On utilise class="" (statique) + [ngClass] (dynamique)
-          qui sont FUSIONNÉS par Angular.
-        -->
-        <h4 class="category-title" [ngClass]="getCatClass(cat)">
-          {{ cat }}
-        </h4>
+        <h4 class="category-title" [ngClass]="getCatClass(cat)">{{ cat }}</h4>
         <div class="ingredients-list">
           <div *ngFor="let ing of ingredientsByCategory[cat]"
                class="ingredient-item"
@@ -45,9 +42,6 @@
     <div class="formula-section">
       <h4 class="formula-title">Votre Formule</h4>
       <div class="formula-grid">
-        <!--
-          MÊME CORRECTION pour formula-slot : utiliser [ngClass] au lieu de [class]
-        -->
         <div *ngFor="let cat of categories" class="formula-slot" [ngClass]="getSlotClass(cat)">
           <span class="slot-label">{{ cat }}</span>
           <div *ngFor="let ing of getSelectedForCategory(cat)" class="slot-item">
@@ -55,15 +49,14 @@
           </div>
         </div>
       </div>
-
       <div class="formula-actions">
         <button class="btn-reset" (click)="reset()">Réinitialiser</button>
-        <button class="btn-validate" (click)="validate()" [disabled]="isValidating || selectedIds.length === 0">
+        <button class="btn-validate" (click)="validate()"
+                [disabled]="isValidating || selectedIds.length === 0">
           {{ isValidating ? 'Validation...' : 'Valider la formule' }}
         </button>
       </div>
     </div>
-
   </div>
 
   <div *ngIf="score !== null" class="result-section text-center">
@@ -71,7 +64,6 @@
       <i class="bi bi-trophy-fill text-warning" style="font-size:3rem"></i>
       <h2 class="mt-3">Résultat Formulation</h2>
       <p class="score-display">{{ score }} / {{ total }}</p>
-
       <div class="corrections-list mt-3">
         <div *ngFor="let c of corrections"
              class="correction-item"
@@ -86,7 +78,6 @@
           </span>
         </div>
       </div>
-
       <button class="btn-validate mt-4" (click)="nextGame()">
         Voir les résultats <i class="bi bi-arrow-right ms-2"></i>
       </button>

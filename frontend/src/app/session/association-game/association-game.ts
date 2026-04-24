@@ -237,6 +237,32 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     return [...arr].sort(() => Math.random() - 0.5);
   }
 
+  abandonner(): void {
+    if (!confirm('Abandonner ce jeu ? Votre score sera 0 pour cette partie.')) return;
+    this.clearTimer();
+    // Score 0 enregistré
+    localStorage.setItem('score_association', '0');
+    localStorage.setItem('total_association', String(this.questions.length));
+    const sessionCode = localStorage.getItem('session_code') || '';
+    const gamesRaw = localStorage.getItem('session_games');
+    if (gamesRaw) {
+      const games = JSON.parse(gamesRaw);
+      const currentIndex = games.findIndex((g: any) => g.type === 'association');
+      const next = games[currentIndex + 1];
+      if (next) {
+        switch (next.type) {
+          case 'formulation': this.router.navigate(['/session/formulation', sessionCode]); break;
+          case 'crossword':   this.router.navigate(['/session/crossword', sessionCode]);   break;
+          default:            this.router.navigate(['/session/results', sessionCode]);
+        }
+      } else {
+        this.router.navigate(['/session/results', sessionCode]);
+      }
+    } else {
+      this.router.navigate(['/session/results', sessionCode]);
+    }
+  }
+
   goNext(): void {
     const sessionCode = localStorage.getItem('session_code') || '';
     const gamesRaw = localStorage.getItem('session_games');
