@@ -8,7 +8,7 @@ import { ParticipationService } from '../../core/services/participation.service'
   standalone: true,
   imports: [CommonModule],
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']
+  styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
   sessionCode = '';
@@ -22,11 +22,9 @@ export class ResultsComponent implements OnInit {
   scoreFormulation: number | null = null;
   totalFormulation: number | null = null;
 
-  scoreGlobal: number = 0;
+  scoreGlobal = 0;
   reussie = false;
   date = new Date();
-  startTime = '';
-  endTime = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -36,10 +34,8 @@ export class ResultsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sessionCode = this.route.snapshot.paramMap.get('sessionCode') || '';
-    const startTime = localStorage.getItem('session_start_time');
-    const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
-    this.playerName = localStorage.getItem('player_name') || 'Joueur';
+    this.sessionCode  = this.route.snapshot.paramMap.get('sessionCode') || '';
+    this.playerName   = localStorage.getItem('player_name')  || 'Joueur';
     this.sessionTitle = localStorage.getItem('session_title') || 'Session de jeu';
 
     const sc = localStorage.getItem('score_crossword');
@@ -49,18 +45,9 @@ export class ResultsComponent implements OnInit {
     const sf = localStorage.getItem('score_formulation');
     const tf = localStorage.getItem('total_formulation');
 
-    if (sc && tc) {
-      this.scoreCrossword = parseInt(sc);
-      this.totalCrossword = parseInt(tc);
-    }
-    if (sa && ta) {
-      this.scoreAssociation = parseInt(sa);
-      this.totalAssociation = parseInt(ta);
-    }
-    if (sf && tf) {
-      this.scoreFormulation = parseInt(sf);
-      this.totalFormulation = parseInt(tf);
-    }
+    if (sc && tc) { this.scoreCrossword  = +sc; this.totalCrossword  = +tc; }
+    if (sa && ta) { this.scoreAssociation = +sa; this.totalAssociation = +ta; }
+    if (sf && tf) { this.scoreFormulation = +sf; this.totalFormulation = +tf; }
 
     this.calculateGlobalScore();
     this.saveParticipation();
@@ -68,8 +55,8 @@ export class ResultsComponent implements OnInit {
 
   calculateGlobalScore(): void {
     const scores: number[] = [];
-    if (this.scoreCrossword !== null && this.totalCrossword)
-      scores.push(Math.round((this.scoreCrossword / this.totalCrossword) * 100));
+    if (this.scoreCrossword  !== null && this.totalCrossword)
+      scores.push(Math.round((this.scoreCrossword  / this.totalCrossword)  * 100));
     if (this.scoreAssociation !== null && this.totalAssociation)
       scores.push(Math.round((this.scoreAssociation / this.totalAssociation) * 100));
     if (this.scoreFormulation !== null && this.totalFormulation)
@@ -87,29 +74,30 @@ export class ResultsComponent implements OnInit {
   }
 
   saveParticipation(): void {
-  const alreadySaved = localStorage.getItem('participation_saved');
-  console.log('saveParticipation appelé, alreadySaved:', alreadySaved);
-  if (alreadySaved) return;
-  
-  const startTime = localStorage.getItem('session_start_time');
-  const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
-  
-  this.participationService.save(this.sessionCode, this.scoreGlobal, tempsTotal).subscribe({
-    next: () => {
-      localStorage.setItem('participation_saved', '1');
-      console.log('participation sauvegardée');
-    }
-  });
-}
+    if (localStorage.getItem('participation_saved')) return;
+    const startTime  = localStorage.getItem('session_start_time');
+    const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
+
+    this.participationService.save(this.sessionCode, this.scoreGlobal, tempsTotal).subscribe({
+      next: () => localStorage.setItem('participation_saved', '1'),
+    });
+  }
+
+  /** AJOUT : retour à la page d'accueil */
+  goHome(): void {
+    this.clearScores();
+    this.router.navigate(['/']);
+  }
 
   rejouer(): void {
-    localStorage.removeItem('score_crossword');
-    localStorage.removeItem('total_crossword');
-    localStorage.removeItem('score_association');
-    localStorage.removeItem('total_association');
-    localStorage.removeItem('score_formulation');
-    localStorage.removeItem('total_formulation');
-    localStorage.removeItem('participation_saved');
+    this.clearScores();
     this.router.navigate(['/join']);
+  }
+
+  private clearScores(): void {
+    ['score_crossword','total_crossword','score_association','total_association',
+     'score_formulation','total_formulation','participation_saved'].forEach(k =>
+      localStorage.removeItem(k)
+    );
   }
 }

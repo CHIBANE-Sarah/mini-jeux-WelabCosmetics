@@ -41,8 +41,9 @@
             <span class="game-score-raw">{{ scoreCrossword }} / {{ totalCrossword }}</span>
           </div>
         </div>
-        <span class="game-pct" [class.good]="getPct(scoreCrossword, totalCrossword) >= 50"
-                                [class.bad]="getPct(scoreCrossword, totalCrossword) < 50">
+        <span class="game-pct"
+              [class.good]="getPct(scoreCrossword, totalCrossword) >= 50"
+              [class.bad]="getPct(scoreCrossword, totalCrossword) < 50">
           {{ getPct(scoreCrossword, totalCrossword) }}%
         </span>
       </div>
@@ -55,8 +56,9 @@
             <span class="game-score-raw">{{ scoreAssociation }} / {{ totalAssociation }}</span>
           </div>
         </div>
-        <span class="game-pct" [class.good]="getPct(scoreAssociation, totalAssociation) >= 50"
-                                [class.bad]="getPct(scoreAssociation, totalAssociation) < 50">
+        <span class="game-pct"
+              [class.good]="getPct(scoreAssociation, totalAssociation) >= 50"
+              [class.bad]="getPct(scoreAssociation, totalAssociation) < 50">
           {{ getPct(scoreAssociation, totalAssociation) }}%
         </span>
       </div>
@@ -69,8 +71,9 @@
             <span class="game-score-raw">{{ scoreFormulation }} / {{ totalFormulation }}</span>
           </div>
         </div>
-        <span class="game-pct" [class.good]="getPct(scoreFormulation, totalFormulation) >= 50"
-                                [class.bad]="getPct(scoreFormulation, totalFormulation) < 50">
+        <span class="game-pct"
+              [class.good]="getPct(scoreFormulation, totalFormulation) >= 50"
+              [class.bad]="getPct(scoreFormulation, totalFormulation) < 50">
           {{ getPct(scoreFormulation, totalFormulation) }}%
         </span>
       </div>
@@ -79,13 +82,16 @@
            class="no-scores">
         Aucun score enregistré pour cette session.
       </div>
-
     </div>
   </div>
 
-  <div class="text-center mt-4">
+  <!-- AJOUT : deux boutons côte à côte -->
+  <div class="results-actions">
+    <button class="btn-accueil" (click)="goHome()">
+      <i class="bi bi-house me-2"></i>Retour à l'accueil
+    </button>
     <button class="btn-rejouer" (click)="rejouer()">
-      Rejouer une session
+      <i class="bi bi-arrow-repeat me-2"></i>Rejouer une session
     </button>
   </div>
 

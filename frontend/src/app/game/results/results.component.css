@@ -17,18 +17,8 @@
   font-size: 13px;
   font-weight: 600;
 }
-
-.status-badge.success {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
-}
-
-.status-badge.failed {
-  background: #ffebee;
-  color: #c62828;
-  border: 1px solid #ef9a9a;
-}
+.status-badge.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.status-badge.failed  { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
 
 .results-card {
   background: #fff;
@@ -41,9 +31,7 @@
   width: 100%;
 }
 
-.results-left {
-  flex: 1;
-}
+.results-left { flex: 1; }
 
 .session-number {
   display: flex;
@@ -51,26 +39,15 @@
   gap: 10px;
   margin-bottom: 20px;
 }
-
 .num {
   background: #1565c0;
   color: white;
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: bold;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: bold; flex-shrink: 0;
 }
-
-.session-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #333;
-}
+.session-name { font-weight: 600; font-size: 0.95rem; color: #333; }
 
 .info-row {
   display: flex;
@@ -79,36 +56,14 @@
   border-bottom: 1px solid #f0f0f0;
   font-size: 0.9rem;
 }
+.info-label  { color: #888; }
+.info-value  { font-weight: 500; color: #333; }
+.score-global { color: #1565c0; font-size: 1.1rem; font-weight: 700; }
 
-.info-label {
-  color: #888;
-}
+.divider { width: 1px; background: #e0e0e0; }
 
-.info-value {
-  font-weight: 500;
-  color: #333;
-}
-
-.score-global {
-  color: #1565c0;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.divider {
-  width: 1px;
-  background: #e0e0e0;
-}
-
-.results-right {
-  flex: 1;
-}
-
-.resume-title {
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 16px;
-}
+.results-right { flex: 1; }
+.resume-title { font-weight: 700; color: #333; margin-bottom: 16px; }
 
 .game-result {
   display: flex;
@@ -119,57 +74,47 @@
   border-radius: 10px;
   margin-bottom: 10px;
 }
-
-.game-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.game-icon {
-  font-size: 1.2rem;
-  color: #888;
-}
-
-.game-name {
-  display: block;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.game-score-raw {
-  display: block;
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.game-pct {
-  font-weight: 700;
-  font-size: 1rem;
-}
-
+.game-info { display: flex; align-items: center; gap: 10px; }
+.game-icon  { font-size: 1.2rem; color: #888; }
+.game-name  { display: block; font-weight: 600; font-size: 0.9rem; color: #333; }
+.game-score-raw { display: block; font-size: 0.75rem; color: #888; }
+.game-pct { font-weight: 700; font-size: 1rem; }
 .game-pct.good { color: #2e7d32; }
-.game-pct.bad { color: #c62828; }
+.game-pct.bad  { color: #c62828; }
 
-.no-scores {
-  color: #888;
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 20px;
+.no-scores { color: #888; font-size: 0.9rem; text-align: center; padding: 20px; }
+
+/* AJOUT : zone des boutons d'action */
+.results-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
+
+.btn-accueil {
+  background: white;
+  color: #1565c0;
+  border: 2px solid #1565c0;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-accueil:hover { background: #e3f0ff; }
 
 .btn-rejouer {
   background: #1565c0;
   color: white;
   border: none;
-  padding: 12px 32px;
+  padding: 12px 28px;
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
-
-.btn-rejouer:hover {
-  background: #0d47a1;
-}
+.btn-rejouer:hover { opacity: 0.88; }

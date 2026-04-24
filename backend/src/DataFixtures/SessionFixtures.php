@@ -16,7 +16,7 @@ class SessionFixtures extends Fixture implements DependentFixtureInterface
         /** @var User $admin */
         $admin = $this->getReference('user_admin', User::class);
 
-        // Session 1 — Mots Croisés uniquement
+        // Session 1 - Mots Croisés uniquement
         $session1 = new Session();
         $session1->setTitreSession('Mots Croisés Cosmétiques');
         $session1->setCodeSession('SESS01');
@@ -32,7 +32,7 @@ class SessionFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($game1);
         $this->addReference('session_1', $session1);
 
-        // Session 2 — Association uniquement
+        // Session 2 - Association uniquement
         $session2 = new Session();
         $session2->setTitreSession('Association Termes & Définitions');
         $session2->setCodeSession('SESS02');
@@ -48,7 +48,7 @@ class SessionFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($game2);
         $this->addReference('session_2', $session2);
 
-        // Session 3 — Formulation uniquement
+        // Session 3 - Formulation uniquement
         $session3 = new Session();
         $session3->setTitreSession('Formulation de Produits');
         $session3->setCodeSession('SESS03');
@@ -64,7 +64,7 @@ class SessionFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($game3);
         $this->addReference('session_3', $session3);
 
-        // Session 4 — Les 3 jeux (session complète pour tester le parcours joueur)
+        // Session 4 - Les 3 jeux (session complète pour tester le parcours joueur)
         $session4 = new Session();
         $session4->setTitreSession('Formation Cosmétique Complète');
         $session4->setCodeSession('LAB2026');

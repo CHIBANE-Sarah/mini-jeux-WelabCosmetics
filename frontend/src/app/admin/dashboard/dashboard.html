@@ -1,12 +1,23 @@
 <div class="dashboard-wrapper">
   <div class="top-navbar">
+    <!-- Logo à gauche -->
     <div>
       <div class="nav-brand">We Lab Cosmetic</div>
       <div class="nav-sub">Inventons la cosmétique de demain</div>
     </div>
-    <button (click)="logout()" class="btn-logout">
-      <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
-    </button>
+
+    <!-- CORRECTION : tout regroupé à droite dans .nav-right -->
+    <div class="nav-right">
+      <a routerLink="/" class="nav-link">
+        <i class="bi bi-house me-1"></i> Accueil
+      </a>
+      <a routerLink="/join" class="nav-link">
+        <i class="bi bi-person-plus me-1"></i> Rejoindre une session
+      </a>
+      <button (click)="logout()" class="btn-logout">
+        <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
+      </button>
+    </div>
   </div>
 
   <div class="dashboard-container">
@@ -96,7 +107,7 @@
         <div class="spinner"></div>
       </div>
       <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
-        Aucune session trouvée.
+        Aucune session créée pour le moment. Cliquez sur "Commencer" pour en créer une.
       </div>
       <div *ngFor="let session of sessions" class="session-item">
         <div>
@@ -105,7 +116,6 @@
         </div>
         <div class="session-meta">
           <div><i class="bi bi-people me-1"></i>{{ session.nbParticipants || 0 }} participants</div>
-          <!-- CORRECTION BUG #4 : duree est en secondes → on divise par 60 pour afficher les minutes -->
           <div class="session-duree">{{ session.duree / 60 | number:'1.0-0' }} min</div>
         </div>
       </div>
@@ -141,9 +151,7 @@
               <div class="session-code">{{ p.sessionCode }}</div>
             </td>
             <td>{{ p.userName }}</td>
-            <td>
-              <span class="score-badge">{{ p.scoreTotal }}%</span>
-            </td>
+            <td><span class="score-badge">{{ p.scoreTotal }}%</span></td>
             <td>{{ p.tempsTotal }}s</td>
           </tr>
         </tbody>
@@ -167,7 +175,6 @@
 
         <div *ngIf="createError" class="modal-error">{{ createError }}</div>
 
-        <!-- Titre -->
         <div class="modal-field">
           <label class="modal-label">Titre de la session</label>
           <input
@@ -178,7 +185,6 @@
           />
         </div>
 
-        <!-- Durée optionnelle -->
         <div class="modal-field">
           <label class="modal-label">
             Durée (minutes)
@@ -193,7 +199,6 @@
           />
         </div>
 
-        <!-- Sélection des jeux -->
         <div class="modal-field">
           <label class="modal-label">Jeux disponibles</label>
           <p class="modal-hint-block">Sélectionnez les jeux à inclure dans cette session</p>
@@ -239,7 +244,6 @@
           </div>
         </div>
 
-        <!-- Durée estimée -->
         <div class="modal-estimated">
           <i class="bi bi-clock me-1"></i>
           Durée totale estimée : <strong>{{ getEstimatedDuration() }} minutes</strong>
