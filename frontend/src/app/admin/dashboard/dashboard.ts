@@ -24,7 +24,6 @@ export class DashboardComponent implements OnInit {
   // ── Création session ──
   newTitre = '';
   newDuree: number | null = null;
-  // Sélection des jeux (au moins 1 obligatoire)
   selectedGames = {
     association: true,
     crossword: true,
@@ -71,8 +70,8 @@ export class DashboardComponent implements OnInit {
     this.sessionService.getDashboardStats().subscribe({
       next: (stats) => {
         this.totalParticipants = stats.totalParticipants;
-        this.averageScore = stats.averageScore;
-        this.averageTime = stats.averageTime;
+        this.averageScore      = stats.averageScore;
+        this.averageTime       = stats.averageTime;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erreur chargement stats', err),
@@ -98,7 +97,7 @@ export class DashboardComponent implements OnInit {
         console.error('Erreur chargement participations', err);
         this.isLoadingResults = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -122,7 +121,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Retourne la liste des types sélectionnés
   getSelectedGameTypes(): string[] {
     const types: string[] = [];
     if (this.selectedGames.association) types.push('association');
@@ -131,7 +129,7 @@ export class DashboardComponent implements OnInit {
     return types;
   }
 
-  // Durée estimée selon les jeux sélectionnés
+  /** Durée estimée en MINUTES selon les jeux sélectionnés */
   getEstimatedDuration(): number {
     let total = 0;
     if (this.selectedGames.association) total += 10;
@@ -141,7 +139,7 @@ export class DashboardComponent implements OnInit {
   }
 
   createSession(): void {
-    if (!this.newTitre) {
+    if (!this.newTitre.trim()) {
       this.createError = 'Veuillez saisir un titre';
       return;
     }
@@ -154,10 +152,14 @@ export class DashboardComponent implements OnInit {
     this.isCreating = true;
     this.createError = '';
 
-    const duree = this.newDuree ?? this.getEstimatedDuration();
+    // CORRECTION BUG #3 (côté frontend) :
+    // La BDD stocke la durée en SECONDES. On envoie les minutes saisies × 60.
+    // SessionController.php multiplie aussi par 60 côté backend pour la cohérence
+    // avec les fixtures (900 = 15 min, 600 = 10 min…).
+    const dureeMinutes = this.newDuree ?? this.getEstimatedDuration();
 
     this.sessionService
-      .createSession({ titre: this.newTitre, duree, gameTypes })
+      .createSession({ titre: this.newTitre.trim(), duree: dureeMinutes, gameTypes })
       .subscribe({
         next: () => {
           this.isCreating = false;
@@ -170,14 +172,6 @@ export class DashboardComponent implements OnInit {
           this.createError = err.error?.message || 'Erreur lors de la création';
         },
       });
-  }
-
-  goToSession(code: string): void {
-    this.router.navigate(['/session', code]);
-  }
-
-  copyCode(code: string): void {
-    navigator.clipboard.writeText(code);
   }
 
   goToGames(): void {

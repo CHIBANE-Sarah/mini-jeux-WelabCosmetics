@@ -105,7 +105,8 @@
         </div>
         <div class="session-meta">
           <div><i class="bi bi-people me-1"></i>{{ session.nbParticipants || 0 }} participants</div>
-          <div class="session-duree">{{ session.duree }} min</div>
+          <!-- CORRECTION BUG #4 : duree est en secondes → on divise par 60 pour afficher les minutes -->
+          <div class="session-duree">{{ session.duree / 60 | number:'1.0-0' }} min</div>
         </div>
       </div>
     </div>
@@ -186,7 +187,7 @@
           <input
             type="number"
             [(ngModel)]="newDuree"
-            placeholder="{{ getEstimatedDuration() }}"
+            [placeholder]="getEstimatedDuration()"
             min="1"
             class="modal-input"
           />
@@ -205,7 +206,7 @@
                 <i class="bi bi-arrows-angle-contract"></i>
               </div>
               <div class="game-select-info">
-                <div class="game-select-name">Association Termes & Définitions</div>
+                <div class="game-select-name">Association Termes &amp; Définitions</div>
                 <div class="game-select-desc">Associez les termes cosmétiques à leur définition</div>
               </div>
               <span class="game-select-duration">10 min</span>

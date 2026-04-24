@@ -22,7 +22,13 @@
 
     <div class="categories-grid">
       <div *ngFor="let cat of categories" class="category-card">
-        <h4 class="category-title" [class]="'cat-' + cat.replace(' ', '-').toLowerCase()">
+        <!--
+          CORRECTION BUG #5 :
+          [class]="..." REMPLACE toutes les classes existantes, faisant disparaître
+          "category-title". On utilise class="" (statique) + [ngClass] (dynamique)
+          qui sont FUSIONNÉS par Angular.
+        -->
+        <h4 class="category-title" [ngClass]="getCatClass(cat)">
           {{ cat }}
         </h4>
         <div class="ingredients-list">
@@ -39,7 +45,10 @@
     <div class="formula-section">
       <h4 class="formula-title">Votre Formule</h4>
       <div class="formula-grid">
-        <div *ngFor="let cat of categories" class="formula-slot" [class]="'slot-' + cat.replace(' ', '-').toLowerCase()">
+        <!--
+          MÊME CORRECTION pour formula-slot : utiliser [ngClass] au lieu de [class]
+        -->
+        <div *ngFor="let cat of categories" class="formula-slot" [ngClass]="getSlotClass(cat)">
           <span class="slot-label">{{ cat }}</span>
           <div *ngFor="let ing of getSelectedForCategory(cat)" class="slot-item">
             {{ ing.nom }}

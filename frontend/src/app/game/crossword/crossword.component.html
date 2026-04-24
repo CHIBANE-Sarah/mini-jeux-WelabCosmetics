@@ -37,7 +37,8 @@
         <button class="btn btn-primary px-4" (click)="validate()">
           Vérifier
         </button>
-        <button class="btn btn-outline-secondary px-4" (click)="buildGrid(); userInputs = userInputs.map(r => r.map(() => ''))">
+        <!-- CORRECTION : méthode resetGrid() au lieu d'expression inline -->
+        <button class="btn btn-outline-secondary px-4" (click)="resetGrid()">
           Réinitialiser
         </button>
       </div>
@@ -74,12 +75,15 @@
       <p class="score-display">{{ score }} / {{ total }}</p>
 
       <div class="corrections-list">
-        <div *ngFor="let correction of corrections; let i = index"
+        <div *ngFor="let correction of corrections"
              class="correction-item"
              [class.correct]="correction.correct"
              [class.wrong]="!correction.correct">
           <span class="correction-word">{{ correction.motCorrect }}</span>
-          <i [class]="correction.correct ? 'bi bi-check-circle-fill text-success' : 'bi bi-x-circle-fill text-danger'"></i>
+          <i [class]="correction.correct
+            ? 'bi bi-check-circle-fill text-success'
+            : 'bi bi-x-circle-fill text-danger'">
+          </i>
         </div>
       </div>
 

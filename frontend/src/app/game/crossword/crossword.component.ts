@@ -41,17 +41,27 @@ export class CrosswordComponent implements OnInit, OnDestroy {
   sessionCode = '';
   timeLeft = 420;
   timer: any;
-  selectedCell: {row: number, col: number} | null = null;
+  selectedCell: { row: number; col: number } | null = null;
 
   private readonly GRID_ROWS = 12;
   private readonly GRID_COLS = 13;
 
+  /**
+   * Positions fixes calées sur les 5 mots des fixtures (CrosswordFixtures.php) :
+   * 1. EMULSION       (8 lettres)  → row=0,  col=0,  horizontal
+   * 2. HUMECTANT      (9 lettres)  → row=3,  col=1,  horizontal
+   * 3. ANTIOXYDANT    (11 lettres) → row=1,  col=9,  vertical
+   * 4. EMULSIFIANT    (11 lettres) → row=7,  col=0,  horizontal
+   * 5. PH             (2 lettres)  → row=7,  col=11, vertical
+   *
+   * Toutes ces positions sont dans les limites 12×13.
+   */
   private readonly WORD_POSITIONS = [
-    { row: 0, col: 0, direction: 'horizontal' as const, number: 1 },
-    { row: 3, col: 1, direction: 'horizontal' as const, number: 2 },
-    { row: 1, col: 9, direction: 'vertical' as const,   number: 3 },
-    { row: 7, col: 0, direction: 'horizontal' as const, number: 4 },
-    { row: 7, col: 11, direction: 'vertical' as const,   number: 5 },
+    { row: 0, col: 0,  direction: 'horizontal' as const, number: 1 },
+    { row: 3, col: 1,  direction: 'horizontal' as const, number: 2 },
+    { row: 1, col: 9,  direction: 'vertical'   as const, number: 3 },
+    { row: 7, col: 0,  direction: 'horizontal' as const, number: 4 },
+    { row: 7, col: 11, direction: 'vertical'   as const, number: 5 },
   ];
 
   constructor(
@@ -69,52 +79,61 @@ export class CrosswordComponent implements OnInit, OnDestroy {
   }
 
   loadQuestions(): void {
-  console.log('loadQuestions appelé, sessionCode:', this.sessionCode);
-  this.crosswordService.getQuestions(this.sessionCode).subscribe({
-    next: (questions) => {
-      console.log('questions reçues:', questions);
-      this.words = questions.map((q, i) => ({
-        ...q,
-        ...this.WORD_POSITIONS[i]
-      }));
-      this.buildGrid();
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      console.log('erreur:', err);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      this.cdr.detectChanges();
-    }
-  });
-}
+    this.crosswordService.getQuestions(this.sessionCode).subscribe({
+      next: (questions) => {
+        this.words = questions.slice(0, this.WORD_POSITIONS.length).map((q, i) => ({
+          ...q,
+          ...this.WORD_POSITIONS[i],
+        }));
+        this.buildGrid();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
 
   buildGrid(): void {
+    // Initialiser toute la grille avec des cellules noires
     this.grid = Array.from({ length: this.GRID_ROWS }, () =>
       Array.from({ length: this.GRID_COLS }, () => ({
         letter: '',
         isBlack: true,
         wordIndex: -1,
-        letterIndex: -1
+        letterIndex: -1,
       }))
     );
 
+    // Initialiser les inputs utilisateur à vide
     this.userInputs = Array.from({ length: this.GRID_ROWS }, () =>
       Array(this.GRID_COLS).fill('')
     );
 
+    // Placer chaque mot dans la grille
     this.words.forEach((word, wi) => {
       for (let i = 0; i < word.motCorrect.length; i++) {
         const r = word.direction === 'horizontal' ? word.row : word.row + i;
         const c = word.direction === 'horizontal' ? word.col + i : word.col;
+
+        // CORRECTION BUG #7 : protection hors-limites
+        // Sans cette vérification, buildGrid() plante silencieusement si un mot
+        // est trop long pour sa position dans la grille.
+        if (r < 0 || r >= this.GRID_ROWS || c < 0 || c >= this.GRID_COLS) {
+          console.warn(
+            `Mot "${word.motCorrect}" dépasse la grille à la position (${r}, ${c}). Lettre ignorée.`
+          );
+          continue;
+        }
+
         this.grid[r][c] = {
           letter: word.motCorrect[i],
           isBlack: false,
           wordIndex: wi,
           letterIndex: i,
-          number: i === 0 ? word.number : undefined
+          number: i === 0 ? word.number : undefined,
         };
       }
     });
@@ -143,7 +162,11 @@ export class CrosswordComponent implements OnInit, OnDestroy {
     const word = this.words[cell.wordIndex];
     const nextRow = word.direction === 'horizontal' ? row : row + 1;
     const nextCol = word.direction === 'horizontal' ? col + 1 : col;
-    if (nextRow < this.GRID_ROWS && nextCol < this.GRID_COLS && !this.grid[nextRow][nextCol].isBlack) {
+    if (
+      nextRow < this.GRID_ROWS &&
+      nextCol < this.GRID_COLS &&
+      !this.grid[nextRow][nextCol].isBlack
+    ) {
       this.selectedCell = { row: nextRow, col: nextCol };
     }
   }
@@ -151,20 +174,23 @@ export class CrosswordComponent implements OnInit, OnDestroy {
   isSelected(row: number, col: number): boolean {
     return this.selectedCell?.row === row && this.selectedCell?.col === col;
   }
-  
+
   get formattedTime(): string {
-  const m = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
-  const s = (this.timeLeft % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-}
+    const m = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
+    const s = (this.timeLeft % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
   validate(): void {
     clearInterval(this.timer);
-    const reponses = this.words.map(word => {
+    const reponses = this.words.map((word) => {
       let rep = '';
       for (let i = 0; i < word.motCorrect.length; i++) {
         const r = word.direction === 'horizontal' ? word.row : word.row + i;
         const c = word.direction === 'horizontal' ? word.col + i : word.col;
-        rep += this.userInputs[r][c] || '_';
+        if (r < this.GRID_ROWS && c < this.GRID_COLS) {
+          rep += this.userInputs[r][c] || '_';
+        }
       }
       return { id: word.id, reponse: rep };
     });
@@ -177,43 +203,48 @@ export class CrosswordComponent implements OnInit, OnDestroy {
           this.corrections = result.corrections;
           localStorage.setItem('score_crossword', String(result.score));
           localStorage.setItem('total_crossword', String(result.total));
+          this.cdr.detectChanges();
         });
-      }
+      },
     });
   }
 
   startTimer(): void {
-  this.timer = setInterval(() => {
-    this.timeLeft--;
-    this.cdr.detectChanges();
-    if (this.timeLeft <= 0) {
-      clearInterval(this.timer);
-      this.validate();
-    }
-  }, 1000);
-}
+    this.timer = setInterval(() => {
+      this.timeLeft--;
+      this.cdr.detectChanges();
+      if (this.timeLeft <= 0) {
+        clearInterval(this.timer);
+        this.validate();
+      }
+    }, 1000);
+  }
+
+  resetGrid(): void {
+    this.buildGrid();
+  }
 
   nextGame(): void {
-  const games = JSON.parse(localStorage.getItem('session_games') || '[]');
-  const currentIndex = games.findIndex((g: any) => g.type === 'crossword');
-  const nextGame = games[currentIndex + 1];
+    const games = JSON.parse(localStorage.getItem('session_games') || '[]');
+    const currentIndex = games.findIndex((g: any) => g.type === 'crossword');
+    const nextGame = games[currentIndex + 1];
 
-  if (!nextGame) {
-    this.router.navigate(['/session/results', this.sessionCode]);
-    return;
-  }
-
-  switch (nextGame.type) {
-    case 'association':
-      this.router.navigate(['/session/association', nextGame.id]);
-      break;
-    case 'formulation':
-      this.router.navigate(['/session/formulation', this.sessionCode]);
-      break;
-    default:
+    if (!nextGame) {
       this.router.navigate(['/session/results', this.sessionCode]);
+      return;
+    }
+
+    switch (nextGame.type) {
+      case 'association':
+        this.router.navigate(['/session/association', nextGame.id]);
+        break;
+      case 'formulation':
+        this.router.navigate(['/session/formulation', this.sessionCode]);
+        break;
+      default:
+        this.router.navigate(['/session/results', this.sessionCode]);
+    }
   }
-}
 
   ngOnDestroy(): void {
     clearInterval(this.timer);
@@ -228,10 +259,10 @@ export class CrosswordComponent implements OnInit, OnDestroy {
   }
 
   get horizontalWords(): WordConfig[] {
-    return this.words.filter(w => w.direction === 'horizontal');
+    return this.words.filter((w) => w.direction === 'horizontal');
   }
 
   get verticalWords(): WordConfig[] {
-    return this.words.filter(w => w.direction === 'vertical');
+    return this.words.filter((w) => w.direction === 'vertical');
   }
 }

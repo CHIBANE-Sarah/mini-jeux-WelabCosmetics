@@ -17,10 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * GameController — Gestion admin des jeux (gérer les jeux).
- * Toutes ces routes nécessitent ROLE_ADMIN.
- */
 #[Route('/api/admin/games', name: 'api_admin_game_')]
 #[IsGranted('ROLE_ADMIN')]
 class GameController extends AbstractController
@@ -29,44 +25,43 @@ class GameController extends AbstractController
     // 1. Liste de tous les jeux
     // ─────────────────────────────────────────────
 
-    /**
-     * GET /api/admin/games
-     * Retourne tous les jeux avec leurs questions/ingrédients.
-     */
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(GameRepository $gameRepository): JsonResponse
-    {
+    public function list(
+        GameRepository $gameRepository,
+        CrosswordQuestionRepository $crosswordRepo,
+        IngredientRepository $ingredientRepo
+    ): JsonResponse {
         $games = $gameRepository->findAll();
 
-        return $this->json(array_map([$this, 'serializeGame'], $games));
+        return $this->json(array_map(
+            fn($g) => $this->serializeGame($g, false, $crosswordRepo, $ingredientRepo),
+            $games
+        ));
     }
 
     // ─────────────────────────────────────────────
     // 2. Détail d'un jeu
     // ─────────────────────────────────────────────
 
-    /**
-     * GET /api/admin/games/{id}
-     * Retourne le détail complet d'un jeu (type + questions/ingrédients).
-     */
     #[Route('/{id}', name: 'detail', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function detail(int $id, GameRepository $gameRepository): JsonResponse
-    {
+    public function detail(
+        int $id,
+        GameRepository $gameRepository,
+        CrosswordQuestionRepository $crosswordRepo,
+        IngredientRepository $ingredientRepo
+    ): JsonResponse {
         $game = $gameRepository->find($id);
         if (!$game) {
             return $this->json(['error' => 'Jeu introuvable'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($this->serializeGame($game, true));
+        return $this->json($this->serializeGame($game, true, $crosswordRepo, $ingredientRepo));
     }
 
     // ─────────────────────────────────────────────
     // 3. Association — CRUD des questions
     // ─────────────────────────────────────────────
 
-    /**
-     * GET /api/admin/games/{id}/association/questions
-     */
     #[Route('/{id}/association/questions', name: 'assoc_questions_list', methods: ['GET'])]
     public function listAssocQuestions(
         int $id,
@@ -83,10 +78,6 @@ class GameController extends AbstractController
         return $this->json(array_map([$this, 'serializeAssocQuestion'], $questions));
     }
 
-    /**
-     * POST /api/admin/games/{id}/association/questions
-     * Body : { "terme": "...", "definitions": [...], "bonneReponse": "..." }
-     */
     #[Route('/{id}/association/questions', name: 'assoc_questions_add', methods: ['POST'])]
     public function addAssocQuestion(
         int $id,
@@ -120,10 +111,6 @@ class GameController extends AbstractController
         return $this->json($this->serializeAssocQuestion($q), Response::HTTP_CREATED);
     }
 
-    /**
-     * PUT /api/admin/games/{id}/association/questions/{questionId}
-     * Body : { "terme": "...", "definitions": [...], "bonneReponse": "..." }
-     */
     #[Route(
         '/{id}/association/questions/{questionId}',
         name: 'assoc_questions_update',
@@ -150,24 +137,15 @@ class GameController extends AbstractController
 
         $body = json_decode($request->getContent(), true);
 
-        if (!empty($body['terme'])) {
-            $q->setTerme($body['terme']);
-        }
-        if (!empty($body['definitions'])) {
-            $q->setDefinitions((array) $body['definitions']);
-        }
-        if (!empty($body['bonneReponse'])) {
-            $q->setBonneReponse($body['bonneReponse']);
-        }
+        if (!empty($body['terme']))        { $q->setTerme($body['terme']); }
+        if (!empty($body['definitions']))  { $q->setDefinitions((array) $body['definitions']); }
+        if (!empty($body['bonneReponse'])) { $q->setBonneReponse($body['bonneReponse']); }
 
         $em->flush();
 
         return $this->json($this->serializeAssocQuestion($q));
     }
 
-    /**
-     * DELETE /api/admin/games/{id}/association/questions/{questionId}
-     */
     #[Route(
         '/{id}/association/questions/{questionId}',
         name: 'assoc_questions_delete',
@@ -201,9 +179,6 @@ class GameController extends AbstractController
     // 4. Crossword — CRUD des questions
     // ─────────────────────────────────────────────
 
-    /**
-     * GET /api/admin/games/{id}/crossword/questions
-     */
     #[Route('/{id}/crossword/questions', name: 'crossword_questions_list', methods: ['GET'])]
     public function listCrosswordQuestions(
         int $id,
@@ -215,16 +190,11 @@ class GameController extends AbstractController
             return $this->json(['error' => 'Jeu introuvable'], Response::HTTP_NOT_FOUND);
         }
 
-        // CrosswordQuestion est lié à Session, on passe par la session du jeu
         $questions = $repo->findBy(['session' => $game->getSession()]);
 
         return $this->json(array_map([$this, 'serializeCrosswordQuestion'], $questions));
     }
 
-    /**
-     * POST /api/admin/games/{id}/crossword/questions
-     * Body : { "definition": "...", "motCorrect": "..." }
-     */
     #[Route('/{id}/crossword/questions', name: 'crossword_questions_add', methods: ['POST'])]
     public function addCrosswordQuestion(
         int $id,
@@ -256,9 +226,6 @@ class GameController extends AbstractController
         return $this->json($this->serializeCrosswordQuestion($q), Response::HTTP_CREATED);
     }
 
-    /**
-     * PUT /api/admin/games/{id}/crossword/questions/{questionId}
-     */
     #[Route(
         '/{id}/crossword/questions/{questionId}',
         name: 'crossword_questions_update',
@@ -284,21 +251,14 @@ class GameController extends AbstractController
         }
 
         $body = json_decode($request->getContent(), true);
-        if (!empty($body['definition'])) {
-            $q->setDefinition($body['definition']);
-        }
-        if (!empty($body['motCorrect'])) {
-            $q->setMotCorrect(strtoupper($body['motCorrect']));
-        }
+        if (!empty($body['definition'])) { $q->setDefinition($body['definition']); }
+        if (!empty($body['motCorrect'])) { $q->setMotCorrect(strtoupper($body['motCorrect'])); }
 
         $em->flush();
 
         return $this->json($this->serializeCrosswordQuestion($q));
     }
 
-    /**
-     * DELETE /api/admin/games/{id}/crossword/questions/{questionId}
-     */
     #[Route(
         '/{id}/crossword/questions/{questionId}',
         name: 'crossword_questions_delete',
@@ -332,9 +292,6 @@ class GameController extends AbstractController
     // 5. Formulation — CRUD des ingrédients
     // ─────────────────────────────────────────────
 
-    /**
-     * GET /api/admin/games/{id}/formulation/ingredients
-     */
     #[Route('/{id}/formulation/ingredients', name: 'formulation_ingredients_list', methods: ['GET'])]
     public function listIngredients(
         int $id,
@@ -351,10 +308,6 @@ class GameController extends AbstractController
         return $this->json(array_map([$this, 'serializeIngredient'], $ingredients));
     }
 
-    /**
-     * POST /api/admin/games/{id}/formulation/ingredients
-     * Body : { "nom": "...", "categorie": "...", "estCorrect": true }
-     */
     #[Route('/{id}/formulation/ingredients', name: 'formulation_ingredients_add', methods: ['POST'])]
     public function addIngredient(
         int $id,
@@ -387,9 +340,6 @@ class GameController extends AbstractController
         return $this->json($this->serializeIngredient($i), Response::HTTP_CREATED);
     }
 
-    /**
-     * PUT /api/admin/games/{id}/formulation/ingredients/{ingredientId}
-     */
     #[Route(
         '/{id}/formulation/ingredients/{ingredientId}',
         name: 'formulation_ingredients_update',
@@ -415,24 +365,15 @@ class GameController extends AbstractController
         }
 
         $body = json_decode($request->getContent(), true);
-        if (!empty($body['nom'])) {
-            $ingredient->setNom($body['nom']);
-        }
-        if (!empty($body['categorie'])) {
-            $ingredient->setCategorie($body['categorie']);
-        }
-        if (isset($body['estCorrect'])) {
-            $ingredient->setEstCorrect((bool) $body['estCorrect']);
-        }
+        if (!empty($body['nom']))       { $ingredient->setNom($body['nom']); }
+        if (!empty($body['categorie'])) { $ingredient->setCategorie($body['categorie']); }
+        if (isset($body['estCorrect'])) { $ingredient->setEstCorrect((bool) $body['estCorrect']); }
 
         $em->flush();
 
         return $this->json($this->serializeIngredient($ingredient));
     }
 
-    /**
-     * DELETE /api/admin/games/{id}/formulation/ingredients/{ingredientId}
-     */
     #[Route(
         '/{id}/formulation/ingredients/{ingredientId}',
         name: 'formulation_ingredients_delete',
@@ -466,25 +407,40 @@ class GameController extends AbstractController
     // Sérialisation
     // ─────────────────────────────────────────────
 
-    private function serializeGame(\App\Entity\Game $game, bool $withContent = false): array
-    {
-        $data = [
-            'id'          => $game->getId(),
-            'type'        => $game->getType(),
-            'sessionId'   => $game->getSession()?->getId(),
-            'sessionCode' => $game->getSession()?->getCodeSession(),
-            'sessionTitre'=> $game->getSession()?->getTitreSession(),
-            'nbQuestions' => 0,
-        ];
+    /**
+     * CORRECTION BUG #6 : nbQuestions était toujours 0 pour crossword et formulation.
+     * On passe les repositories pour compter les questions des types non-association.
+     */
+    private function serializeGame(
+        \App\Entity\Game $game,
+        bool $withContent,
+        CrosswordQuestionRepository $crosswordRepo,
+        IngredientRepository $ingredientRepo
+    ): array {
+        $nbQuestions = 0;
 
         if ($game->getType() === \App\Entity\Game::TYPE_ASSOCIATION) {
-            $data['nbQuestions'] = $game->getAssociationQuestions()->count();
-            if ($withContent) {
-                $data['questions'] = array_map(
-                    [$this, 'serializeAssocQuestion'],
-                    $game->getAssociationQuestions()->toArray()
-                );
-            }
+            $nbQuestions = $game->getAssociationQuestions()->count();
+        } elseif ($game->getType() === \App\Entity\Game::TYPE_CROSSWORD) {
+            $nbQuestions = $crosswordRepo->count(['session' => $game->getSession()]);
+        } elseif ($game->getType() === \App\Entity\Game::TYPE_FORMULATION) {
+            $nbQuestions = $ingredientRepo->count(['session' => $game->getSession()]);
+        }
+
+        $data = [
+            'id'           => $game->getId(),
+            'type'         => $game->getType(),
+            'sessionId'    => $game->getSession()?->getId(),
+            'sessionCode'  => $game->getSession()?->getCodeSession(),
+            'sessionTitre' => $game->getSession()?->getTitreSession(),
+            'nbQuestions'  => $nbQuestions,
+        ];
+
+        if ($withContent && $game->getType() === \App\Entity\Game::TYPE_ASSOCIATION) {
+            $data['questions'] = array_map(
+                [$this, 'serializeAssocQuestion'],
+                $game->getAssociationQuestions()->toArray()
+            );
         }
 
         return $data;
@@ -493,10 +449,10 @@ class GameController extends AbstractController
     private function serializeAssocQuestion(AssociationQuestion $q): array
     {
         return [
-            'id'          => $q->getId(),
-            'terme'       => $q->getTerme(),
-            'definitions' => $q->getDefinitions(),
-            'bonneReponse'=> $q->getBonneReponse(),
+            'id'           => $q->getId(),
+            'terme'        => $q->getTerme(),
+            'definitions'  => $q->getDefinitions(),
+            'bonneReponse' => $q->getBonneReponse(),
         ];
     }
 

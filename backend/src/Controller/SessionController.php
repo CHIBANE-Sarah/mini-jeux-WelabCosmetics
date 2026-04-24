@@ -17,6 +17,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 final class SessionController extends AbstractController
 {
+    /**
+     * POST /api/session
+     *
+     * CORRECTION BUG #3 :
+     * Le frontend envoie la durée en MINUTES (ex: 45 pour 45 minutes).
+     * La BDD stocke en SECONDES (les fixtures ont 900 = 15 min, 600 = 10 min, etc.)
+     * On multiplie par 60 à la réception pour uniformiser.
+     */
     #[Route('/session', name: 'app_session_create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function create(
@@ -30,6 +38,7 @@ final class SessionController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
+
         if (empty($data['titre']) || !isset($data['duree'])) {
             return $this->json(
                 ['message' => 'Les champs "titre" et "duree" sont requis.'],
@@ -39,7 +48,8 @@ final class SessionController extends AbstractController
 
         $session = new Session();
         $session->setTitreSession($data['titre']);
-        $session->setDuree((int) $data['duree']);
+        // CORRECTION : le frontend envoie des minutes, on stocke en secondes
+        $session->setDuree((int) $data['duree'] * 60);
         $session->setCreateur($admin);
 
         // Génération du code unique à 6 caractères
@@ -52,10 +62,9 @@ final class SessionController extends AbstractController
         $gameTypes = $data['gameTypes'] ?? [
             Game::TYPE_ASSOCIATION,
             Game::TYPE_CROSSWORD,
-            Game::TYPE_FORMULATION
+            Game::TYPE_FORMULATION,
         ];
 
-        // Dédoublonnage et validation
         $validTypes = [Game::TYPE_ASSOCIATION, Game::TYPE_CROSSWORD, Game::TYPE_FORMULATION];
         $gameTypes  = array_unique(array_filter($gameTypes, fn($t) => in_array($t, $validTypes)));
 
@@ -75,14 +84,10 @@ final class SessionController extends AbstractController
 
         return $this->json([
             'message' => 'Session créée avec succès !',
-            'session' => $this->serializeSession($session)
+            'session' => $this->serializeSession($session),
         ], Response::HTTP_CREATED);
     }
 
-    /**
-     * Liste toutes les sessions de l'admin connecté.
-     * CORRECTION : suppression du dd() qui bloquait l'endpoint.
-     */
     #[Route('/sessions', name: 'app_session_list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function list(SessionRepository $sessionRepository): JsonResponse
@@ -153,10 +158,10 @@ final class SessionController extends AbstractController
         $averageDuration = $participationRepository->getAverageDuration();
 
         return $this->json([
-            'totalSessions'    => $sessionRepository->count([]),
+            'totalSessions'     => $sessionRepository->count([]),
             'totalParticipants' => $participationRepository->count([]),
-            'averageScore'     => $averageScore !== null ? round($averageScore) : 0,
-            'averageTime'      => $averageDuration !== null ? round($averageDuration / 60) : 0,
+            'averageScore'      => $averageScore !== null ? round($averageScore) : 0,
+            'averageTime'       => $averageDuration !== null ? round($averageDuration / 60) : 0,
         ]);
     }
 
@@ -166,7 +171,7 @@ final class SessionController extends AbstractController
             'id'             => $session->getId(),
             'titre'          => $session->getTitreSession(),
             'code'           => $session->getCodeSession(),
-            'duree'          => $session->getDuree(),
+            'duree'          => $session->getDuree(), // en secondes
             'createur'       => $session->getCreateur()?->getLogin(),
             'nbParticipants' => $session->getParticipations()->count(),
         ];

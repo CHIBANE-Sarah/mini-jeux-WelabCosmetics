@@ -12,7 +12,7 @@ interface IngredientsByCategory {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './formulation.component.html',
-  styleUrls: ['./formulation.component.css']
+  styleUrls: ['./formulation.component.css'],
 })
 export class FormulationComponent implements OnInit, OnDestroy {
   ingredients: Ingredient[] = [];
@@ -47,20 +47,28 @@ export class FormulationComponent implements OnInit, OnDestroy {
       next: (ingredients) => {
         this.ingredients = ingredients;
         this.ingredientsByCategory = {};
-        ingredients.forEach(ing => {
+        ingredients.forEach((ing) => {
           if (!this.ingredientsByCategory[ing.categorie]) {
             this.ingredientsByCategory[ing.categorie] = [];
           }
           this.ingredientsByCategory[ing.categorie].push(ing);
         });
-        this.categories = Object.keys(this.ingredientsByCategory);
+        // Ordre des catégories conforme aux IHM
+        const ordreCategories = ['Phase Aqueuse', 'Phase Grasse', 'Actifs', 'Parfum'];
+        this.categories = ordreCategories.filter((c) => this.ingredientsByCategory[c]);
+        // Ajouter les catégories éventuellement non prévues
+        Object.keys(this.ingredientsByCategory).forEach((c) => {
+          if (!this.categories.includes(c)) {
+            this.categories.push(c);
+          }
+        });
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -79,8 +87,9 @@ export class FormulationComponent implements OnInit, OnDestroy {
   }
 
   getSelectedForCategory(categorie: string): Ingredient[] {
-    return (this.ingredientsByCategory[categorie] || [])
-      .filter(ing => this.selectedIds.includes(ing.id));
+    return (this.ingredientsByCategory[categorie] || []).filter((ing) =>
+      this.selectedIds.includes(ing.id)
+    );
   }
 
   reset(): void {
@@ -103,7 +112,7 @@ export class FormulationComponent implements OnInit, OnDestroy {
       error: () => {
         this.isValidating = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -125,27 +134,40 @@ export class FormulationComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  /**
+   * CORRECTION BUG #5 — méthodes pour les classes dynamiques.
+   * [ngClass] accepte une string et la FUSIONNE avec class="" statique.
+   * Contrairement à [class]="..." qui remplace TOUT.
+   */
+  getCatClass(cat: string): string {
+    return 'cat-' + cat.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  getSlotClass(cat: string): string {
+    return 'slot-' + cat.toLowerCase().replace(/\s+/g, '-');
+  }
+
   nextGame(): void {
-  const games = JSON.parse(localStorage.getItem('session_games') || '[]');
-  const currentIndex = games.findIndex((g: any) => g.type === 'formulation');
-  const nextGame = games[currentIndex + 1];
+    const games = JSON.parse(localStorage.getItem('session_games') || '[]');
+    const currentIndex = games.findIndex((g: any) => g.type === 'formulation');
+    const nextGame = games[currentIndex + 1];
 
-  if (!nextGame) {
-    this.router.navigate(['/session/results', this.sessionCode]);
-    return;
-  }
-
-  switch (nextGame.type) {
-    case 'association':
-      this.router.navigate(['/session/association', nextGame.id]);
-      break;
-    case 'crossword':
-      this.router.navigate(['/session/crossword', this.sessionCode]);
-      break;
-    default:
+    if (!nextGame) {
       this.router.navigate(['/session/results', this.sessionCode]);
+      return;
+    }
+
+    switch (nextGame.type) {
+      case 'association':
+        this.router.navigate(['/session/association', nextGame.id]);
+        break;
+      case 'crossword':
+        this.router.navigate(['/session/crossword', this.sessionCode]);
+        break;
+      default:
+        this.router.navigate(['/session/results', this.sessionCode]);
+    }
   }
-}
 
   ngOnDestroy(): void {
     clearInterval(this.timer);
