@@ -1,16 +1,22 @@
 # WeLab Cosmetic - Frontend (Angular)
 
-Ce dossier contient l'interface utilisateur (Client) développée avec **Angular**. Il s'agit d'une **Single Page Application (SPA)** communicant avec l'API Symfony.
+Ce dossier contient l'interface utilisateur développée avec **Angular 19**.
+Il s'agit d'une **Single Page Application (SPA)** communicant avec l'API Symfony.
 
-> Ps. Le frontend tourne entièrement via **Docker**.
+> Le frontend tourne entièrement via **Docker**.
 
 ## Principes d'Architecture Front-End
 
-L'intégration a été pensée avec une exigence de niveau professionnel :
-- **Design Pixel-Perfect** : Reproduction exacte des maquettes IHM (Marges, ombres, couleurs).
-- **Séparation des préoccupations (SoC)** : Le HTML et le CSS sont strictement séparés dans leurs propres fichiers pour une meilleure maintenabilité.
-- **Variables CSS Globales** : La charte graphique de *WeLab Cosmetic* est centralisée dans `styles.css`, permettant de modifier les thèmes facilement.
-- **Requêtes Asynchrones** : Utilisation d'`HttpClient` et de `RxJS` (Observables) pour la communication avec l'API (ex: Interception du JWT).
+- **Design WeLab** : Variables CSS globales centralisées dans `styles.css`
+  reproduisant la charte graphique du laboratoire (couleurs, typographie, espacements).
+- **Séparation des préoccupations** : HTML, CSS et TypeScript sont strictement
+  séparés dans leurs propres fichiers pour une meilleure maintenabilité.
+- **Standalone Components** : Tous les composants Angular utilisent l'architecture
+  standalone (sans NgModule), conformément aux bonnes pratiques Angular 19.
+- **Interceptor JWT** : Le token d'authentification est automatiquement injecté
+  dans toutes les requêtes HTTP via `auth-interceptor.ts`, sans duplication de code.
+- **Requêtes Asynchrones** : Utilisation d'`HttpClient` et de `RxJS` (Observables)
+  pour toute la communication avec l'API backend.
 
 ## Prérequis
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et démarré
@@ -18,26 +24,58 @@ L'intégration a été pensée avec une exigence de niveau professionnel :
 
 ## Installation et Démarrage
 
-1. **Démarrer les conteneurs Docker (depuis la racine du projet) :**
-   ```bash
-   docker compose up -d
-   ```
-   > Le conteneur `welab-angular` démarre automatiquement. Au premier lancement, il installe Angular CLI et toutes les dépendances (équivalent d'un `npm install`). Cela peut prendre quelques minutes.
+### 1. Démarrer les conteneurs Docker (depuis la racine du projet)
+```bash
+docker compose up -d
+```
+Le conteneur `welab-angular` démarre automatiquement. Au premier lancement,
+il installe Angular CLI et toutes les dépendances npm. Cela peut prendre
+plusieurs minutes.
 
-2. **Vérifier que Angular est bien démarré :**
-   ```bash
-   docker logs welab-angular -f
-   ```
-   > Attendez le message `✔ Compiled successfully`. Appuyez sur `Ctrl+C` pour quitter l'affichage des logs (les conteneurs continuent de tourner).
+### 2. Vérifier que Angular est bien démarré
+```bash
+docker logs welab-angular -f
+```
+Attendez le message `✔ Compiled successfully`.
+Appuyez sur `Ctrl+C` pour quitter l'affichage des logs
+(les conteneurs continuent de tourner).
 
-3. **Accéder à l'application :**
-   Ouvrez votre navigateur sur `http://localhost:4200`.
+### 3. Accéder à l'application
+Ouvrez votre navigateur sur `http://localhost:4200`.
 
-## Structure principale
-- `/src/styles.css` : Variables de couleurs globales WeLab.
-- `/src/app/core/services/` : Services API (ex: `auth.service.ts` gérant le LocalStorage et JWT).
-- `/src/app/home/` : Page d'accueil publique de la plateforme.
-- `/src/app/auth/login/` : Page de connexion administrateur (Two-Way Data Binding).
-- `/src/app/admin/dashboard/` : Tableau de bord dynamique affichant les données depuis l'API via `*ngFor`.
-- `/src/app/game/association/` : Jeu d'association termes / définitions.
 ---
+
+## Structure du projet
+src/
+├── styles.css                    → Variables CSS globales WeLab (couleurs, polices)
+└── app/
+├── app.routes.ts             → Définition de toutes les routes de l'application
+├── home/                     → Page d'accueil publique
+├── join/                     → Page rejoindre une session (côté joueur)
+├── auth/login/               → Page de connexion administrateur
+├── admin/
+│   ├── dashboard/            → Tableau de bord admin (sessions, stats, résultats)
+│   ├── games-list/           → Liste des jeux disponibles par session
+│   └── game-edit/            → Éditeur de questions et ingrédients par jeu
+├── session/
+│   ├── session/              → Page d'introduction de la session (côté joueur)
+│   └── association-game/     → Jeu d'association termes & définitions (drag & drop)
+├── game/
+│   ├── crossword/            → Jeu de mots croisés (grille interactive)
+│   ├── formulation/          → Jeu de formulation de produit (sélection d'ingrédients)
+│   └── results/              → Page de résultats finale
+├── core/
+│   ├── services/             → Services HTTP (auth, session, jeux, participation)
+│   ├── interceptors/         → Interceptor JWT (injection automatique du token)
+│   └── guards/               → Guard d'authentification (protection des routes admin)
+└── interfaces/               → Interfaces TypeScript partagées
+
+## Accès à l'application
+
+| Page | URL | Rôle |
+|------|-----|------|
+| Accueil | http://localhost:4200 | Public |
+| Rejoindre une session | http://localhost:4200/join | Joueur |
+| Connexion admin | http://localhost:4200/login | Admin |
+| Dashboard admin | http://localhost:4200/dashboard | Admin |
+| Gérer les jeux | http://localhost:4200/dashboard/games | Admin |
