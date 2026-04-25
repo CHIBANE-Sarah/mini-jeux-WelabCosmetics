@@ -48,7 +48,7 @@ Ouvrez votre navigateur sur `http://localhost:4200`.
 ## Structure du projet
 ```bash
 src/
-├── styles.css                    → Variables CSS globales WeLab (couleurs, polices)
+├── styles.css                → Variables CSS globales WeLab (couleurs, polices)
 └── app/
 ├── app.routes.ts             → Définition de toutes les routes de l'application
 ├── home/                     → Page d'accueil publique
