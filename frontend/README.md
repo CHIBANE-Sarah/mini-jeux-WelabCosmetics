@@ -46,6 +46,7 @@ Ouvrez votre navigateur sur `http://localhost:4200`.
 ---
 
 ## Structure du projet
+```bash
 src/
 ├── styles.css                    → Variables CSS globales WeLab (couleurs, polices)
 └── app/
@@ -59,7 +60,7 @@ src/
 │   └── game-edit/            → Éditeur de questions et ingrédients par jeu
 ├── session/
 │   ├── session/              → Page d'introduction de la session (côté joueur)
-│   └── association-game/     → Jeu d'association termes & définitions (drag & drop)
+│   └── association-game/     → Jeu d'association termes et définitions (drag and drop)
 ├── game/
 │   ├── crossword/            → Jeu de mots croisés (grille interactive)
 │   ├── formulation/          → Jeu de formulation de produit (sélection d'ingrédients)
@@ -69,6 +70,7 @@ src/
 │   ├── interceptors/         → Interceptor JWT (injection automatique du token)
 │   └── guards/               → Guard d'authentification (protection des routes admin)
 └── interfaces/               → Interfaces TypeScript partagées
+```
 
 ## Accès à l'application
 
