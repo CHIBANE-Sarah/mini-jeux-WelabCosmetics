@@ -17,14 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 final class SessionController extends AbstractController
 {
-    /**
-     * POST /api/session
-     *
-     * CORRECTION BUG #3 :
-     * Le frontend envoie la durée en MINUTES (ex: 45 pour 45 minutes).
-     * La BDD stocke en SECONDES (les fixtures ont 900 = 15 min, 600 = 10 min, etc.)
-     * On multiplie par 60 à la réception pour uniformiser.
-     */
     #[Route('/session', name: 'app_session_create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function create(
@@ -48,11 +40,9 @@ final class SessionController extends AbstractController
 
         $session = new Session();
         $session->setTitreSession($data['titre']);
-        // CORRECTION : le frontend envoie des minutes, on stocke en secondes
         $session->setDuree((int) $data['duree'] * 60);
         $session->setCreateur($admin);
 
-        // Génération du code unique à 6 caractères
         do {
             $code = strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
         } while ($sessionRepository->findOneBy(['codeSession' => $code]) !== null);
@@ -66,7 +56,7 @@ final class SessionController extends AbstractController
         ];
 
         $validTypes = [Game::TYPE_ASSOCIATION, Game::TYPE_CROSSWORD, Game::TYPE_FORMULATION];
-        $gameTypes  = array_unique(array_filter($gameTypes, fn($t) => in_array($t, $validTypes)));
+        $gameTypes = array_unique(array_filter($gameTypes, fn($t) => in_array($t, $validTypes)));
 
         if (empty($gameTypes)) {
             return $this->json(['message' => 'Sélectionnez au moins un jeu.'], Response::HTTP_BAD_REQUEST);
@@ -77,6 +67,68 @@ final class SessionController extends AbstractController
             $game->setType($type);
             $session->addGame($game);
             $entityManager->persist($game);
+
+            if ($type === Game::TYPE_ASSOCIATION) {
+                $firstQuestion = $entityManager
+                    ->getRepository(\App\Entity\AssociationQuestion::class)
+                    ->findOneBy([]);
+
+                if ($firstQuestion && $firstQuestion->getGame()) {
+                    $defaultQuestions = $entityManager
+                        ->getRepository(\App\Entity\AssociationQuestion::class)
+                        ->findBy(['game' => $firstQuestion->getGame()]);
+
+                    foreach ($defaultQuestions as $q) {
+                        $newQ = new \App\Entity\AssociationQuestion();
+                        $newQ->setTerme($q->getTerme());
+                        $newQ->setDefinitions($q->getDefinitions());
+                        $newQ->setBonneReponse($q->getBonneReponse());
+                        $newQ->setGame($game);
+                        $entityManager->persist($newQ);
+                    }
+                }
+            }
+
+            if ($type === Game::TYPE_CROSSWORD) {
+                $firstQuestion = $entityManager
+                    ->getRepository(\App\Entity\CrosswordQuestion::class)
+                    ->findOneBy([]);
+
+                if ($firstQuestion && $firstQuestion->getSession()) {
+                    $defaultQuestions = $entityManager
+                        ->getRepository(\App\Entity\CrosswordQuestion::class)
+                        ->findBy(['session' => $firstQuestion->getSession()]);
+
+                    foreach ($defaultQuestions as $q) {
+                        $newQ = new \App\Entity\CrosswordQuestion();
+                        $newQ->setDefinition($q->getDefinition());
+                        $newQ->setMotCorrect($q->getMotCorrect());
+                        $newQ->setSession($session);
+                        $entityManager->persist($newQ);
+                    }
+                }
+            }
+
+            if ($type === Game::TYPE_FORMULATION) {
+                $firstIngredient = $entityManager
+                    ->getRepository(\App\Entity\Ingredient::class)
+                    ->findOneBy([]);
+
+                if ($firstIngredient && $firstIngredient->getSession()) {
+                    $defaultIngredients = $entityManager
+                        ->getRepository(\App\Entity\Ingredient::class)
+                        ->findBy(['session' => $firstIngredient->getSession()]);
+
+                    foreach ($defaultIngredients as $i) {
+                        $newI = new \App\Entity\Ingredient();
+                        $newI->setNom($i->getNom());
+                        $newI->setCategorie($i->getCategorie());
+                        $newI->setEstCorrect($i->getEstCorrect());
+                        $newI->setSession($session);
+                        $entityManager->persist($newI);
+                    }
+                }
+            }
         }
 
         $entityManager->persist($session);
@@ -126,8 +178,8 @@ final class SessionController extends AbstractController
 
         return $this->json(array_map(function (Game $game) {
             return [
-                'id'        => $game->getId(),
-                'type'      => $game->getType(),
+                'id' => $game->getId(),
+                'type' => $game->getType(),
                 'sessionId' => $game->getSession()->getId(),
             ];
         }, $games));
@@ -142,8 +194,8 @@ final class SessionController extends AbstractController
         }
 
         return $this->json([
-            'message'   => 'Session rejointe',
-            'code'      => $session->getCodeSession(),
+            'message' => 'Session rejointe',
+            'code' => $session->getCodeSession(),
             'sessionId' => $session->getId(),
         ]);
     }
@@ -161,7 +213,6 @@ final class SessionController extends AbstractController
             return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
         }
 
-        // Vérifier que l'admin connecté est bien le créateur
         if ($session->getCreateur() !== $this->getUser()) {
             return $this->json(['message' => 'Non autorisé'], Response::HTTP_FORBIDDEN);
         }
@@ -178,25 +229,25 @@ final class SessionController extends AbstractController
         SessionRepository $sessionRepository,
         ParticipationRepository $participationRepository
     ): JsonResponse {
-        $averageScore    = $participationRepository->getAverageScore();
+        $averageScore = $participationRepository->getAverageScore();
         $averageDuration = $participationRepository->getAverageDuration();
 
         return $this->json([
-            'totalSessions'     => $sessionRepository->count([]),
+            'totalSessions' => $sessionRepository->count([]),
             'totalParticipants' => $participationRepository->count([]),
-            'averageScore'      => $averageScore !== null ? round($averageScore) : 0,
-            'averageTime'       => $averageDuration !== null ? round($averageDuration / 60) : 0,
+            'averageScore' => $averageScore !== null ? round($averageScore) : 0,
+            'averageTime' => $averageDuration !== null ? round($averageDuration / 60) : 0,
         ]);
     }
 
     private function serializeSession(Session $session): array
     {
         return [
-            'id'             => $session->getId(),
-            'titre'          => $session->getTitreSession(),
-            'code'           => $session->getCodeSession(),
-            'duree'          => $session->getDuree(), // en secondes
-            'createur'       => $session->getCreateur()?->getLogin(),
+            'id' => $session->getId(),
+            'titre' => $session->getTitreSession(),
+            'code' => $session->getCodeSession(),
+            'duree' => $session->getDuree(),
+            'createur' => $session->getCreateur()?->getLogin(),
             'nbParticipants' => $session->getParticipations()->count(),
         ];
     }

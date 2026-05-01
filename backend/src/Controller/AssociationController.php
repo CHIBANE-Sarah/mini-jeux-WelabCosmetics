@@ -29,13 +29,7 @@ class AssociationController extends AbstractController
 
         $questions = $questionRepository->findBy(['game' => $game]);
 
-        // CORRECTION : Si ce nouveau jeu n'a pas de questions, on prend la banque par défaut
-        if (count($questions) === 0) {
-            $firstQuestion = $questionRepository->findOneBy([]);
-            if ($firstQuestion) {
-                $questions = $questionRepository->findBy(['game' => $firstQuestion->getGame()]);
-            }
-        }
+     
 
         $data = array_map(function (AssociationQuestion $q) {
             $definitions = $q->getDefinitions();
@@ -73,13 +67,7 @@ class AssociationController extends AbstractController
 
         $questions = $questionRepository->findBy(['game' => $game]);
         
-        // CORRECTION : Même logique pour la vérification
-        if (count($questions) === 0) {
-            $firstQuestion = $questionRepository->findOneBy([]);
-            if ($firstQuestion) {
-                $questions = $questionRepository->findBy(['game' => $firstQuestion->getGame()]);
-            }
-        }
+
 
         $questionMap = [];
         foreach ($questions as $question) {

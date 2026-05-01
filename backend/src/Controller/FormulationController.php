@@ -34,18 +34,11 @@ class FormulationController extends AbstractController
 
         $ingredients = $ingredientRepository->findBy(['session' => $session]);
 
-        // FALLBACK : si cette session n'a pas d'ingrédients,
-        // on utilise la banque de la première session qui en possède.
-        if (count($ingredients) === 0) {
-            $firstIngredient = $ingredientRepository->findOneBy([]);
-            if ($firstIngredient) {
-                $ingredients = $ingredientRepository->findBy(['session' => $firstIngredient->getSession()]);
-            }
-        }
+
 
         $data = array_map(fn(Ingredient $i) => [
-            'id'        => $i->getId(),
-            'nom'       => $i->getNom(),
+            'id' => $i->getId(),
+            'nom' => $i->getNom(),
             'categorie' => $i->getCategorie(),
         ], $ingredients);
 
@@ -61,7 +54,7 @@ class FormulationController extends AbstractController
         IngredientRepository $ingredientRepository,
         SessionRepository $sessionRepository
     ): JsonResponse {
-        $body        = json_decode($request->getContent(), true);
+        $body = json_decode($request->getContent(), true);
         $sessionCode = $body['sessionCode'] ?? null;
         $selectionIds = $body['ingredients'] ?? [];
 
@@ -73,38 +66,32 @@ class FormulationController extends AbstractController
 
         $tousIngredients = $ingredientRepository->findBy(['session' => $session]);
 
-        // FALLBACK : même logique que le GET
-        if (count($tousIngredients) === 0) {
-            $firstIngredient = $ingredientRepository->findOneBy([]);
-            if ($firstIngredient) {
-                $tousIngredients = $ingredientRepository->findBy(['session' => $firstIngredient->getSession()]);
-            }
-        }
 
-        $score       = 0;
-        $total       = count(array_filter($tousIngredients, fn(Ingredient $i) => $i->getEstCorrect()));
+
+        $score = 0;
+        $total = count(array_filter($tousIngredients, fn(Ingredient $i) => $i->getEstCorrect()));
         $corrections = [];
 
         foreach ($tousIngredients as $ingredient) {
             $selectionne = in_array($ingredient->getId(), $selectionIds);
-            $correct     = $ingredient->getEstCorrect();
+            $correct = $ingredient->getEstCorrect();
 
             if ($selectionne && $correct) {
                 $score++;
             }
 
             $corrections[] = [
-                'id'          => $ingredient->getId(),
-                'nom'         => $ingredient->getNom(),
-                'categorie'   => $ingredient->getCategorie(),
+                'id' => $ingredient->getId(),
+                'nom' => $ingredient->getNom(),
+                'categorie' => $ingredient->getCategorie(),
                 'selectionne' => $selectionne,
-                'correct'     => $correct,
+                'correct' => $correct,
             ];
         }
 
         return $this->json([
-            'score'       => $score,
-            'total'       => $total,
+            'score' => $score,
+            'total' => $total,
             'corrections' => $corrections,
         ]);
     }

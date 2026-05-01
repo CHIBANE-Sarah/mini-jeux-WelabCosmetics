@@ -37,14 +37,7 @@ class CrosswordController extends AbstractController
 
         $questions = $crosswordRepository->findBy(['session' => $session]);
 
-        // FALLBACK : si cette session n'a pas de questions crossword,
-        // on utilise la banque de la première session qui en possède.
-        if (count($questions) === 0) {
-            $firstQuestion = $crosswordRepository->findOneBy([]);
-            if ($firstQuestion) {
-                $questions = $crosswordRepository->findBy(['session' => $firstQuestion->getSession()]);
-            }
-        }
+
 
         $data = array_map(fn(CrosswordQuestion $q) => [
             'id'         => $q->getId(),
