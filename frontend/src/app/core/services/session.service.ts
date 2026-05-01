@@ -11,6 +11,20 @@ export interface Session {
   nbParticipants?: number;
 }
 
+export interface GameDurationConfig {
+  association?: number;
+  crossword?: number;
+  formulation?: number;
+  [key: string]: number | undefined;
+}
+
+export interface CreateSessionPayload {
+  titre: string;
+  duree: number;
+  gameTypes?: string[];
+  gameDurations?: GameDurationConfig;
+}
+
 export interface DashboardStats {
   totalSessions: number;
   totalParticipants: number;
@@ -36,11 +50,10 @@ export class SessionService {
     return this.http.get<any[]>(`${this.apiUrl}/session/${code}/games`);
   }
 
-  createSession(data: { titre: string; duree: number; gameTypes?: string[] }): Observable<any> {
+  createSession(data: CreateSessionPayload): Observable<any> {
     return this.http.post(`${this.apiUrl}/session`, data);
   }
 
-  /** AJOUT : suppression d'une session par son code */
   deleteSession(code: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/session/${code}`);
   }

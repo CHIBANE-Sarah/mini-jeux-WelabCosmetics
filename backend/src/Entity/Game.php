@@ -10,9 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
 {
-    // Les 3 types de jeux possibles dans le projet
     const TYPE_ASSOCIATION = 'association';
-    const TYPE_CROSSWORD   = 'crossword';
+    const TYPE_CROSSWORD = 'crossword';
     const TYPE_FORMULATION = 'formulation';
 
     #[ORM\Id]
@@ -20,16 +19,17 @@ class Game
     #[ORM\Column]
     private ?int $id = null;
 
-    // Type du jeu : 'association', 'crossword' ou 'formulation'
     #[ORM\Column(length: 50)]
     private ?string $type = null;
 
-    // Relation vers la Session : un jeu appartient à une session
+    // Durée du jeu en secondes
+    #[ORM\Column]
+    private ?int $duree = 0;
+
     #[ORM\ManyToOne(inversedBy: 'games')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Session $session = null;
 
-    // Relation vers les questions d'association liées à ce jeu
     #[ORM\OneToMany(
         targetEntity: AssociationQuestion::class,
         mappedBy: 'game',
@@ -58,6 +58,17 @@ class Game
         return $this;
     }
 
+    public function getDuree(): ?int
+    {
+        return $this->duree;
+    }
+
+    public function setDuree(int $duree): static
+    {
+        $this->duree = $duree;
+        return $this;
+    }
+
     public function getSession(): ?Session
     {
         return $this->session;
@@ -80,6 +91,7 @@ class Game
             $this->associationQuestions->add($question);
             $question->setGame($this);
         }
+
         return $this;
     }
 
@@ -90,6 +102,7 @@ class Game
                 $question->setGame(null);
             }
         }
+
         return $this;
     }
 }

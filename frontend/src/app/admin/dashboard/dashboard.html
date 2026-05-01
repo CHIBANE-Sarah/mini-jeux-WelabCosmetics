@@ -24,7 +24,6 @@
       <p class="dash-desc">Gérez vos sessions et suivez les performances des participants</p>
     </div>
 
-    <!-- Statistiques -->
     <div class="grid-row">
       <div class="stat-card">
         <div class="stat-icon stat-icon-blue">
@@ -35,6 +34,7 @@
           <div class="stat-label">Sessions créées</div>
         </div>
       </div>
+
       <div class="stat-card">
         <div class="stat-icon stat-icon-pink">
           <i class="bi bi-people"></i>
@@ -44,6 +44,7 @@
           <div class="stat-label">Joueurs participants</div>
         </div>
       </div>
+
       <div class="stat-card">
         <div class="stat-icon stat-icon-cyan">
           <i class="bi bi-trophy"></i>
@@ -53,6 +54,7 @@
           <div class="stat-label">Score moyen</div>
         </div>
       </div>
+
       <div class="stat-card">
         <div class="stat-icon stat-icon-orange">
           <i class="bi bi-clock"></i>
@@ -64,7 +66,6 @@
       </div>
     </div>
 
-    <!-- Actions -->
     <div class="grid-row">
       <div class="action-card">
         <div class="action-icon action-icon-blue">
@@ -76,6 +77,7 @@
           Commencer
         </button>
       </div>
+
       <div class="action-card">
         <div class="action-icon action-icon-pink">
           <i class="bi bi-controller"></i>
@@ -86,6 +88,7 @@
           Accéder
         </button>
       </div>
+
       <div class="action-card">
         <div class="action-icon action-icon-dark">
           <i class="bi bi-bar-chart-fill"></i>
@@ -98,26 +101,28 @@
       </div>
     </div>
 
-    <!-- Sessions récentes -->
     <div class="sessions-panel">
       <h3 class="panel-title">Sessions récentes</h3>
+
       <div *ngIf="isLoading" class="loading-state">
         <div class="spinner"></div>
       </div>
+
       <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
         Aucune session créée pour le moment. Cliquez sur "Commencer" pour en créer une.
       </div>
 
-      <!-- MODIFICATION : ajout du bouton supprimer à chaque session -->
       <div *ngFor="let session of sessions" class="session-item">
         <div>
           <div class="session-title">{{ session.titre }}</div>
           <div class="session-code">Code : {{ session.code }}</div>
         </div>
+
         <div class="session-meta">
           <div><i class="bi bi-people me-1"></i>{{ session.nbParticipants || 0 }} participants</div>
           <div class="session-duree">{{ session.duree / 60 | number:'1.0-0' }} min</div>
         </div>
+
         <button
           (click)="deleteSession(session.code)"
           class="btn-delete-session"
@@ -127,7 +132,6 @@
       </div>
     </div>
 
-    <!-- Section Résultats -->
     <div *ngIf="showResults" class="sessions-panel results-panel">
       <h3 class="panel-title">
         <i class="bi bi-bar-chart-fill me-2"></i>Résultats des participants
@@ -163,22 +167,18 @@
         </tbody>
       </table>
     </div>
-
   </div>
 </div>
 
-<!-- Modal Créer une session -->
 <div class="modal fade" id="createSessionModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-custom">
-
       <div class="modal-header modal-header-custom">
         <h5 class="modal-title-custom">Créer une session</h5>
         <button type="button" class="btn-close" (click)="closeCreateModal()"></button>
       </div>
 
       <div class="modal-body modal-body-custom">
-
         <div *ngIf="createError" class="modal-error">{{ createError }}</div>
 
         <div class="modal-field">
@@ -192,79 +192,101 @@
         </div>
 
         <div class="modal-field">
-          <label class="modal-label">
-            Durée (minutes)
-            <span class="modal-hint">— laissez vide pour utiliser la durée estimée ({{ getEstimatedDuration() }} min)</span>
-          </label>
-          <input
-            type="number"
-            [(ngModel)]="newDuree"
-            [placeholder]="getEstimatedDuration()"
-            min="1"
-            class="modal-input"
-          />
-        </div>
-
-        <div class="modal-field">
           <label class="modal-label">Jeux disponibles</label>
-          <p class="modal-hint-block">Sélectionnez les jeux à inclure dans cette session</p>
+          <p class="modal-hint-block">
+            Sélectionnez les jeux à inclure et définissez la durée de chaque jeu.
+          </p>
 
           <div class="game-select-list">
-
             <label class="game-select-item" [class.selected]="selectedGames.association">
               <input type="checkbox" [(ngModel)]="selectedGames.association" />
+
               <div class="game-select-icon icon-assoc">
                 <i class="bi bi-arrows-angle-contract"></i>
               </div>
+
               <div class="game-select-info">
                 <div class="game-select-name">Association Termes &amp; Définitions</div>
                 <div class="game-select-desc">Associez les termes cosmétiques à leur définition</div>
               </div>
-              <span class="game-select-duration">10 min</span>
+
+              <div class="game-duration-control">
+                <input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="gameDurations.association"
+                  [disabled]="!selectedGames.association"
+                  class="modal-input duration-input"
+                />
+                <span>min</span>
+              </div>
             </label>
 
             <label class="game-select-item" [class.selected]="selectedGames.crossword">
               <input type="checkbox" [(ngModel)]="selectedGames.crossword" />
+
               <div class="game-select-icon icon-cross">
                 <i class="bi bi-grid-3x3"></i>
               </div>
+
               <div class="game-select-info">
                 <div class="game-select-name">Mots Croisés Cosmétiques</div>
                 <div class="game-select-desc">Découvrez le vocabulaire essentiel de la cosmétique</div>
               </div>
-              <span class="game-select-duration">15 min</span>
+
+              <div class="game-duration-control">
+                <input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="gameDurations.crossword"
+                  [disabled]="!selectedGames.crossword"
+                  class="modal-input duration-input"
+                />
+                <span>min</span>
+              </div>
             </label>
 
             <label class="game-select-item" [class.selected]="selectedGames.formulation">
               <input type="checkbox" [(ngModel)]="selectedGames.formulation" />
+
               <div class="game-select-icon icon-form">
                 <i class="bi bi-droplet"></i>
               </div>
+
               <div class="game-select-info">
                 <div class="game-select-name">Formulation de Produit</div>
                 <div class="game-select-desc">Créez une formulation cosmétique en combinant les bons ingrédients</div>
               </div>
-              <span class="game-select-duration">20 min</span>
-            </label>
 
+              <div class="game-duration-control">
+                <input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="gameDurations.formulation"
+                  [disabled]="!selectedGames.formulation"
+                  class="modal-input duration-input"
+                />
+                <span>min</span>
+              </div>
+            </label>
           </div>
         </div>
 
         <div class="modal-estimated">
           <i class="bi bi-clock me-1"></i>
-          Durée totale estimée : <strong>{{ getEstimatedDuration() }} minutes</strong>
+          Durée totale de la session :
+          <strong>{{ getEstimatedDuration() }} minutes</strong>
         </div>
-
       </div>
 
       <div class="modal-footer modal-footer-custom">
         <button (click)="closeCreateModal()" class="btn-modal-cancel">Annuler</button>
+
         <button (click)="createSession()" [disabled]="isCreating" class="btn-modal-confirm">
           <span *ngIf="isCreating" class="spinner"></span>
           {{ isCreating ? 'Création...' : 'Créer la session' }}
         </button>
       </div>
-
     </div>
   </div>
 </div>

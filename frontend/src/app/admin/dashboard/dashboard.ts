@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { SessionService, Session } from '../../core/services/session.service';
+
 declare const bootstrap: any;
 
 @Component({
@@ -23,12 +24,19 @@ export class DashboardComponent implements OnInit {
 
   // ── Création session ──
   newTitre = '';
-  newDuree: number | null = null;
+
   selectedGames = {
     association: true,
     crossword: true,
     formulation: true,
   };
+
+  gameDurations = {
+    association: 10,
+    crossword: 15,
+    formulation: 20,
+  };
+
   isCreating = false;
   createError = '';
 
@@ -42,7 +50,7 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     public router: Router,
     private cdr: ChangeDetectorRef,
-    private http: HttpClient
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +60,7 @@ export class DashboardComponent implements OnInit {
 
   loadSessions(): void {
     this.isLoading = true;
+
     this.sessionService.getMySessions().subscribe({
       next: (sessions) => {
         this.sessions = sessions;
@@ -70,8 +79,8 @@ export class DashboardComponent implements OnInit {
     this.sessionService.getDashboardStats().subscribe({
       next: (stats) => {
         this.totalParticipants = stats.totalParticipants;
-        this.averageScore      = stats.averageScore;
-        this.averageTime       = stats.averageTime;
+        this.averageScore = stats.averageScore;
+        this.averageTime = stats.averageTime;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erreur chargement stats', err),
@@ -80,6 +89,7 @@ export class DashboardComponent implements OnInit {
 
   viewResults(): void {
     this.showResults = !this.showResults;
+
     if (this.showResults && this.participations.length === 0) {
       this.loadParticipations();
     }
@@ -87,6 +97,7 @@ export class DashboardComponent implements OnInit {
 
   loadParticipations(): void {
     this.isLoadingResults = true;
+
     this.http.get<any[]>('http://localhost:8000/api/participation').subscribe({
       next: (data) => {
         this.participations = data;
@@ -104,9 +115,21 @@ export class DashboardComponent implements OnInit {
   openCreateModal(): void {
     this.createError = '';
     this.newTitre = '';
-    this.newDuree = null;
-    this.selectedGames = { association: true, crossword: true, formulation: true };
+
+    this.selectedGames = {
+      association: true,
+      crossword: true,
+      formulation: true,
+    };
+
+    this.gameDurations = {
+      association: 10,
+      crossword: 15,
+      formulation: 20,
+    };
+
     const modalElement = document.getElementById('createSessionModal');
+
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
@@ -115,6 +138,7 @@ export class DashboardComponent implements OnInit {
 
   closeCreateModal(): void {
     const modalElement = document.getElementById('createSessionModal');
+
     if (modalElement) {
       const modal = bootstrap.Modal.getInstance(modalElement);
       modal?.hide();
@@ -123,18 +147,21 @@ export class DashboardComponent implements OnInit {
 
   getSelectedGameTypes(): string[] {
     const types: string[] = [];
+
     if (this.selectedGames.association) types.push('association');
-    if (this.selectedGames.crossword)   types.push('crossword');
+    if (this.selectedGames.crossword) types.push('crossword');
     if (this.selectedGames.formulation) types.push('formulation');
+
     return types;
   }
 
-  /** Durée estimée en MINUTES selon les jeux sélectionnés */
   getEstimatedDuration(): number {
     let total = 0;
-    if (this.selectedGames.association) total += 10;
-    if (this.selectedGames.crossword)   total += 15;
-    if (this.selectedGames.formulation) total += 20;
+
+    if (this.selectedGames.association) total += Number(this.gameDurations.association) || 0;
+    if (this.selectedGames.crossword) total += Number(this.gameDurations.crossword) || 0;
+    if (this.selectedGames.formulation) total += Number(this.gameDurations.formulation) || 0;
+
     return total;
   }
 
@@ -143,23 +170,38 @@ export class DashboardComponent implements OnInit {
       this.createError = 'Veuillez saisir un titre';
       return;
     }
+
     const gameTypes = this.getSelectedGameTypes();
+
     if (gameTypes.length === 0) {
       this.createError = 'Sélectionnez au moins un jeu';
       return;
     }
 
+    const selectedDurations: Record<string, number> = {};
+
+    if (this.selectedGames.association) {
+      selectedDurations['association'] = Math.max(1, Number(this.gameDurations.association) || 10);
+    }
+
+    if (this.selectedGames.crossword) {
+      selectedDurations['crossword'] = Math.max(1, Number(this.gameDurations.crossword) || 15);
+    }
+
+    if (this.selectedGames.formulation) {
+      selectedDurations['formulation'] = Math.max(1, Number(this.gameDurations.formulation) || 20);
+    }
+
     this.isCreating = true;
     this.createError = '';
 
-    // CORRECTION BUG #3 (côté frontend) :
-    // La BDD stocke la durée en SECONDES. On envoie les minutes saisies × 60.
-    // SessionController.php multiplie aussi par 60 côté backend pour la cohérence
-    // avec les fixtures (900 = 15 min, 600 = 10 min…).
-    const dureeMinutes = this.newDuree ?? this.getEstimatedDuration();
-
     this.sessionService
-      .createSession({ titre: this.newTitre.trim(), duree: dureeMinutes, gameTypes })
+      .createSession({
+        titre: this.newTitre.trim(),
+        duree: this.getEstimatedDuration(),
+        gameTypes,
+        gameDurations: selectedDurations,
+      })
       .subscribe({
         next: () => {
           this.isCreating = false;
@@ -170,6 +212,7 @@ export class DashboardComponent implements OnInit {
         error: (err) => {
           this.isCreating = false;
           this.createError = err.error?.message || 'Erreur lors de la création';
+          this.cdr.detectChanges();
         },
       });
   }
@@ -187,16 +230,17 @@ export class DashboardComponent implements OnInit {
     if (!confirm(`Supprimer la session "${code}" ? Cette action est irréversible.`)) {
       return;
     }
+
     this.sessionService.deleteSession(code).subscribe({
       next: () => {
-        // Retirer la session de la liste locale sans recharger
-        this.sessions = this.sessions.filter(s => s.code !== code);
+        this.sessions = this.sessions.filter((s) => s.code !== code);
         this.cdr.detectChanges();
       },
       error: (err) => {
-        alert('Impossible de supprimer cette session : ' + (err.error?.message || 'erreur serveur'));
-      }
+        alert(
+          'Impossible de supprimer cette session : ' + (err.error?.message || 'erreur serveur'),
+        );
+      },
     });
   }
-
 }

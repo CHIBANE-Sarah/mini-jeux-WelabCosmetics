@@ -31,16 +31,16 @@ final class SessionController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (empty($data['titre']) || !isset($data['duree'])) {
+        if (empty($data['titre'])) {
             return $this->json(
-                ['message' => 'Les champs "titre" et "duree" sont requis.'],
+                ['message' => 'Le champ "titre" est requis.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
         $session = new Session();
         $session->setTitreSession($data['titre']);
-        $session->setDuree((int) $data['duree'] * 60);
+        $session->setDuree(0);
         $session->setCreateur($admin);
 
         do {
@@ -56,15 +56,33 @@ final class SessionController extends AbstractController
         ];
 
         $validTypes = [Game::TYPE_ASSOCIATION, Game::TYPE_CROSSWORD, Game::TYPE_FORMULATION];
-        $gameTypes = array_unique(array_filter($gameTypes, fn($t) => in_array($t, $validTypes)));
+        $gameTypes = array_values(array_unique(array_filter(
+            $gameTypes,
+            fn($t) => in_array($t, $validTypes, true)
+        )));
 
         if (empty($gameTypes)) {
             return $this->json(['message' => 'Sélectionnez au moins un jeu.'], Response::HTTP_BAD_REQUEST);
         }
 
+        $defaultDurations = [
+            Game::TYPE_ASSOCIATION => 10,
+            Game::TYPE_CROSSWORD => 15,
+            Game::TYPE_FORMULATION => 20,
+        ];
+
+        $gameDurations = $data['gameDurations'] ?? [];
+        $totalDurationSeconds = 0;
+
         foreach ($gameTypes as $type) {
             $game = new Game();
             $game->setType($type);
+
+            $durationMinutes = (int) ($gameDurations[$type] ?? $defaultDurations[$type] ?? 10);
+            $durationSeconds = max(1, $durationMinutes) * 60;
+            $game->setDuree($durationSeconds);
+            $totalDurationSeconds += $durationSeconds;
+
             $session->addGame($game);
             $entityManager->persist($game);
 
@@ -131,6 +149,8 @@ final class SessionController extends AbstractController
             }
         }
 
+        $session->setDuree($totalDurationSeconds);
+
         $entityManager->persist($session);
         $entityManager->flush();
 
@@ -156,6 +176,7 @@ final class SessionController extends AbstractController
     public function getSession(string $code, SessionRepository $sessionRepository): JsonResponse
     {
         $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
+
         if (!$session) {
             return $this->json(
                 ['message' => 'Session introuvable avec ce code.'],
@@ -170,6 +191,7 @@ final class SessionController extends AbstractController
     public function getSessionGames(string $code, SessionRepository $sessionRepository): JsonResponse
     {
         $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
+
         if (!$session) {
             return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
         }
@@ -181,6 +203,7 @@ final class SessionController extends AbstractController
                 'id' => $game->getId(),
                 'type' => $game->getType(),
                 'sessionId' => $game->getSession()->getId(),
+                'duree' => $game->getDuree(),
             ];
         }, $games));
     }
@@ -189,6 +212,7 @@ final class SessionController extends AbstractController
     public function joinSession(string $code, SessionRepository $sessionRepository): JsonResponse
     {
         $session = $sessionRepository->findOneBy(['codeSession' => strtoupper($code)]);
+
         if (!$session) {
             return $this->json(['message' => 'Session introuvable'], Response::HTTP_NOT_FOUND);
         }

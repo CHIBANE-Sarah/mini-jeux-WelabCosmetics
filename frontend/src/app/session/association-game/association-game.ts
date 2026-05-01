@@ -42,12 +42,15 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   definitionDropListIds: string[] = [];
   userAnswers: { [terme: string]: string } = {};
   result: AssociationVerifyResponse | null = null;
+
   isLoading = true;
   isVerified = false;
-  initialTime = 420;
-  timeLeft = this.initialTime;
-  timerInterval: ReturnType<typeof setInterval> | null = null;
   isVerifying = false;
+
+  initialTime = 420;
+  timeLeft = 420;
+  timerInterval: ReturnType<typeof setInterval> | null = null;
+
   participantInfo: ParticipantInfo | null = null;
 
   constructor(
@@ -55,13 +58,16 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     private router: Router,
     private associationService: AssociationService,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
   ) {}
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('gameId') || this.route.snapshot.paramMap.get('id');
+    const idParam =
+      this.route.snapshot.paramMap.get('gameId') || this.route.snapshot.paramMap.get('id');
+
     this.gameId = Number(idParam);
 
+    this.applyGameDuration();
     this.loadParticipantInfo();
 
     if (this.gameId && this.gameId > 0) {
@@ -75,8 +81,19 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     this.clearTimer();
   }
 
+  private applyGameDuration(): void {
+    const games = JSON.parse(localStorage.getItem('session_games') || '[]');
+    const currentGame = games.find((g: any) => g.id === this.gameId);
+
+    if (currentGame?.duree) {
+      this.initialTime = currentGame.duree;
+      this.timeLeft = currentGame.duree;
+    }
+  }
+
   private loadParticipantInfo(): void {
     const stored = localStorage.getItem('welab.participant');
+
     if (stored) {
       try {
         this.participantInfo = JSON.parse(stored);
@@ -100,6 +117,7 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
         this.availableTerms = this.questions.map((q) => q.terme);
 
         const uniqueDefs = [...new Set(data.questions.flatMap((q) => q.definitions))];
+
         this.definitionSlots = this.shuffleArray(uniqueDefs).map((def) => ({
           def,
           droppedItems: [],
@@ -107,7 +125,6 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
 
         this.definitionDropListIds = this.definitionSlots.map((_, index) => `def-list-${index}`);
 
-        this.timeLeft = this.initialTime;
         this.isLoading = false;
         this.startTimer();
         this.cdr.detectChanges();
@@ -119,7 +136,7 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<string[]>): void {
     if (this.isVerified) return;
 
     if (event.previousContainer === event.container) {
@@ -128,26 +145,31 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
       if (event.container.id.startsWith('def-list-') && event.container.data.length >= 1) {
         return;
       }
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex
+        event.currentIndex,
       );
     }
+
     this.updateUserAnswers();
   }
 
-  removeTermFromDef(slot: DefSlot) {
+  removeTermFromDef(slot: DefSlot): void {
     if (this.isVerified || slot.droppedItems.length === 0) return;
+
     const term = slot.droppedItems[0];
     slot.droppedItems = [];
     this.availableTerms.push(term);
+
     this.updateUserAnswers();
   }
 
-  updateUserAnswers() {
+  updateUserAnswers(): void {
     this.userAnswers = {};
+
     this.definitionSlots.forEach((slot) => {
       if (slot.droppedItems.length > 0) {
         this.userAnswers[slot.droppedItems[0]] = slot.def;
@@ -161,7 +183,6 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
     );
   }
 
-  
   verify(forceSubmit = false): void {
     if (this.result || this.isVerifying) return;
     if (!forceSubmit && !this.allAnswered) return;
@@ -196,7 +217,6 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
         this.isVerified = true;
         this.isVerifying = false;
 
-        
         localStorage.setItem('score_association', String(result.score));
         localStorage.setItem('total_association', String(result.total));
 
@@ -212,12 +232,14 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
 
   startTimer(): void {
     this.clearTimer();
+
     this.ngZone.runOutsideAngular(() => {
       this.timerInterval = setInterval(() => {
         this.ngZone.run(() => {
           if (this.timeLeft > 0) {
             this.timeLeft--;
             this.cdr.detectChanges();
+
             if (this.timeLeft === 0) {
               this.verify(true);
             }
@@ -228,8 +250,11 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   }
 
   get formattedTime(): string {
-    const min = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
+    const min = Math.floor(this.timeLeft / 60)
+      .toString()
+      .padStart(2, '0');
     const sec = (this.timeLeft % 60).toString().padStart(2, '0');
+
     return `${min}:${sec}`;
   }
 
@@ -239,28 +264,13 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
 
   abandonner(): void {
     if (!confirm('Abandonner ce jeu ? Votre score sera 0 pour cette partie.')) return;
+
     this.clearTimer();
-    // Score 0 enregistré
+
     localStorage.setItem('score_association', '0');
     localStorage.setItem('total_association', String(this.questions.length));
-    const sessionCode = localStorage.getItem('session_code') || '';
-    const gamesRaw = localStorage.getItem('session_games');
-    if (gamesRaw) {
-      const games = JSON.parse(gamesRaw);
-      const currentIndex = games.findIndex((g: any) => g.type === 'association');
-      const next = games[currentIndex + 1];
-      if (next) {
-        switch (next.type) {
-          case 'formulation': this.router.navigate(['/session/formulation', sessionCode]); break;
-          case 'crossword':   this.router.navigate(['/session/crossword', sessionCode]);   break;
-          default:            this.router.navigate(['/session/results', sessionCode]);
-        }
-      } else {
-        this.router.navigate(['/session/results', sessionCode]);
-      }
-    } else {
-      this.router.navigate(['/session/results', sessionCode]);
-    }
+
+    this.goNext();
   }
 
   goNext(): void {
@@ -292,6 +302,6 @@ export class AssociationGameComponent implements OnInit, OnDestroy {
   }
 
   getConnectedDropLists(index: number): string[] {
-    return ['terms-list', ...this.definitionDropListIds.filter(id => id !== `def-list-${index}`)];
+    return ['terms-list', ...this.definitionDropListIds.filter((id) => id !== `def-list-${index}`)];
   }
 }
