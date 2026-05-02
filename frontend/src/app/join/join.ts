@@ -16,6 +16,8 @@ export class JoinSession {
   nom = '';
   prenom = '';
   sessionCode = '';
+  avatar = 'bi-eyedropper';
+  avatars = ['bi-eyedropper', 'bi-flower1', 'bi-droplet', 'bi-tree', 'bi-droplet-half', 'bi-stars'];
   errorMessage = '';
   successMessage = '';
   isLoading = false;
@@ -62,6 +64,7 @@ export class JoinSession {
                   nom: this.nom.trim(),
                   prenom: this.prenom.trim(),
                   sessionCode: session.code,
+                  avatar: this.avatar,
                 })
               );
 

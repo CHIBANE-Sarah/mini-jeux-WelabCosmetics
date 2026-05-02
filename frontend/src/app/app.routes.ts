@@ -10,6 +10,7 @@ import { FormulationComponent } from './game/formulation/formulation.component';
 import { ResultsComponent } from './game/results/results.component';
 import { GamesListComponent } from './admin/games-list/games-list.component';
 import { AboutComponent } from './about/about';
+import { PlayerDashboardComponent } from './player-dashboard/player-dashboard';
 import { GameEditComponent } from './admin/game-edit/game-edit.component';
 import { inject } from '@angular/core';
 import { AuthService } from './core/services/auth.service';
@@ -36,6 +37,7 @@ export const routes: Routes = [
   },
   { path: 'join', component: JoinSession },
   { path: 'about', component: AboutComponent },
+  { path: 'player-dashboard', component: PlayerDashboardComponent },
   { path: 'session/association/:gameId', component: AssociationGameComponent },
   { path: 'session/crossword/:sessionCode', component: CrosswordComponent },
   { path: 'session/formulation/:sessionCode', component: FormulationComponent },

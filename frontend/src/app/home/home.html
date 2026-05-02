@@ -44,6 +44,35 @@
     </div>
   </div>
 
+  <section class="reviews-section" *ngIf="reviews.length > 0">
+    <div class="reviews-header">
+      <h2>Avis des joueurs</h2>
+      <p>Ils ont testé les mini-jeux WeLab Cosmetic</p>
+    </div>
+
+    <div class="reviews-grid">
+      <div *ngFor="let review of reviews" class="review-home-card">
+        <div class="review-home-top">
+          <div class="review-avatar">
+            <i class="bi" [ngClass]="review.avatar || 'bi-eyedropper'"></i>
+          </div>
+          <div>
+            <div class="review-name">{{ review.userName }}</div>
+            <div class="review-session">{{ review.sessionTitre || review.sessionCode }}</div>
+          </div>
+        </div>
+
+        <div class="review-stars">
+          <i *ngFor="let s of getStars(review.note)" class="bi bi-star-fill"></i>
+        </div>
+
+        <p class="review-comment">
+          {{ review.commentaire || 'Super expérience !' }}
+        </p>
+      </div>
+    </div>
+  </section>
+
   <div class="banner-tuto">
     <div class="banner-content">
       <h3 class="banner-title">Comment ça marche ?</h3>

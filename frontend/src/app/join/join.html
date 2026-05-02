@@ -20,6 +20,20 @@
       </div>
 
       <div class="form-group">
+        <label class="form-label">Choisis ton avatar</label>
+        <div class="avatar-picker">
+          <button
+            type="button"
+            *ngFor="let a of avatars"
+            class="avatar-option"
+            [class.selected]="avatar === a"
+            (click)="avatar = a">
+            <i class="bi" [ngClass]="a"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label class="form-label">Code de session</label>
         <input type="text" [(ngModel)]="sessionCode" name="sessionCode" required maxlength="7" placeholder="LAB2026" class="form-input input-code" />
         <p class="form-hint">Entre le code fourni par ton professeur</p>

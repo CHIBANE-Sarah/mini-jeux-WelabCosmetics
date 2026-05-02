@@ -49,3 +49,235 @@
   width: auto;
   object-fit: contain;
 }
+
+/* ===== Avis joueurs ===== */
+
+.reviews-section {
+  max-width: 950px;
+  margin: 0 auto 4rem;
+}
+
+.reviews-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.reviews-header h2 {
+  color: #b97486;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.reviews-header p {
+  color: #8f6771;
+  margin: 0;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.review-home-card {
+  background: #ffffff;
+  border: 1px solid #f1dce3;
+  border-radius: 20px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 28px rgba(185, 116, 134, 0.09);
+  transition: 0.2s ease;
+}
+
+.review-home-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 38px rgba(185, 116, 134, 0.15);
+}
+
+.review-home-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fff4f7;
+  display: grid;
+  place-items: center;
+  color: #b97486;
+  font-size: 1.3rem;
+}
+
+.review-name {
+  color: #4177A6;
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.review-session {
+  color: #8f6771;
+  font-size: 0.76rem;
+}
+
+.review-stars {
+  color: #f5a623;
+  margin-bottom: 0.7rem;
+}
+
+.review-comment {
+  color: #8f6771;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 850px) {
+  .reviews-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Slider dynamique WeLab dans "Comment ça marche" ===== */
+
+.banner-img {
+  width: 35%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: welabBannerSlider 14s infinite ease-in-out;
+  transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+@keyframes welabBannerSlider {
+  0%, 30% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
+      url('../../assets/Welab-Produits.png');
+  }
+
+  36%, 64% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
+      url('../../assets/Welab-Labo.png');
+  }
+
+  70%, 100% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
+      url('../../assets/Welab-Formulation.png');
+  }
+}
+
+.banner-tuto {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.banner-tuto:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(65, 119, 166, 0.2);
+}
+
+.banner-tuto:hover .banner-img {
+  transform: scale(1.05);
+  filter: brightness(1.05) saturate(1.08);
+}
+
+.step-item {
+  transition: transform 0.2s ease;
+}
+
+.step-item:hover {
+  transform: translateX(8px);
+}
+
+.role-card,
+.feature-box {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(185, 116, 134, 0.15);
+}
+
+.feature-box:hover {
+  transform: translateY(-6px);
+}
+
+.card-icon,
+.feat-icon {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.role-card:hover .card-icon,
+.feature-box:hover .feat-icon {
+  transform: scale(1.08) rotate(-3deg);
+  box-shadow: 0 10px 24px rgba(185, 116, 134, 0.15);
+}
+
+/* ===== FORCE slider 3 images WeLab ===== */
+
+.banner-img {
+  width: 35% !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  animation: welabBannerSliderFixed 14s infinite ease-in-out !important;
+}
+
+@keyframes welabBannerSliderFixed {
+  0%, 30% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
+      url('../../assets/Welab-Produits.png');
+  }
+
+  36%, 64% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
+      url('../../assets/Welab-Labo.png');
+  }
+
+  70%, 100% {
+    background-image:
+      linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
+      url('../../assets/Welab-Formulation.png');
+  }
+}
+
+/* Afficher les images du slider entièrement */
+.banner-img {
+  background-size: contain !important;
+  background-color: #ffffff !important;
+}
+
+/* ===== Amélioration layout banner ===== */
+
+.banner-tuto {
+  display: flex;
+}
+
+.banner-content {
+  flex: 1;
+}
+
+.banner-img {
+  width: 45% !important;   /* ← AVANT 35% */
+  min-height: 320px;
+}
+
+/* Responsive (important) */
+@media (max-width: 900px) {
+  .banner-tuto {
+    flex-direction: column;
+  }
+
+  .banner-img {
+    width: 100% !important;
+    height: 220px;
+  }
+}

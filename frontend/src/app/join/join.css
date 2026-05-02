@@ -161,3 +161,57 @@
   font-size: 0.8rem;
   color: #666;
 }
+.avatar-picker {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.avatar-option {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid #f1dce3;
+  background: #fff4f7;
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-option:hover,
+.avatar-option.selected {
+  background: #b97486;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(185, 116, 134, 0.2);
+}
+
+/* Avatars modernes avec Bootstrap Icons */
+.avatar-option {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid #f1dce3;
+  background: #fff4f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-option i {
+  font-size: 22px;
+  color: #b97486;
+}
+
+.avatar-option:hover,
+.avatar-option.selected {
+  background: #b97486;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(185, 116, 134, 0.2);
+}
+
+.avatar-option.selected i,
+.avatar-option:hover i {
+  color: white;
+}

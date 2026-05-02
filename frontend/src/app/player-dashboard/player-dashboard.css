@@ -1,0 +1,175 @@
+.player-page {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background: #fff;
+}
+
+.player-hero {
+  max-width: 950px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(135deg, #fff4f7, #ffffff);
+  border: 1px solid #f1dce3;
+  border-radius: 24px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  box-shadow: 0 14px 32px rgba(185, 116, 134, 0.12);
+}
+
+.avatar-circle {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: #b97486;
+  display: grid;
+  place-items: center;
+  font-size: 2.4rem;
+  box-shadow: 0 12px 26px rgba(185, 116, 134, 0.25);
+}
+
+.player-hero h1 {
+  color: #b97486;
+  margin: 0 0 0.4rem;
+  font-weight: 800;
+}
+
+.player-hero p {
+  color: #8f6771;
+  margin: 0;
+}
+
+.player-stats {
+  max-width: 950px;
+  margin: 0 auto 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.player-stat-card {
+  background: white;
+  border: 1px solid #f1dce3;
+  border-radius: 18px;
+  padding: 1.3rem;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(185, 116, 134, 0.08);
+}
+
+.player-stat-card i {
+  color: #4177A6;
+  font-size: 1.6rem;
+}
+
+.player-stat-card strong {
+  display: block;
+  color: #b97486;
+  font-size: 2rem;
+  margin-top: 0.5rem;
+}
+
+.player-stat-card span {
+  color: #8f6771;
+  font-size: 0.85rem;
+}
+
+.history-panel {
+  max-width: 950px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #f1dce3;
+  border-radius: 22px;
+  padding: 1.7rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.history-header h2 {
+  color: #4177A6;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.history-header button {
+  border: none;
+  background: #b97486;
+  color: white;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1dce3;
+  padding: 1rem 0;
+}
+
+.history-title {
+  color: #4177A6;
+  font-weight: 700;
+}
+
+.history-sub {
+  color: #8f6771;
+  font-size: 0.82rem;
+}
+
+.history-meta {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.score-pill,
+.time-pill {
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.score-pill {
+  background: #e9f7fa;
+  color: #4177A6;
+}
+
+.time-pill {
+  background: #fff4f7;
+  color: #b97486;
+}
+
+.empty-state {
+  color: #8f6771;
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 780px) {
+  .player-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .player-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .history-row,
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+}
+
+.avatar-circle i {
+  font-size: 2.2rem;
+  color: white;
+}

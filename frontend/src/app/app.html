@@ -24,6 +24,11 @@
       À propos
     </a>
 
+    <a *ngIf="isPlayerInSession()" routerLink="/player-dashboard" routerLinkActive="active-link">
+      <i class="bi bi-person-circle"></i>
+      Mon profil
+    </a>
+
     <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="active-link">
       <i class="bi bi-speedometer2"></i>
       Dashboard

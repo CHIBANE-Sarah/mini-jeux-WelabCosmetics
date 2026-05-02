@@ -1,83 +1,153 @@
 # WeLab Cosmetic - Frontend (Angular)
 
-Ce dossier contient l'interface utilisateur développée avec **Angular 19**.
-Il s'agit d'une **Single Page Application (SPA)** communicant avec l'API Symfony.
+Ce dossier contient l'interface utilisateur développée avec **Angular**.
+Il s'agit d'une **Single Page Application (SPA)** communiquant avec l'API Symfony.
 
 > Le frontend tourne entièrement via **Docker**.
 
-## Principes d'Architecture Front-End
-
-- **Design WeLab** : Variables CSS globales centralisées dans `styles.css`
-  reproduisant la charte graphique du laboratoire (couleurs, typographie, espacements).
-- **Séparation des préoccupations** : HTML, CSS et TypeScript sont strictement
-  séparés dans leurs propres fichiers pour une meilleure maintenabilité.
-- **Standalone Components** : Tous les composants Angular utilisent l'architecture
-  standalone (sans NgModule), conformément aux bonnes pratiques Angular 19.
-- **Interceptor JWT** : Le token d'authentification est automatiquement injecté
-  dans toutes les requêtes HTTP via `auth-interceptor.ts`, sans duplication de code.
-- **Requêtes Asynchrones** : Utilisation d'`HttpClient` et de `RxJS` (Observables)
-  pour toute la communication avec l'API backend.
+---
 
 ## Prérequis
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et démarré
+
+- Docker Desktop
 - Git
+
+---
 
 ## Installation et Démarrage
 
-### 1. Démarrer les conteneurs Docker (depuis la racine du projet)
-```bash
-docker compose up -d
-```
-Le conteneur `welab-angular` démarre automatiquement. Au premier lancement,
-il installe Angular CLI et toutes les dépendances npm. Cela peut prendre
-plusieurs minutes.
+    docker compose up -d
 
-### 2. Vérifier que Angular est bien démarré
-```bash
-docker logs welab-angular -f
-```
-Attendez le message `✔ Compiled successfully`.
-Appuyez sur `Ctrl+C` pour quitter l'affichage des logs
-(les conteneurs continuent de tourner).
+Le conteneur `welab-angular` démarre automatiquement et installe les dépendances.
 
-### 3. Accéder à l'application
-Ouvrez votre navigateur sur `http://localhost:4200`.
+Pour suivre le démarrage :
+
+    docker logs welab-angular -f
+
+Une fois prêt, accéder à :
+
+    http://localhost:4200
+
+---
+
+## Architecture Frontend
+
+- Composants Angular standalone (sans NgModule)
+- Routing centralisé (`app.routes.ts`)
+- Services HTTP avec `HttpClient`
+- Interceptor JWT pour l’authentification admin
+- Utilisation de `localStorage` pour le mode joueur
 
 ---
 
 ## Structure du projet
-```bash
-src/
-├── styles.css                → Variables CSS globales WeLab (couleurs, polices)
-└── app/
-├── app.routes.ts             → Définition de toutes les routes de l'application
-├── home/                     → Page d'accueil publique
-├── join/                     → Page rejoindre une session (côté joueur)
-├── auth/login/               → Page de connexion administrateur
-├── admin/
-│   ├── dashboard/            → Tableau de bord admin (sessions, stats, résultats)
-│   ├── games-list/           → Liste des jeux disponibles par session
-│   └── game-edit/            → Éditeur de questions et ingrédients par jeu
-├── session/
-│   ├── session/              → Page d'introduction de la session (côté joueur)
-│   └── association-game/     → Jeu d'association termes et définitions (drag and drop)
-├── game/
-│   ├── crossword/            → Jeu de mots croisés (grille interactive)
-│   ├── formulation/          → Jeu de formulation de produit (sélection d'ingrédients)
-│   └── results/              → Page de résultats finale
-├── core/
-│   ├── services/             → Services HTTP (auth, session, jeux, participation)
-│   ├── interceptors/         → Interceptor JWT (injection automatique du token)
-│   └── guards/               → Guard d'authentification (protection des routes admin)
-└── interfaces/               → Interfaces TypeScript partagées
-```
 
-## Accès à l'application
+    src/
+    ├── app/
+    │   ├── home/                → Page d’accueil
+    │   ├── join/                → Rejoindre une session
+    │   ├── about/               → Page À propos
+    │   ├── auth/                → Connexion admin
+    │   ├── admin/
+    │   │   ├── dashboard/       → Dashboard admin
+    │   │   ├── games-list/      → Liste des jeux
+    │   │   └── game-edit/       → Édition des jeux
+    │   ├── session/             → Parcours joueur
+    │   ├── game/
+    │   │   ├── crossword/       → Mots croisés
+    │   │   ├── formulation/     → Formulation
+    │   │   └── results/         → Résultats + reviews
+    │   ├── core/
+    │   │   ├── services/        → API services
+    │   │   ├── interceptors/    → JWT interceptor
+    │   │   └── guards/          → Auth guard
 
-| Page | URL | Rôle |
-|------|-----|------|
-| Accueil | http://localhost:4200 | Public |
-| Rejoindre une session | http://localhost:4200/join | Joueur |
-| Connexion admin | http://localhost:4200/login | Admin |
-| Dashboard admin | http://localhost:4200/dashboard | Admin |
-| Gérer les jeux | http://localhost:4200/dashboard/games | Admin |
+---
+
+## Fonctionnalités principales
+
+### Côté joueur
+
+- Accès via code session (sans compte)
+- Saisie nom / prénom
+- Enchaînement des mini-jeux :
+  - Mots croisés
+  - Association
+  - Formulation
+- Calcul du score global
+- Enregistrement automatique de la participation
+- Temps de session mesuré
+
+### Résultats & expérience joueur
+
+- Page de résultats détaillée :
+  - Score global
+  - Score par jeu
+  - Statut réussite / échec
+- Possibilité de rejouer ou revenir à l’accueil
+
+---
+
+## Fonctionnalités UX/UI  
+
+- Refonte globale de l’interface (UI moderne et cohérente)
+- Navbar globale persistante (navigation dynamique)
+- Footer harmonisé
+- Dashboard admin amélioré :
+  - Classement des joueurs
+  - Top scores (médailles)
+  - Temps de jeu
+  - Animations et hover interactifs
+- Slider dynamique sur la page d’accueil (images cosmétiques)
+- Animations et micro-interactions sur les cartes
+- Amélioration des formulaires (feedback utilisateur)
+
+---
+
+## Profil joueur
+
+- Stockage local (localStorage)
+- Informations conservées :
+  - Nom
+  - Prénom
+  - Session
+- Sélection d’un avatar
+- Pas d’authentification requise
+
+---
+
+## Reviews joueurs
+
+- Système de notation avec étoiles
+- Ajout d’un commentaire
+- Choix d’un avatar
+- Envoi vers le backend
+- Affichage possible des avis récents
+
+---
+
+## Gestion des données côté frontend
+
+- Stockage temporaire :
+  - scores par jeu
+  - temps de session
+- Nettoyage après chaque session
+- Synchronisation avec le backend via API
+
+---
+
+## Améliorations UX
+
+- Feedback visuel (loading, succès, erreurs)
+- Navigation fluide entre les pages
+- Interface responsive
+- Interactions utilisateur dynamiques
+- Expérience orientée joueur
+
+---
+
+## Commandes utiles
+
+    docker logs welab-angular -f
+    docker compose ps
+

@@ -42,6 +42,7 @@ security:
     - { path: ^/api/crossword, roles: PUBLIC_ACCESS }
     - { path: ^/api/formulation, roles: PUBLIC_ACCESS }
     - { path: ^/api/participation, roles: PUBLIC_ACCESS }
+    - { path: ^/api/reviews, roles: PUBLIC_ACCESS }
 
     # Admin — gestion des jeux (ROLE_ADMIN obligatoire)
     - { path: ^/api/admin, roles: ROLE_ADMIN }

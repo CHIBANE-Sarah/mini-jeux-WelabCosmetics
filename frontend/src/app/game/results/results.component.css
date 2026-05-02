@@ -118,3 +118,99 @@
   transition: opacity 0.2s;
 }
 .btn-rejouer:hover { opacity: 0.88; }
+/* ===== Review joueur ===== */
+
+.review-card {
+  max-width: 760px;
+  margin: 2rem auto 0;
+  background: #ffffff;
+  border: 1px solid #f1dce3;
+  border-radius: 22px;
+  padding: 1.6rem;
+  text-align: center;
+  box-shadow: 0 14px 32px rgba(185, 116, 134, 0.12);
+}
+
+.review-card h3 {
+  color: #b97486;
+  margin-bottom: 0.4rem;
+  font-weight: 800;
+}
+
+.review-card p {
+  color: #8f6771;
+  margin-bottom: 1rem;
+}
+
+.stars-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.star-btn {
+  border: none;
+  background: #fff4f7;
+  color: #b97486;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  background: #b97486;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(185, 116, 134, 0.2);
+}
+
+.review-textarea {
+  width: 100%;
+  min-height: 95px;
+  resize: vertical;
+  border-radius: 16px;
+  border: 1px solid #f1dce3;
+  padding: 1rem;
+  outline: none;
+  color: #4177A6;
+  background: #fffafa;
+}
+
+.review-textarea:focus {
+  border-color: #b97486;
+  box-shadow: 0 0 0 3px rgba(185, 116, 134, 0.12);
+}
+
+.btn-review {
+  margin-top: 1rem;
+  border: none;
+  background: #b97486;
+  color: white;
+  border-radius: 999px;
+  padding: 0.75rem 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.review-error {
+  color: #b33b63;
+  font-size: 0.85rem;
+  margin-top: 0.7rem;
+}
+
+.review-success {
+  color: #4177A6;
+  background: #e9f7fa;
+  border-radius: 16px;
+  padding: 1rem;
+  font-weight: 800;
+}
+
+.review-success i {
+  margin-right: 0.4rem;
+}

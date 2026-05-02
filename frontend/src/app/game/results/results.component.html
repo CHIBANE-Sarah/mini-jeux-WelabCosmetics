@@ -85,6 +85,43 @@
     </div>
   </div>
 
+  <div class="review-card">
+    <h3>Ton avis nous intéresse</h3>
+    <p>Comment as-tu trouvé cette session de mini-jeux ?</p>
+
+    <div *ngIf="!reviewSent; else reviewThanks">
+      <div class="stars-row">
+        <button
+          type="button"
+          *ngFor="let star of [1,2,3,4,5]"
+          class="star-btn"
+          [class.active]="star <= reviewNote"
+          (click)="setReviewNote(star)">
+          <i class="bi" [ngClass]="star <= reviewNote ? 'bi-star-fill' : 'bi-star'"></i>
+        </button>
+      </div>
+
+      <textarea
+        class="review-textarea"
+        [(ngModel)]="reviewComment"
+        placeholder="Ton commentaire ou une proposition d'amélioration...">
+      </textarea>
+
+      <div *ngIf="reviewError" class="review-error">{{ reviewError }}</div>
+
+      <button class="btn-review" (click)="submitReview()">
+        Envoyer mon avis
+      </button>
+    </div>
+
+    <ng-template #reviewThanks>
+      <div class="review-success">
+        <i class="bi bi-check-circle-fill"></i>
+        Merci pour ton avis !
+      </div>
+    </ng-template>
+  </div>
+
   <!-- AJOUT : deux boutons côte à côte -->
   <div class="results-actions">
     <button class="btn-accueil" (click)="goHome()">

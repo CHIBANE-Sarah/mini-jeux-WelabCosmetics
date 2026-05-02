@@ -1,0 +1,57 @@
+<div class="player-page">
+  <section class="player-hero">
+    <div class="avatar-circle">
+      <i class="bi" [ngClass]="player?.avatar || 'bi-eyedropper'"></i>
+    </div>
+
+    <div>
+      <h1>{{ player?.prenom }} {{ player?.nom }}</h1>
+      <p>Profil joueur · Session actuelle : <strong>{{ player?.sessionCode || 'Aucune' }}</strong></p>
+    </div>
+  </section>
+
+  <section class="player-stats">
+    <div class="player-stat-card">
+      <i class="bi bi-controller"></i>
+      <strong>{{ participations.length }}</strong>
+      <span>sessions jouées</span>
+    </div>
+
+    <div class="player-stat-card">
+      <i class="bi bi-trophy"></i>
+      <strong>{{ bestScore }}%</strong>
+      <span>meilleur score</span>
+    </div>
+
+    <div class="player-stat-card">
+      <i class="bi bi-bar-chart-line"></i>
+      <strong>{{ averageScore }}%</strong>
+      <span>score moyen</span>
+    </div>
+  </section>
+
+  <section class="history-panel">
+    <div class="history-header">
+      <h2>Historique des participations</h2>
+      <button (click)="goJoin()">Rejouer une session</button>
+    </div>
+
+    <div *ngIf="isLoading" class="empty-state">Chargement...</div>
+
+    <div *ngIf="!isLoading && participations.length === 0" class="empty-state">
+      Aucun historique trouvé pour ce joueur.
+    </div>
+
+    <div *ngFor="let p of participations" class="history-row">
+      <div>
+        <div class="history-title">{{ p.sessionTitre }}</div>
+        <div class="history-sub">Code : {{ p.sessionCode }} · {{ p.createdAt }}</div>
+      </div>
+
+      <div class="history-meta">
+        <span class="score-pill">{{ p.scoreTotal }}%</span>
+        <span class="time-pill">{{ formatSeconds(p.tempsTotal) }}</span>
+      </div>
+    </div>
+  </section>
+</div>
