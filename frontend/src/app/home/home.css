@@ -156,19 +156,19 @@
   0%, 30% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
-      url('../../assets/Welab-Produits.png');
+      url('/assets/Welab-Produits.png');
   }
 
   36%, 64% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
-      url('../../assets/Welab-Labo.png');
+      url('/assets/Welab-Labo.png');
   }
 
   70%, 100% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)), rgba(65, 119, 166, 0.05)),
-      url('../../assets/Welab-Formulation.png');
+      url('/assets/Welab-Formulation.png');
   }
 }
 
@@ -233,19 +233,19 @@
   0%, 30% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
-      url('../../assets/Welab-Produits.png');
+      url('/assets/Welab-Produits.png');
   }
 
   36%, 64% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
-      url('../../assets/Welab-Labo.png');
+      url('/assets/Welab-Labo.png');
   }
 
   70%, 100% {
     background-image:
       linear-gradient(to left, rgba(255,255,255,0) 40%, rgba(65,119,166,0.12)),
-      url('../../assets/Welab-Formulation.png');
+      url('/assets/Welab-Formulation.png');
   }
 }
 
