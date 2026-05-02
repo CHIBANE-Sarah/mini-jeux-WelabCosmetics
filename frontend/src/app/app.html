@@ -1,1 +1,73 @@
-﻿<router-outlet></router-outlet>
+<div class="global-navbar" *ngIf="!isLoginPage()">
+  <div class="global-nav-brand" routerLink="/">
+    <img src="assets/logo-welab.webp" alt="WeLab Cosmetic" class="brand-img" />
+  </div>
+
+  <div class="global-nav-links">
+    <button class="nav-btn nav-btn-light" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+      Retour
+    </button>
+
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <i class="bi bi-house"></i>
+      Accueil
+    </a>
+
+    <a routerLink="/join" routerLinkActive="active-link">
+      <i class="bi bi-person-plus"></i>
+      Rejoindre
+    </a>
+
+    <a routerLink="/about" routerLinkActive="active-link">
+      <i class="bi bi-info-circle"></i>
+      À propos
+    </a>
+
+    <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="active-link">
+      <i class="bi bi-speedometer2"></i>
+      Dashboard
+    </a>
+
+    <a *ngIf="isLoggedIn()" routerLink="/dashboard/games" routerLinkActive="active-link">
+      <i class="bi bi-controller"></i>
+      Gérer les jeux
+    </a>
+
+    <a *ngIf="!isLoggedIn() && !isPlayerInSession()" routerLink="/login" routerLinkActive="active-link">
+      <i class="bi bi-box-arrow-in-right"></i>
+      Connexion
+    </a>
+
+    <button *ngIf="isLoggedIn()" class="nav-btn nav-btn-logout" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+      Déconnexion
+    </button>
+  </div>
+</div>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="welab-footer" *ngIf="!isLoginPage()">
+  <div class="welab-footer-inner">
+    <div class="welab-footer-brand">
+      <img src="assets/logo-welab.webp" alt="WeLab Cosmetic" class="welab-footer-logo" />
+      <p>Plateforme éducative de mini-jeux cosmétiques.</p>
+    </div>
+
+    <div class="welab-footer-nav">
+      <h4>Navigation</h4>
+      <a routerLink="/">Accueil</a>
+      <a routerLink="/join">Rejoindre une session</a>
+      <a routerLink="/about">À propos</a>
+      <a *ngIf="!isLoggedIn()" routerLink="/login">Espace Administrateur</a>
+      <a *ngIf="isLoggedIn()" routerLink="/dashboard">Dashboard</a>
+    </div>
+
+    <div class="welab-footer-copy">
+      © 2026 WeLab Cosmetic
+    </div>
+  </div>
+</footer>

@@ -1,31 +1,13 @@
 <div class="dashboard-wrapper">
-  <div class="top-navbar">
-    <div>
-      <div class="nav-brand">We Lab Cosmetic</div>
-      <div class="nav-sub">Inventons la cosmétique de demain</div>
-    </div>
-
-    <div class="nav-right">
-      <a routerLink="/" class="nav-link">
-        <i class="bi bi-house me-1"></i> Accueil
-      </a>
-      <a routerLink="/join" class="nav-link">
-        <i class="bi bi-person-plus me-1"></i> Rejoindre une session
-      </a>
-      <button (click)="logout()" class="btn-logout">
-        <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
-      </button>
-    </div>
-  </div>
-
   <div class="dashboard-container">
     <div class="dashboard-header">
       <h1 class="dash-title">Tableau de bord</h1>
       <p class="dash-desc">Gérez vos sessions et suivez les performances des participants</p>
     </div>
 
-    <div class="grid-row">
-      <div class="stat-card">
+    <!-- Statistiques interactives -->
+    <div class="grid-row stats-grid">
+      <button class="stat-card stat-clickable" [class.active-stat]="activePanel === 'sessions'" (click)="togglePanel('sessions')">
         <div class="stat-icon stat-icon-blue">
           <i class="bi bi-controller"></i>
         </div>
@@ -33,9 +15,9 @@
           <div class="stat-val stat-val-blue">{{ sessions.length }}</div>
           <div class="stat-label">Sessions créées</div>
         </div>
-      </div>
+      </button>
 
-      <div class="stat-card">
+      <button class="stat-card stat-clickable" [class.active-stat]="activePanel === 'participants'" (click)="togglePanel('participants')">
         <div class="stat-icon stat-icon-pink">
           <i class="bi bi-people"></i>
         </div>
@@ -43,9 +25,9 @@
           <div class="stat-val stat-val-pink">{{ totalParticipants }}</div>
           <div class="stat-label">Joueurs participants</div>
         </div>
-      </div>
+      </button>
 
-      <div class="stat-card">
+      <button class="stat-card stat-clickable" [class.active-stat]="activePanel === 'scores'" (click)="togglePanel('scores')">
         <div class="stat-icon stat-icon-cyan">
           <i class="bi bi-trophy"></i>
         </div>
@@ -53,9 +35,9 @@
           <div class="stat-val stat-val-cyan">{{ averageScore }}%</div>
           <div class="stat-label">Score moyen</div>
         </div>
-      </div>
+      </button>
 
-      <div class="stat-card">
+      <button class="stat-card stat-clickable" [class.active-stat]="activePanel === 'times'" (click)="togglePanel('times')">
         <div class="stat-icon stat-icon-orange">
           <i class="bi bi-clock"></i>
         </div>
@@ -63,9 +45,135 @@
           <div class="stat-val stat-val-orange">{{ averageTime }}m</div>
           <div class="stat-label">Temps moyen de jeu</div>
         </div>
+      </button>
+    </div>
+
+    <!-- Panneau interactif sous les cartes -->
+    <div *ngIf="activePanel" class="stat-detail-panel">
+      <div class="stat-detail-header">
+        <h3 *ngIf="activePanel === 'sessions'">
+          <i class="bi bi-controller me-2"></i>Sessions créées
+        </h3>
+        <h3 *ngIf="activePanel === 'participants'">
+          <i class="bi bi-people me-2"></i>Joueurs participants
+        </h3>
+        <h3 *ngIf="activePanel === 'scores'">
+          <i class="bi bi-trophy me-2"></i>Classement des scores
+        </h3>
+        <h3 *ngIf="activePanel === 'times'">
+          <i class="bi bi-clock me-2"></i>Classement des temps
+        </h3>
+
+        <button class="detail-close" (click)="activePanel = null">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <!-- Sessions -->
+      <div *ngIf="activePanel === 'sessions'">
+        <div *ngIf="sessions.length === 0" class="empty-state">
+          Aucune session créée.
+        </div>
+
+        <div *ngFor="let session of sessions" class="detail-row">
+          <div>
+            <div class="detail-title">{{ session.titre }}</div>
+            <div class="detail-sub">Code : {{ session.code }}</div>
+          </div>
+
+          <div class="detail-badges">
+            <span class="soft-badge">{{ session.duree / 60 | number:'1.0-0' }} min</span>
+            <span class="soft-badge">{{ gameCounts[session.code] || 0 }} jeux</span>
+            <span class="soft-badge">{{ session.nbParticipants || 0 }} participants</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Participants -->
+      <div *ngIf="activePanel === 'participants'">
+        <div *ngIf="isLoadingResults" class="loading-state">
+          <div class="spinner"></div>
+        </div>
+
+        <div *ngIf="!isLoadingResults && uniquePlayers.length === 0" class="empty-state">
+          Aucun joueur enregistré.
+        </div>
+
+        <div *ngFor="let p of uniquePlayers" class="detail-row">
+          <div>
+            <div class="detail-title">{{ p.userName }}</div>
+            <div class="detail-sub">{{ p.sessionTitre }} — {{ p.sessionCode }}</div>
+          </div>
+
+          <div class="detail-badges">
+            <span class="soft-badge score-soft">{{ p.scoreTotal }}%</span>
+            <span class="soft-badge">{{ formatSeconds(p.tempsTotal) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scores -->
+      <div *ngIf="activePanel === 'scores'">
+        <div *ngIf="isLoadingResults" class="loading-state">
+          <div class="spinner"></div>
+        </div>
+
+        <div *ngIf="!isLoadingResults && sortedScores.length === 0" class="empty-state">
+          Aucun score enregistré.
+        </div>
+
+        <div *ngFor="let p of sortedScores; let i = index" class="detail-row ranking-row" [class.top-one]="i === 0">
+          <div class="rank-icon">
+            <ng-container [ngSwitch]="i">
+              <i *ngSwitchCase="0" class="bi bi-award-fill medal medal-gold"></i>
+              <i *ngSwitchCase="1" class="bi bi-award-fill medal medal-silver"></i>
+              <i *ngSwitchCase="2" class="bi bi-award-fill medal medal-bronze"></i>
+              <span *ngSwitchDefault>{{ i + 1 }}</span>
+            </ng-container>
+          </div>
+
+          <div class="ranking-info">
+            <div class="detail-title">{{ p.userName }}</div>
+            <div class="detail-sub">{{ p.sessionTitre }} — {{ p.sessionCode }}</div>
+            <div class="mini-bar">
+              <div class="mini-bar-fill score-fill" [style.width]="getScoreBarWidth(p.scoreTotal)"></div>
+            </div>
+          </div>
+
+          <div class="score-rank-badge">{{ p.scoreTotal }}%</div>
+        </div>
+      </div>
+
+      <!-- Temps -->
+      <div *ngIf="activePanel === 'times'">
+        <div *ngIf="isLoadingResults" class="loading-state">
+          <div class="spinner"></div>
+        </div>
+
+        <div *ngIf="!isLoadingResults && sortedTimes.length === 0" class="empty-state">
+          Aucun temps enregistré.
+        </div>
+
+        <div *ngFor="let p of sortedTimes; let i = index" class="detail-row ranking-row" [class.top-one]="i === 0">
+          <div class="rank-icon">
+            <i *ngIf="i === 0" class="bi bi-lightning-charge-fill fastest-icon"></i>
+            <span *ngIf="i !== 0">{{ i + 1 }}</span>
+          </div>
+
+          <div class="ranking-info">
+            <div class="detail-title">{{ p.userName }}</div>
+            <div class="detail-sub">{{ p.sessionTitre }} — {{ p.sessionCode }}</div>
+            <div class="mini-bar">
+              <div class="mini-bar-fill time-fill" [style.width]="getTimeBarWidth(p.tempsTotal)"></div>
+            </div>
+          </div>
+
+          <div class="time-rank-badge">{{ formatSeconds(p.tempsTotal) }}</div>
+        </div>
       </div>
     </div>
 
+    <!-- Actions -->
     <div class="grid-row">
       <div class="action-card">
         <div class="action-icon action-icon-blue">
@@ -101,6 +209,7 @@
       </div>
     </div>
 
+    <!-- Sessions récentes -->
     <div class="sessions-panel">
       <h3 class="panel-title">Sessions récentes</h3>
 
@@ -132,6 +241,7 @@
       </div>
     </div>
 
+    <!-- Ancien tableau résultats -->
     <div *ngIf="showResults" class="sessions-panel results-panel">
       <h3 class="panel-title">
         <i class="bi bi-bar-chart-fill me-2"></i>Résultats des participants
@@ -162,7 +272,7 @@
             </td>
             <td>{{ p.userName }}</td>
             <td><span class="score-badge">{{ p.scoreTotal }}%</span></td>
-            <td>{{ p.tempsTotal }}s</td>
+            <td>{{ formatSeconds(p.tempsTotal) }}</td>
           </tr>
         </tbody>
       </table>
@@ -170,6 +280,7 @@
   </div>
 </div>
 
+<!-- Modal Créer une session -->
 <div class="modal fade" id="createSessionModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-custom">

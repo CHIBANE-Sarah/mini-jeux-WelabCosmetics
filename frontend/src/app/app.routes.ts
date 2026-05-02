@@ -9,6 +9,7 @@ import { CrosswordComponent } from './game/crossword/crossword.component';
 import { FormulationComponent } from './game/formulation/formulation.component';
 import { ResultsComponent } from './game/results/results.component';
 import { GamesListComponent } from './admin/games-list/games-list.component';
+import { AboutComponent } from './about/about';
 import { GameEditComponent } from './admin/game-edit/game-edit.component';
 import { inject } from '@angular/core';
 import { AuthService } from './core/services/auth.service';
@@ -34,6 +35,7 @@ export const routes: Routes = [
     canActivate: [() => inject(AuthService).isAuthenticated() ? true : inject(Router).parseUrl('/login')]
   },
   { path: 'join', component: JoinSession },
+  { path: 'about', component: AboutComponent },
   { path: 'session/association/:gameId', component: AssociationGameComponent },
   { path: 'session/crossword/:sessionCode', component: CrosswordComponent },
   { path: 'session/formulation/:sessionCode', component: FormulationComponent },

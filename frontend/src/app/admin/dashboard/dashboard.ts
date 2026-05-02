@@ -3,10 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { SessionService, Session } from '../../core/services/session.service';
 
 declare const bootstrap: any;
+
+type DashboardPanel = 'sessions' | 'participants' | 'scores' | 'times' | null;
 
 @Component({
   selector: 'app-dashboard',
@@ -17,12 +21,15 @@ declare const bootstrap: any;
 })
 export class DashboardComponent implements OnInit {
   sessions: Session[] = [];
+  gameCounts: Record<string, number> = {};
   isLoading = true;
+
   totalParticipants = 0;
   averageScore = 0;
   averageTime = 0;
 
-  // ── Création session ──
+  activePanel: DashboardPanel = null;
+
   newTitre = '';
 
   selectedGames = {
@@ -40,7 +47,6 @@ export class DashboardComponent implements OnInit {
   isCreating = false;
   createError = '';
 
-  // ── Résultats ──
   participations: any[] = [];
   showResults = false;
   isLoadingResults = false;
@@ -65,6 +71,7 @@ export class DashboardComponent implements OnInit {
       next: (sessions) => {
         this.sessions = sessions;
         this.isLoading = false;
+        this.loadGameCounts();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -72,6 +79,24 @@ export class DashboardComponent implements OnInit {
         this.isLoading = false;
         this.cdr.detectChanges();
       },
+    });
+  }
+
+  loadGameCounts(): void {
+    if (this.sessions.length === 0) return;
+
+    const requests = this.sessions.map((s) =>
+      this.sessionService.getSessionGames(s.code).pipe(
+        map((games) => ({ code: s.code, count: games.length })),
+        catchError(() => of({ code: s.code, count: 0 })),
+      ),
+    );
+
+    forkJoin(requests).subscribe((items) => {
+      items.forEach((item) => {
+        this.gameCounts[item.code] = item.count;
+      });
+      this.cdr.detectChanges();
     });
   }
 
@@ -85,6 +110,17 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => console.error('Erreur chargement stats', err),
     });
+  }
+
+  togglePanel(panel: DashboardPanel): void {
+    this.activePanel = this.activePanel === panel ? null : panel;
+
+    if (
+      (panel === 'participants' || panel === 'scores' || panel === 'times') &&
+      this.participations.length === 0
+    ) {
+      this.loadParticipations();
+    }
   }
 
   viewResults(): void {
@@ -110,6 +146,52 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  get sortedScores(): any[] {
+    return [...this.participations].sort((a, b) => Number(b.scoreTotal) - Number(a.scoreTotal));
+  }
+
+  get sortedTimes(): any[] {
+    return [...this.participations].sort((a, b) => Number(a.tempsTotal) - Number(b.tempsTotal));
+  }
+
+  get uniquePlayers(): any[] {
+    const seen = new Set<string>();
+
+    return this.participations.filter((p) => {
+      const key = `${p.userName}-${p.sessionCode}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+
+  getScoreBarWidth(score: number): string {
+    const value = Math.max(0, Math.min(100, Number(score) || 0));
+    return value + '%';
+  }
+
+  getTimeBarWidth(seconds: number): string {
+    const times = this.sortedTimes.map((p) => Number(p.tempsTotal) || 0);
+    const max = Math.max(...times, 1);
+    const value = Number(seconds) || 0;
+    return Math.max(8, Math.round((value / max) * 100)) + '%';
+  }
+
+  getRankIcon(index: number): string {
+    if (index === 0) return '💎';
+    if (index === 1) return '🥇';
+    if (index === 2) return '🥈';
+    return `${index + 1}.`;
+  }
+
+  formatSeconds(seconds: number): string {
+    const value = Number(seconds) || 0;
+    const min = Math.floor(value / 60);
+    const sec = value % 60;
+    return `${min}m ${sec.toString().padStart(2, '0')}s`;
   }
 
   openCreateModal(): void {
@@ -237,9 +319,7 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        alert(
-          'Impossible de supprimer cette session : ' + (err.error?.message || 'erreur serveur'),
-        );
+        alert('Impossible de supprimer cette session : ' + (err.error?.message || 'erreur serveur'));
       },
     });
   }

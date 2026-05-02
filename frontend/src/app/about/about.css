@@ -1,0 +1,173 @@
+.about-page {
+  background: #fff;
+  min-height: 100vh;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.about-hero {
+  max-width: 850px;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+
+.about-logo {
+  height: 80px;
+  margin-bottom: 1.5rem;
+}
+
+.about-hero h1 {
+  color: #b97486;
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.about-hero p {
+  color: #8f6771;
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.about-grid {
+  max-width: 1050px;
+  margin: 0 auto 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.3rem;
+}
+
+.about-card {
+  background: #fff8fa;
+  border: 1px solid #f1dce3;
+  border-radius: 20px;
+  padding: 1.8rem;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(185, 116, 134, 0.1);
+  transition: 0.2s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 36px rgba(185, 116, 134, 0.18);
+}
+
+.about-card i {
+  font-size: 2rem;
+  color: #b97486;
+}
+
+.about-card h3 {
+  color: #4177A6;
+  margin: 1rem 0 0.6rem;
+}
+
+.about-card p {
+  color: #8f6771;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.about-section {
+  max-width: 950px;
+  margin: 0 auto 3rem;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f1dce3;
+  padding: 2.3rem;
+}
+
+.about-section h2 {
+  color: #4177A6;
+  margin-bottom: 1rem;
+}
+
+.about-section > p {
+  color: #8f6771;
+  line-height: 1.7;
+}
+
+.axis-list {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.axis-list div {
+  background: #fff4f7;
+  border-radius: 16px;
+  padding: 1.2rem;
+}
+
+.axis-list span {
+  color: #b97486;
+  font-weight: 800;
+}
+
+.axis-list h4 {
+  color: #b97486;
+  margin: 0.3rem 0;
+}
+
+.axis-list p {
+  color: #8f6771;
+  margin: 0;
+}
+
+.about-numbers {
+  max-width: 850px;
+  margin: 0 auto 3rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.about-numbers div {
+  background: linear-gradient(135deg, #fff4f7, #ffffff);
+  border: 1px solid #f1dce3;
+  border-radius: 18px;
+  padding: 1.3rem 2rem;
+  text-align: center;
+}
+
+.about-numbers strong {
+  display: block;
+  color: #b97486;
+  font-size: 2.3rem;
+}
+
+.about-numbers span {
+  color: #8f6771;
+  font-size: 0.9rem;
+}
+
+.about-link {
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+  color: #8f6771;
+}
+
+.about-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  background: #b97486;
+  color: white;
+  text-decoration: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+@media (max-width: 850px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-hero h1 {
+    font-size: 1.8rem;
+  }
+}
