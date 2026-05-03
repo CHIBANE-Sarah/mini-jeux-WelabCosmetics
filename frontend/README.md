@@ -1,153 +1,378 @@
-# WeLab Cosmetic - Frontend (Angular)
+# WeLab Cosmetic - Frontend Angular
 
-Ce dossier contient l'interface utilisateur développée avec **Angular**.
-Il s'agit d'une **Single Page Application (SPA)** communiquant avec l'API Symfony.
+Ce dossier contient l'interface utilisateur de l'application **WeLab Cosmetic**.
 
-> Le frontend tourne entièrement via **Docker**.
+Le frontend est développé avec **Angular**.  
+Il s'agit d'une **Single Page Application** qui communique avec le backend Symfony via des requêtes HTTP vers une API REST.
+
+> Le frontend tourne via Docker avec le conteneur `welab-angular`.
 
 ---
 
 ## Prérequis
 
-- Docker Desktop
+- Docker Desktop installé et démarré
 - Git
+- Un navigateur web récent
 
 ---
 
-## Installation et Démarrage
+## Lancement du frontend
 
-    docker compose up -d
+Depuis la racine du projet :
 
-Le conteneur `welab-angular` démarre automatiquement et installe les dépendances.
+```bash
+docker compose up --build
+```
 
-Pour suivre le démarrage :
+ou, si les conteneurs sont déjà construits :
 
-    docker logs welab-angular -f
+```bash
+docker compose up -d
+```
 
-Une fois prêt, accéder à :
+Le conteneur Angular démarre automatiquement.
 
-    http://localhost:4200
+Pour suivre les logs du frontend :
+
+```bash
+docker logs welab-angular -f
+```
+
+Attendre que le serveur Angular soit prêt, puis ouvrir :
+
+```txt
+http://localhost:4200
+```
 
 ---
 
-## Architecture Frontend
+## Architecture frontend
 
-- Composants Angular standalone (sans NgModule)
-- Routing centralisé (`app.routes.ts`)
-- Services HTTP avec `HttpClient`
-- Interceptor JWT pour l’authentification admin
-- Utilisation de `localStorage` pour le mode joueur
+Le frontend repose sur :
+
+- des composants Angular standalone
+- un routing centralisé dans `app.routes.ts`
+- des services Angular pour les appels API
+- un interceptor JWT pour les requêtes administrateur
+- un guard pour protéger les routes admin
+- du stockage temporaire avec `localStorage` pour le parcours joueur
+- des fichiers HTML/CSS/TypeScript séparés pour chaque composant
 
 ---
 
 ## Structure du projet
 
-    src/
-    ├── app/
-    │   ├── home/                → Page d’accueil
-    │   ├── join/                → Rejoindre une session
-    │   ├── about/               → Page À propos
-    │   ├── auth/                → Connexion admin
-    │   ├── admin/
-    │   │   ├── dashboard/       → Dashboard admin
-    │   │   ├── games-list/      → Liste des jeux
-    │   │   └── game-edit/       → Édition des jeux
-    │   ├── session/             → Parcours joueur
-    │   ├── game/
-    │   │   ├── crossword/       → Mots croisés
-    │   │   ├── formulation/     → Formulation
-    │   │   └── results/         → Résultats + reviews
-    │   ├── core/
-    │   │   ├── services/        → API services
-    │   │   ├── interceptors/    → JWT interceptor
-    │   │   └── guards/          → Auth guard
+```txt
+src/
+├── app/
+│   ├── app.routes.ts             → Routes principales de l'application
+│   ├── app.config.ts             → Configuration globale Angular
+│   ├── home/                     → Page d'accueil
+│   ├── about/                    → Page À propos
+│   ├── join/                     → Page pour rejoindre une session
+│   ├── player-dashboard/         → Tableau de bord côté joueur
+│   ├── auth/
+│   │   └── login/                → Connexion administrateur
+│   ├── admin/
+│   │   ├── dashboard/            → Dashboard administrateur
+│   │   ├── games-list/           → Liste des jeux administrables
+│   │   └── game-edit/            → Édition des questions/ingrédients
+│   ├── session/
+│   │   ├── session.ts            → Page de session côté joueur
+│   │   └── association-game/     → Jeu d'association
+│   ├── game/
+│   │   ├── crossword/            → Jeu de mots croisés
+│   │   ├── formulation/          → Jeu de formulation
+│   │   └── results/              → Page de résultats finale
+│   ├── core/
+│   │   ├── services/             → Services HTTP
+│   │   ├── interceptors/         → Interceptor JWT
+│   │   └── guards/               → Guard d'authentification
+│   └── interfaces/               → Interfaces TypeScript partagées
+├── assets/                       → Images et ressources
+├── index.html
+├── main.ts
+└── styles.css                    → Styles globaux
+```
 
 ---
 
-## Fonctionnalités principales
+## Pages principales
 
-### Côté joueur
-
-- Accès via code session (sans compte)
-- Saisie nom / prénom
-- Enchaînement des mini-jeux :
-  - Mots croisés
-  - Association
-  - Formulation
-- Calcul du score global
-- Enregistrement automatique de la participation
-- Temps de session mesuré
-
-### Résultats & expérience joueur
-
-- Page de résultats détaillée :
-  - Score global
-  - Score par jeu
-  - Statut réussite / échec
-- Possibilité de rejouer ou revenir à l’accueil
+| Page | URL | Rôle |
+|------|-----|------|
+| Accueil | `http://localhost:4200` | Public |
+| Rejoindre une session | `http://localhost:4200/join` | Joueur |
+| Connexion admin | `http://localhost:4200/login` | Admin |
+| Dashboard admin | `http://localhost:4200/dashboard` | Admin |
+| Gestion des jeux | `http://localhost:4200/dashboard/games` | Admin |
+| Résultats joueur | `/session/results/{sessionCode}` | Joueur |
 
 ---
 
-## Fonctionnalités UX/UI  
+## Fonctionnement général côté joueur
 
-- Refonte globale de l’interface (UI moderne et cohérente)
-- Navbar globale persistante (navigation dynamique)
-- Footer harmonisé
-- Dashboard admin amélioré :
-  - Classement des joueurs
-  - Top scores (médailles)
-  - Temps de jeu
-  - Animations et hover interactifs
-- Slider dynamique sur la page d’accueil (images cosmétiques)
-- Animations et micro-interactions sur les cartes
-- Amélioration des formulaires (feedback utilisateur)
+Le parcours joueur fonctionne ainsi :
 
----
+```txt
+Accueil
+↓
+Rejoindre une session avec un code
+↓
+Saisie nom / prénom / avatar
+↓
+Page de session
+↓
+Mini-jeux
+↓
+Page de résultats
+↓
+Enregistrement de la participation
+↓
+Avis joueur facultatif
+```
 
-## Profil joueur
-
-- Stockage local (localStorage)
-- Informations conservées :
-  - Nom
-  - Prénom
-  - Session
-- Sélection d’un avatar
-- Pas d’authentification requise
-
----
-
-## Reviews joueurs
-
-- Système de notation avec étoiles
-- Ajout d’un commentaire
-- Choix d’un avatar
-- Envoi vers le backend
-- Affichage possible des avis récents
+Le joueur n'a pas besoin de compte.  
+Ses informations temporaires sont stockées dans le navigateur avec `localStorage`.
 
 ---
 
-## Gestion des données côté frontend
+## Fonctionnement général côté administrateur
 
-- Stockage temporaire :
-  - scores par jeu
-  - temps de session
-- Nettoyage après chaque session
-- Synchronisation avec le backend via API
+Le parcours administrateur fonctionne ainsi :
+
+```txt
+Connexion admin
+↓
+Réception du token JWT
+↓
+Stockage du token dans localStorage
+↓
+Accès au dashboard
+↓
+Création et gestion des sessions
+↓
+Consultation des statistiques et résultats
+```
+
+Les routes administrateur sont protégées par :
+
+- un guard Angular côté frontend
+- une vérification JWT côté backend
 
 ---
 
-## Améliorations UX
+## Services Angular principaux
 
-- Feedback visuel (loading, succès, erreurs)
-- Navigation fluide entre les pages
-- Interface responsive
-- Interactions utilisateur dynamiques
-- Expérience orientée joueur
+Les services situés dans `src/app/core/services` centralisent les appels API.
+
+Exemples :
+
+```txt
+auth.service.ts              → connexion, déconnexion, token JWT
+session.service.ts           → sessions, création, suppression, statistiques
+association.ts               → jeu d'association
+crossword.service.ts         → mots croisés
+formulation.service.ts       → formulation
+participation.service.ts     → enregistrement des résultats
+review.service.ts            → avis joueurs
+game-admin.service.ts        → gestion admin des jeux
+```
+
+---
+
+## Authentification frontend
+
+L'authentification administrateur repose sur un token JWT.
+
+Étapes :
+
+```txt
+1. L'admin se connecte sur /login
+2. Angular envoie username/password à Symfony
+3. Symfony retourne un token JWT
+4. Angular stocke le token dans localStorage
+5. L'interceptor ajoute le token aux requêtes HTTP
+6. Les routes admin deviennent accessibles
+```
+
+Fichiers concernés :
+
+```txt
+auth/login/login.ts
+core/services/auth.service.ts
+core/interceptors/auth-interceptor.ts
+core/guards/auth-guard.ts
+app.routes.ts
+```
+
+---
+
+## Gestion du joueur avec localStorage
+
+Le mode joueur utilise `localStorage` pour stocker temporairement :
+
+```txt
+welab.participant
+player_name
+session_code
+session_games
+session_title
+session_start_time
+score_crossword
+score_association
+score_formulation
+total_crossword
+total_association
+total_formulation
+```
+
+Ces données permettent :
+
+- de conserver le nom du joueur pendant la session
+- de savoir quels jeux enchaîner
+- de calculer les scores
+- de mesurer le temps total
+- d'afficher les résultats finaux
+
+---
+
+## Mini-jeux
+
+### Association
+
+Fichier principal :
+
+```txt
+session/association-game/association-game.ts
+```
+
+Fonctionnalités :
+
+- chargement des questions depuis l'API
+- affichage des termes et définitions
+- glisser-déposer avec Angular CDK
+- vérification des réponses
+- stockage du score
+
+### Mots croisés
+
+Fichier principal :
+
+```txt
+game/crossword/crossword.component.ts
+```
+
+Fonctionnalités :
+
+- génération d'une grille
+- saisie des lettres par le joueur
+- validation des réponses
+- calcul du score
+- timer
+
+### Formulation
+
+Fichier principal :
+
+```txt
+game/formulation/formulation.component.ts
+```
+
+Fonctionnalités :
+
+- affichage des ingrédients par catégorie
+- sélection des ingrédients corrects
+- validation auprès du backend
+- calcul du score
+- timer
+
+---
+
+## Page de résultats
+
+Fichier principal :
+
+```txt
+game/results/results.component.ts
+```
+
+La page de résultats :
+
+- lit les scores depuis `localStorage`
+- calcule le score global
+- affiche le score par jeu
+- détermine si la session est réussie
+- enregistre automatiquement la participation
+- permet de laisser un avis
+
+---
+
+## Fonctionnalités UX/UI
+
+Le frontend intègre plusieurs améliorations d'expérience utilisateur :
+
+- interface responsive
+- feedbacks visuels de chargement et d'erreur
+- messages de succès
+- navigation fluide entre les pages
+- dashboard administrateur enrichi
+- classement des joueurs
+- affichage des scores et temps
+- avatars joueurs
+- système d'avis avec note
+- animations et effets de survol
+- slider visuel sur la page d'accueil
 
 ---
 
 ## Commandes utiles
 
-    docker logs welab-angular -f
-    docker compose ps
+### Voir les logs Angular
 
+```bash
+docker logs welab-angular -f
+```
+
+### Vérifier les conteneurs
+
+```bash
+docker compose ps
+```
+
+### Redémarrer le projet
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+### Lancer avec reconstruction complète
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Points techniques importants
+
+- Angular affiche les pages et gère l'interaction utilisateur.
+- Les services Angular communiquent avec Symfony via HTTP.
+- Les réponses API sont au format JSON.
+- `localStorage` sert au stockage temporaire côté joueur.
+- Le token JWT sert uniquement à protéger l'espace administrateur.
+- Les composants sont standalone, donc ils déclarent directement leurs imports.
+- Les fichiers HTML, CSS et TypeScript sont séparés pour faciliter la maintenance.
+
+---
+
+## Compte administrateur de test
+
+Après chargement des fixtures backend :
+
+```txt
+Login : admin
+Mot de passe : admin123
+```

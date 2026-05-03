@@ -1,7 +1,11 @@
-
+# Fichier complémentaire de Docker Compose.
+# Il modifie ou complète la configuration du fichier compose.yaml.
 services:
 ###> doctrine/doctrine-bundle ###
+  # Configuration complémentaire du service PostgreSQL.
   database:
+    # Expose le port PostgreSQL.
+    # Ici, Docker choisit automatiquement un port hôte disponible.
     ports:
       - "5432"
 ###< doctrine/doctrine-bundle ###

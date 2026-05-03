@@ -1,53 +1,102 @@
+# Définition des services Docker nécessaires au projet.
 services:
-  # Frontend Angular
+  # Service frontend Angular.
   angular:
+    # Image Node.js utilisée pour lancer Angular.
     image: node:20-alpine
+
+    # Nom du conteneur Angular.
     container_name: welab-angular
+
+    # Dossier de travail dans le conteneur.
     working_dir: /var/www/frontend
+
+    # Monte le dossier frontend local dans le conteneur.
+    # Cela permet de modifier le code localement et de le voir dans Docker.
     volumes:
       - ./frontend:/var/www/frontend
+
+    # Expose le port Angular.
+    # Si ANGULAR_PORT n'est pas défini, le port utilisé sera 4200.
     ports:
       - "${ANGULAR_PORT:-4200}:4200"
+
+    # Commande exécutée au lancement du conteneur.
+    # Elle installe Angular CLI, installe les dépendances npm, puis lance ng serve.
+    # --host 0.0.0.0 rend Angular accessible depuis l’extérieur du conteneur.
+    # --poll=2000 aide à détecter les changements de fichiers dans Docker.
     command: sh -c "apk add --no-cache bash && npm install -g @angular/cli@21.2.2 && npm install && ng serve --host 0.0.0.0 --poll=2000"
+
+    # Connecte le conteneur au réseau Docker du projet.
     networks:
       - welab-network
 
-  # Backend Symfony
+  # Service backend Symfony.
   symfony:
+    # Construit l'image à partir du Dockerfile à la racine du projet.
     build:
       context: .
       dockerfile: Dockerfile
+
+      # Arguments transmis au Dockerfile.
       args:
         USERNAME: sarah
         UID: 1000
         EMAIL: chibanesarah42@gmail.com
         NAME: "Sarah Chibane"
+
+    # Nom du conteneur Symfony.
     container_name: welab-symfony
+
+    # Monte le dossier backend local dans le conteneur.
     volumes:
       - ./backend:/var/www/backend
+
+    # Expose PHP-FPM sur le port 9000.
     ports:
       - "9000:9000"
+
+    # Variable d'environnement utilisée par Symfony pour se connecter à la base.
+    # Ici, la base utilisée est SQLite dans backend/var/data.db.
     environment:
       DATABASE_URL: "sqlite:////var/www/backend/var/data.db"
+
+    # Connecte Symfony au réseau Docker du projet.
     networks:
       - welab-network
 
-  # Serveur Nginx
+  # Service serveur web Nginx.
   web:
+    # Image Nginx légère.
     image: nginx:alpine
+
+    # Nom du conteneur Nginx.
     container_name: welab-web
+
+    # Expose le backend via Nginx.
+    # Si SYMFONY_PORT n'est pas défini, le port utilisé sera 8000.
     ports:
       - "${SYMFONY_PORT:-8000}:80"
+
+    # Monte les fichiers nécessaires dans Nginx.
+    # backend : code Symfony.
+    # frontend : code Angular.
+    # default.conf : configuration Nginx.
     volumes:
       - ./backend:/var/www/backend
       - ./frontend:/var/www/frontend
       - ./default.conf:/etc/nginx/conf.d/default.conf
+
+    # Connecte Nginx au même réseau que les autres services.
     networks:
       - welab-network
+
+    # Nginx démarre après Symfony et Angular.
     depends_on:
       - symfony
       - angular
 
+# Réseau Docker commun aux services.
 networks:
   welab-network:
     driver: bridge

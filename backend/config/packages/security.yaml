@@ -1,63 +1,92 @@
 security:
+  # Configuration du hachage des mots de passe.
+  # 'auto' laisse Symfony choisir l'algorithme recommandé.
   password_hashers:
     Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
+  # Définition de la manière dont Symfony récupère les utilisateurs.
   providers:
     app_user_provider:
       entity:
+        # Symfony charge les utilisateurs depuis l'entité User.
         class: App\Entity\User
+
+        # Le champ utilisé comme identifiant de connexion est "login".
         property: login
 
+  # Les firewalls définissent les zones de sécurité de l'application.
   firewalls:
+    # Firewall désactivé pour les fichiers techniques de développement.
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
 
+    # Firewall spécifique à la route de connexion.
     login:
       pattern: ^/api/login
+
+      # Stateless signifie que Symfony ne garde pas de session serveur.
+      # L'identification repose sur le token JWT.
       stateless: true
+
+      # Symfony attend une requête JSON contenant username + password.
       json_login:
+        # Route appelée pour se connecter.
         check_path: /api/login
+
+        # Si la connexion réussit, LexikJWT génère un token.
         success_handler: lexik_jwt_authentication.handler.authentication_success
+
+        # Si la connexion échoue, LexikJWT renvoie une erreur.
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+    # Firewall appliqué à toutes les autres routes /api.
     api:
       pattern: ^/api
+
+      # Pas de session côté serveur, uniquement JWT.
       stateless: true
+
+      # Active la vérification du token JWT.
       jwt: ~
 
+  # Règles d’accès aux routes API.
   access_control:
-    # Auth publique
+    # La connexion est publique, sinon personne ne pourrait se connecter.
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
+
+    # Route de test publique.
     - { path: ^/api/test, roles: PUBLIC_ACCESS }
 
-    # Session — rejoindre et consulter (public)
+    # Routes publiques pour rejoindre et consulter une session.
     - { path: ^/api/session/[A-Z0-9]+/games, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/[A-Z0-9]+/join, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/.*/join, roles: PUBLIC_ACCESS }
     - { path: ^/api/session/[A-Z0-9]+$, roles: PUBLIC_ACCESS, methods: [GET] }
 
-    # Jeux publics (lecture pour les joueurs)
+    # Routes publiques utilisées par les joueurs pour consulter ou jouer.
     - { path: ^/api/association, roles: PUBLIC_ACCESS }
     - { path: ^/api/crossword, roles: PUBLIC_ACCESS }
     - { path: ^/api/formulation, roles: PUBLIC_ACCESS }
     - { path: ^/api/participation, roles: PUBLIC_ACCESS }
     - { path: ^/api/reviews, roles: PUBLIC_ACCESS }
 
-    # Admin — gestion des jeux (ROLE_ADMIN obligatoire)
+    # Routes admin : seuls les utilisateurs avec ROLE_ADMIN peuvent y accéder.
     - { path: ^/api/admin, roles: ROLE_ADMIN }
 
-    # Admin — stats et sessions
+    # Statistiques et gestion des sessions réservées aux admins.
     - { path: ^/api/stats/dashboard, roles: ROLE_ADMIN }
     - { path: ^/api/sessions, roles: ROLE_ADMIN }
 
-    # Tout le reste nécessite authentification
+    # Toutes les autres routes /api nécessitent un utilisateur authentifié.
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
+# Configuration spécifique aux tests.
 when@test:
   security:
     password_hashers:
       Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        # Paramètres réduits pour accélérer les tests.
         algorithm: auto
         cost: 4
         time_cost: 3

@@ -1,24 +1,42 @@
-
+# Fichier Docker Compose généré par Symfony/Doctrine pour une base PostgreSQL.
+# Dans votre docker-compose principal, vous utilisez plutôt SQLite.
+# Ce fichier peut donc être considéré comme un fichier généré ou secondaire.
 services:
 ###> doctrine/doctrine-bundle ###
+  # Service de base de données PostgreSQL.
   database:
+    # Image PostgreSQL utilisée.
+    # Si POSTGRES_VERSION n’est pas défini, la version 16-alpine est utilisée.
     image: postgres:${POSTGRES_VERSION:-16}-alpine
+
+    # Variables d'environnement de la base PostgreSQL.
     environment:
+      # Nom de la base.
       POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
+
+      # Mot de passe de la base.
+      # À changer en production.
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+
+      # Nom d'utilisateur PostgreSQL.
       POSTGRES_USER: ${POSTGRES_USER:-app}
+
+    # Healthcheck permettant à Docker de vérifier que PostgreSQL est prêt.
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
       timeout: 5s
       retries: 5
       start_period: 60s
+
+    # Volume persistant pour conserver les données PostgreSQL.
     volumes:
       - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+
+      # Alternative possible : utiliser un dossier local au lieu d'un volume Docker.
       # - ./docker/db/data:/var/lib/postgresql/data:rw
 ###< doctrine/doctrine-bundle ###
 
+# Déclaration du volume Docker utilisé par PostgreSQL.
 volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
