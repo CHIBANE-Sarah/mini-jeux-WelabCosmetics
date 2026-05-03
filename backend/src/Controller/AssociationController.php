@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\AssociationQuestion;
 use App\Entity\Game;
-use App\Entity\Participation;
 use App\Repository\AssociationQuestionRepository;
 use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -114,19 +113,6 @@ class AssociationController extends AbstractController
                     'estCorrect' => false,
                 ];
             }
-        }
-
-        $participantData = $body['participant'] ?? null;
-        if ($participantData && isset($participantData['nom'], $participantData['prenom'])) {
-            $participation = new Participation();
-            $participation->setJoueurNom($participantData['nom']);
-            $participation->setJoueurPrenom($participantData['prenom']);
-            $participation->setScore($score);
-            $participation->setDureeSeconds(max(0, (int)($body['duree'] ?? 0)));
-            $participation->setSession($game->getSession());
-
-            $em->persist($participation);
-            $em->flush();
         }
 
         return $this->json([

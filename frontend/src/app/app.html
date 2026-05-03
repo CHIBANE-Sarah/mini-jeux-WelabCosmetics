@@ -1,4 +1,4 @@
-<div class="global-navbar" *ngIf="!isLoginPage()">
+<div class="global-navbar">
   <div class="global-nav-brand" routerLink="/">
     <img src="assets/logo-welab.webp" alt="WeLab Cosmetic" class="brand-img" />
   </div>
@@ -14,32 +14,27 @@
       Accueil
     </a>
 
-    <a routerLink="/join" routerLinkActive="active-link">
+    <a *ngIf="showJoinLink()" routerLink="/join" routerLinkActive="active-link">
       <i class="bi bi-person-plus"></i>
       Rejoindre
     </a>
 
-    <a routerLink="/about" routerLinkActive="active-link">
+    <a *ngIf="!isAboutPage()" routerLink="/about" routerLinkActive="active-link">
       <i class="bi bi-info-circle"></i>
       À propos
     </a>
 
-    <a *ngIf="isPlayerInSession()" routerLink="/player-dashboard" routerLinkActive="active-link">
+    <a *ngIf="showPlayerProfileLink()" routerLink="/player-dashboard" routerLinkActive="active-link">
       <i class="bi bi-person-circle"></i>
       Mon profil
     </a>
 
-    <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="active-link">
+    <a *ngIf="showDashboardLink()" routerLink="/dashboard" routerLinkActive="active-link">
       <i class="bi bi-speedometer2"></i>
       Dashboard
     </a>
 
-    <a *ngIf="isLoggedIn()" routerLink="/dashboard/games" routerLinkActive="active-link">
-      <i class="bi bi-controller"></i>
-      Gérer les jeux
-    </a>
-
-    <a *ngIf="!isLoggedIn() && !isPlayerInSession()" routerLink="/login" routerLinkActive="active-link">
+    <a *ngIf="showLoginLink()" routerLink="/login" routerLinkActive="active-link">
       <i class="bi bi-box-arrow-in-right"></i>
       Connexion
     </a>
@@ -72,7 +67,10 @@
     </div>
 
     <div class="welab-footer-copy">
-      © 2026 WeLab Cosmetic
+      © 2026 WeLab Cosmetic<br>
+<span style="font-size: 0.9em; opacity: 0.8;">
+Travail réalisé par Kamilia.H - Sarah.C et Christian.B 
+</span>
     </div>
   </div>
 </footer>

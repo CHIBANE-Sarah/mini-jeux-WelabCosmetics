@@ -12,14 +12,7 @@ class AssociationFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        // CORRECTION : on utilise session_2 (SESS02) créée par SessionFixtures
-        // au lieu de créer une nouvelle session LAB2026 qui entrait en conflit.
-        $session = $this->getReference('session_2', \App\Entity\Session::class);
-
-        $game = new Game();
-        $game->setType(Game::TYPE_ASSOCIATION);
-        $game->setSession($session);
-        $manager->persist($game);
+        $game = $this->getReference('game_association_sess01', Game::class);
 
         $questions = [
             [
@@ -92,9 +85,9 @@ class AssociationFixtures extends Fixture implements DependentFixtureInterface
     }
 
     // CORRECTION : dépend de SessionFixtures (pas UserFixtures)
-    // pour avoir accès à la référence session_2
+    // pour avoir accès au jeu association
     public function getDependencies(): array
     {
-        return [SessionFixtures::class];
+        return [GameFixtures::class];
     }
 }

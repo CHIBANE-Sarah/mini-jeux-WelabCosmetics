@@ -71,6 +71,17 @@ export class JoinSession {
               
               localStorage.setItem('player_name', this.prenom + ' ' + this.nom);
               localStorage.setItem('session_code', normalizedCode);
+              [
+                'score_crossword',
+                'total_crossword',
+                'score_association',
+                'total_association',
+                'score_formulation',
+                'total_formulation',
+                'participation_saved',
+                'session_start_time',
+              ].forEach((key) => localStorage.removeItem(key));
+
               localStorage.removeItem('session_start_time');
 
       

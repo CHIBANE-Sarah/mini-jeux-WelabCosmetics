@@ -16,12 +16,52 @@ export class App {
     private router: Router
   ) {}
 
+  currentUrl(): string {
+    return this.router.url.split('?')[0].split('#')[0];
+  }
+
   isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
   }
 
   isPlayerInSession(): boolean {
-    return !!localStorage.getItem('session_code');
+    return !!localStorage.getItem('session_code') || !!localStorage.getItem('welab.participant');
+  }
+
+  isLoginPage(): boolean {
+    return this.currentUrl() === '/login';
+  }
+
+  isDashboardPage(): boolean {
+    return this.currentUrl() === '/dashboard';
+  }
+
+  isAboutPage(): boolean {
+    return this.currentUrl() === '/about';
+  }
+
+  isJoinPage(): boolean {
+    return this.currentUrl() === '/join';
+  }
+
+  isSessionFlow(): boolean {
+    return this.currentUrl().startsWith('/session');
+  }
+
+  showJoinLink(): boolean {
+    return !this.isJoinPage() && !this.isSessionFlow();
+  }
+
+  showDashboardLink(): boolean {
+    return this.isLoggedIn() && !this.isDashboardPage();
+  }
+
+  showLoginLink(): boolean {
+    return !this.isLoggedIn() && !this.isPlayerInSession() && !this.isLoginPage();
+  }
+
+  showPlayerProfileLink(): boolean {
+    return this.isPlayerInSession() && !this.isLoginPage() && this.currentUrl() !== '/player-dashboard';
   }
 
   logout(): void {
@@ -30,9 +70,5 @@ export class App {
 
   goBack(): void {
     window.history.back();
-  }
-
-  isLoginPage(): boolean {
-    return this.router.url === '/login';
   }
 }

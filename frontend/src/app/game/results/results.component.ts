@@ -43,8 +43,8 @@ export class ResultsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sessionCode  = this.route.snapshot.paramMap.get('sessionCode') || '';
-    this.playerName   = localStorage.getItem('player_name')  || 'Joueur';
+    this.sessionCode = this.route.snapshot.paramMap.get('sessionCode') || '';
+    this.playerName = localStorage.getItem('player_name') || 'Joueur';
     this.sessionTitle = localStorage.getItem('session_title') || 'Session de jeu';
 
     const storedProfile = localStorage.getItem('welab.participant');
@@ -56,6 +56,12 @@ export class ResultsComponent implements OnInit {
       }
     }
 
+    this.readScoresFromStorage();
+    this.calculateGlobalScore();
+    this.saveParticipation();
+  }
+
+  private readScoresFromStorage(): void {
     const sc = localStorage.getItem('score_crossword');
     const tc = localStorage.getItem('total_crossword');
     const sa = localStorage.getItem('score_association');
@@ -63,41 +69,87 @@ export class ResultsComponent implements OnInit {
     const sf = localStorage.getItem('score_formulation');
     const tf = localStorage.getItem('total_formulation');
 
-    if (sc && tc) { this.scoreCrossword  = +sc; this.totalCrossword  = +tc; }
-    if (sa && ta) { this.scoreAssociation = +sa; this.totalAssociation = +ta; }
-    if (sf && tf) { this.scoreFormulation = +sf; this.totalFormulation = +tf; }
+    if (sc !== null && tc !== null) {
+      this.scoreCrossword = Number(sc);
+      this.totalCrossword = Number(tc);
+    }
 
-    this.calculateGlobalScore();
-    this.saveParticipation();
+    if (sa !== null && ta !== null) {
+      this.scoreAssociation = Number(sa);
+      this.totalAssociation = Number(ta);
+    }
+
+    if (sf !== null && tf !== null) {
+      this.scoreFormulation = Number(sf);
+      this.totalFormulation = Number(tf);
+    }
+  }
+
+  private hasAnyScore(): boolean {
+    return (
+      this.scoreCrossword !== null ||
+      this.scoreAssociation !== null ||
+      this.scoreFormulation !== null
+    );
+  }
+
+  private scoreToPercent(score: number | null, total: number | null): number {
+    if (score === null) return 0;
+
+    const s = Number(score);
+    const t = Number(total) || 0;
+
+    if (t > 0 && s <= t) {
+      return Math.round((s / t) * 100);
+    }
+
+    return Math.round(Math.max(0, Math.min(100, s)));
   }
 
   calculateGlobalScore(): void {
     const scores: number[] = [];
-    if (this.scoreCrossword  !== null && this.totalCrossword)
-      scores.push(Math.round((this.scoreCrossword  / this.totalCrossword)  * 100));
-    if (this.scoreAssociation !== null && this.totalAssociation)
-      scores.push(Math.round((this.scoreAssociation / this.totalAssociation) * 100));
-    if (this.scoreFormulation !== null && this.totalFormulation)
-      scores.push(Math.round((this.scoreFormulation / this.totalFormulation) * 100));
 
-    if (scores.length > 0) {
-      this.scoreGlobal = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    if (this.scoreCrossword !== null) {
+      scores.push(this.scoreToPercent(this.scoreCrossword, this.totalCrossword));
     }
+
+    if (this.scoreAssociation !== null) {
+      scores.push(this.scoreToPercent(this.scoreAssociation, this.totalAssociation));
+    }
+
+    if (this.scoreFormulation !== null) {
+      scores.push(this.scoreToPercent(this.scoreFormulation, this.totalFormulation));
+    }
+
+    this.scoreGlobal =
+      scores.length > 0
+        ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+        : 0;
+
     this.reussie = this.scoreGlobal >= 50;
   }
 
   getPct(score: number | null, total: number | null): number {
-    if (score === null || !total) return 0;
-    return Math.round((score / total) * 100);
+    return this.scoreToPercent(score, total);
   }
 
   saveParticipation(): void {
-    if (localStorage.getItem('participation_saved')) return;
-    const startTime  = localStorage.getItem('session_start_time');
-    const tempsTotal = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
+    if (!this.hasAnyScore()) return;
+
+    const startTime = localStorage.getItem('session_start_time');
+    const saveKey = `participation_saved_${this.sessionCode}_${this.playerName}_${startTime || 'no-start'}`;
+
+    if (localStorage.getItem(saveKey)) return;
+
+    const tempsTotal = startTime
+      ? Math.round((Date.now() - parseInt(startTime, 10)) / 1000)
+      : 0;
 
     this.participationService.save(this.sessionCode, this.scoreGlobal, tempsTotal).subscribe({
-      next: () => localStorage.setItem('participation_saved', '1'),
+      next: () => {
+        localStorage.setItem(saveKey, '1');
+        localStorage.setItem('participation_saved', '1');
+      },
     });
   }
 
@@ -134,21 +186,26 @@ export class ResultsComponent implements OnInit {
     });
   }
 
-  /** AJOUT : retour à la page d'accueil */
   goHome(): void {
     this.clearScores();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], { replaceUrl: true });
   }
 
   rejouer(): void {
     this.clearScores();
-    this.router.navigate(['/join']);
+    this.router.navigate(['/join'], { replaceUrl: true });
   }
 
   private clearScores(): void {
-    ['score_crossword','total_crossword','score_association','total_association',
-     'score_formulation','total_formulation','participation_saved'].forEach(k =>
-      localStorage.removeItem(k)
-    );
+    [
+      'score_crossword',
+      'total_crossword',
+      'score_association',
+      'total_association',
+      'score_formulation',
+      'total_formulation',
+      'participation_saved',
+      'session_start_time',
+    ].forEach((key) => localStorage.removeItem(key));
   }
 }
